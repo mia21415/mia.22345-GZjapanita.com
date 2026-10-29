@@ -1204,12 +1204,12 @@
                     <div style="font-size: 0.9rem; color: #ff8888; margin-bottom: 6px;">הוספת מנה חדשה לתפריט:</div>
                     <input type="text" id="newDishName" class="admin-input" placeholder="שם המנה" style="margin-bottom: 6px;">
                     <input type="text" id="newDishPrice" class="admin-input" placeholder="מחיר למכירה (מחיר סופי ב-₪)" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="margin-bottom: 6px;">
-                    <input type="text" id="newDishOriginalPrice" class="admin-input" placeholder="מחיר מקורי לפני הנחה (רשות, למשל 1950)" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="margin-bottom: 6px;">
+                    <input type="text" id="newDishOriginalPrice" class="admin-input" placeholder="מחיר מקורי לפני הנחה (רשות)" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="margin-bottom: 6px;">
                     
                     <select id="newDishCategory" class="admin-select" style="margin-bottom: 6px;" onchange="handleCategorySelect(this.value)"></select>
-                    <input type="text" id="customCategoryInput" class="admin-input" placeholder="הקלד שם קטגוריה חדשה (למשל: מנות פתיחה)" style="display: none; margin-bottom: 6px;">
+                    <input type="text" id="customCategoryInput" class="admin-input" placeholder="הקלד שם קטגוריה חדשה" style="display: none; margin-bottom: 6px;">
                     
-                    <button class="admin-btn" onclick="addCustomDish()">הוסף מנה לתפריט לענן</button>
+                    <button class="admin-btn" onclick="addCustomDish()">הוסף מנה לתפריט</button>
                 </div>
 
                 <div class="admin-form" style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
@@ -1232,9 +1232,9 @@
                     <input type="text" id="newUsername" class="admin-input" placeholder="שם משתמש חדש">
                     <input type="text" id="newPin" class="admin-input" placeholder="קוד מספרי חדש" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                     <select id="newRole" class="admin-select"></select>
-                    <button class="admin-btn" onclick="addUser()">הוסף משתמש לענן</button>
+                    <button class="admin-btn" onclick="addUser()">הוסף משתמש</button>
                 </div>
-                <div style="font-size:0.9rem; color:#aaa; margin-bottom:8px;">משתמשים קיימים (שינוי דרגה גלובלי):</div>
+                <div style="font-size:0.9rem; color:#aaa; margin-bottom:8px;">משתמשים קיימים:</div>
                 <div class="user-list" id="userList" style="max-height: 90px;"></div>
             </div>
         </div>
@@ -1255,17 +1255,14 @@
                 <div class="f1-status-box" id="f1StatusBox">סטטוס אתר: פעיל תקין</div>
                 <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
                     <button class="f1-btn" style="background: linear-gradient(135deg, #aa1111, #550000);" onclick="setGlobalSiteState(false)">כבה את האתר לכולם (קראש)</button>
-                    <button class="f1-btn" style="background: linear-gradient(135deg, #11aa44, #005522);" onclick="setGlobalSiteState(true)">הפעל מחדש את האתר לכולם</button>
-                    <button class="f1-btn" style="background: linear-gradient(135deg, #ff8800, #cc4400); margin-top: 10px;" onclick="fullSiteReset()">🔄 איפוס מלא לכל האתר בעולם</button>
+                    <button class="f1-btn" style="background: linear-gradient(135deg, #11aa44, #005522);" onclick="setGlobalSiteState(true)">הפעל מחדש את האתר</button>
+                    <button class="f1-btn" style="background: linear-gradient(135deg, #ff8800, #cc4400); margin-top: 10px;" onclick="fullSiteReset()">🔄 איפוס מלא לכל הנתונים</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const MASTER_KEY = "$2a$10$cJlLyrBIJ/gEJACCNGGXAuP/LsL3KJC4XEKQw/mIKSHexHUcP742y";
-        const BIN_ID = "67554316ad19ca34f8d75e47";
-
         let currentLoggedUser = '';
         let currentOrder = [];
 
@@ -1300,58 +1297,25 @@
             crash: false
         };
 
-        // פונקציית טעינה מהענן (מוציאה את המידע האמיתי ושומרת במשתנה)
-        async function fetchFromCloud() {
-            try {
-                let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-                    headers: { 'X-Master-Key': MASTER_KEY }
-                });
-                if (res.ok) {
-                    let json = await res.json();
-                    if (json && json.record) {
-                        let remote = json.record;
-                        // מוודאים שנטען מידע מלא מהענן אם הוא קיים
-                        if (remote.users && Array.isArray(remote.users) && remote.users.length > 0) {
-                            globalData.users = remote.users;
-                        }
-                        if (remote.roles && Array.isArray(remote.roles)) {
-                            globalData.roles = remote.roles;
-                        }
-                        if (remote.menuItems && Array.isArray(remote.menuItems)) {
-                            globalData.menuItems = remote.menuItems;
-                        }
-                        globalData.revenue = remote.revenue || 0;
-                        globalData.sales = remote.sales || {};
-                        globalData.invoices = remote.invoices || {};
-                        globalData.crash = remote.crash || false;
-
-                        updateUIFromGlobal();
+        // מנגנון שמירה מקומית יציב שלא תלוי בשום שسرת חיצוני
+        function loadData() {
+            let saved = localStorage.getItem('japanita_stable_data');
+            if (saved) {
+                try {
+                    let parsed = JSON.parse(saved);
+                    if (parsed && parsed.users) {
+                        globalData = parsed;
                     }
-                }
-            } catch (e) {}
+                } catch(e) {}
+            }
         }
 
-        // פונקציית שמירה מיידית לענן שחוסכת כל בעיה
-        async function syncToCloud() {
-            try {
-                await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': MASTER_KEY
-                    },
-                    body: JSON.stringify(globalData)
-                });
-            } catch (e) {}
+        function saveData() {
+            localStorage.setItem('japanita_stable_data', JSON.stringify(globalData));
+            updateUIFromGlobal();
         }
 
-        // טעינה ראשונית מידית בפתיחת האתר
-        fetchFromCloud();
-
-        // סנכרון רקע שקט כל 4 שניות כדי להתעדכן בשינויים של אחרים בלי לדרוס
-        setInterval(() => {
-            fetchFromCloud();
-        }, 4000);
+        loadData();
 
         function updateUIFromGlobal() {
             const crashScreen = document.getElementById('crashScreen');
@@ -1472,7 +1436,7 @@
             }
         }
 
-        async function addCustomDish() {
+        function addCustomDish() {
             const name = document.getElementById('newDishName').value.trim();
             const price = parseFloat(document.getElementById('newDishPrice').value);
             const origPriceVal = document.getElementById('newDishOriginalPrice').value.trim();
@@ -1489,8 +1453,7 @@
                     dishObj.originalPrice = parseFloat(origPriceVal);
                 }
                 globalData.menuItems.push(dishObj);
-                await syncToCloud();
-                updateUIFromGlobal();
+                saveData();
 
                 document.getElementById('newDishName').value = '';
                 document.getElementById('newDishPrice').value = '';
@@ -1515,10 +1478,9 @@
             });
         }
 
-        async function deleteDish(index) {
+        function deleteDish(index) {
             globalData.menuItems.splice(index, 1);
-            await syncToCloud();
-            updateUIFromGlobal();
+            saveData();
         }
 
         function renderUsersBadges() {
@@ -1619,7 +1581,7 @@
             totalContainer.innerText = 'סך הכל: ₪' + totalSum.toLocaleString();
         }
 
-        async function confirmOrder() {
+        function confirmOrder() {
             if (currentOrder.length === 0) return;
 
             let totalSum = currentOrder.reduce((sum, item) => sum + (item.price * item.qty), 0);
@@ -1637,11 +1599,10 @@
                 total: totalSum
             });
 
-            await syncToCloud();
+            saveData();
             currentOrder = [];
             renderOrderSidebar();
-            updateUIFromGlobal();
-            alert("ההזמנה בוצעה וסונכרנה בהצלחה לענן!");
+            alert("ההזמנה בוצעה ונשמרה בהצלחה!");
         }
 
         function openInvoicesModal() {
@@ -1685,10 +1646,10 @@
             navigator.clipboard.writeText(textToCopy).catch(err => {});
         }
 
-        async function deleteInvoice(username, index) {
+        function deleteInvoice(username, index) {
             if (globalData.invoices[username]) {
                 globalData.invoices[username].splice(index, 1);
-                await syncToCloud();
+                saveData();
                 openInvoicesModal();
             }
         }
@@ -1781,9 +1742,7 @@
             document.getElementById('loginBox').classList.add('active');
         }
 
-        async function enterSite() {
-            // טעינה מהענן ברגע הכניסה כדי לוודא שהכל מעודכן
-            await fetchFromCloud();
+        function enterSite() {
             const username = document.getElementById('usernameInput').value.trim();
             const pin = document.getElementById('pinInput').value.trim();
             const errorMsg = document.getElementById('errorMsg');
@@ -1855,27 +1814,15 @@
 
         function closeF1() { document.getElementById('f1Modal').classList.remove('active'); }
 
-        async function setGlobalSiteState(isWorking) {
+        function setGlobalSiteState(isWorking) {
             globalData.crash = !isWorking;
-            await syncToCloud();
+            saveData();
             updateUIFromGlobal();
         }
 
-        async function fullSiteReset() {
-            if (confirm("האם אתה בטוח שברצונך לאפס את כל האתר? כל המשתמשים, המכירות והכסף יימחקו לצמיתות בענן לכולם!")) {
-                globalData = {
-                    users: [
-                        { username: "mia", pin: "1234", role: "מנכ\"ל" }
-                    ],
-                    roles: ['מנכ"ל', 'סמנכ״ל', 'אחראי עובדים', 'עובד רגיל'],
-                    menuItems: defaultMenu,
-                    revenue: 0,
-                    sales: {},
-                    invoices: {},
-                    crash: false
-                };
-                await syncToCloud();
-                alert("האתר אופס בהצלחה בענן לכל העולם! הדף יתרענן.");
+        function fullSiteReset() {
+            if (confirm("האם אתה בטוח שברצונך לאפס את כל האתר? כל המשתמשים והנתונים יימחקו לצמיתות!")) {
+                localStorage.removeItem('japanita_stable_data');
                 location.reload();
             }
         }
@@ -1885,10 +1832,10 @@
             if (!box) return;
             if (globalData.crash) {
                 box.className = 'f1-status-box offline';
-                box.innerText = 'סטטוס אתר: מושבת / קרס לכולם';
+                box.innerText = 'סטטוס אתר: מושבת / קרס';
             } else {
                 box.className = 'f1-status-box online';
-                box.innerText = 'סטטוס אתר: פעיל ותקין לחלוטין בענן';
+                box.innerText = 'סטטוס אתר: פעיל ותקין לחלוטין';
             }
         }
 
@@ -1916,11 +1863,11 @@
             selectElem.innerHTML = (globalData.roles || []).map(r => `<option value="${r}">${r}</option>`).join('');
         }
 
-        async function addNewRole() {
+        function addNewRole() {
             const roleName = document.getElementById('newRoleName').value.trim();
             if (roleName && !(globalData.roles || []).includes(roleName)) {
                 globalData.roles.push(roleName);
-                await syncToCloud();
+                saveData();
                 updateRoleSelects();
                 renderRoles();
                 renderUsers();
@@ -1929,12 +1876,12 @@
             }
         }
 
-        async function deleteRole(index) {
+        function deleteRole(index) {
             if ((globalData.roles || []).length <= 1) return;
             const removedRole = globalData.roles[index];
             globalData.roles.splice(index, 1);
             globalData.users.forEach(u => { if (u.role === removedRole) u.role = globalData.roles[0]; });
-            await syncToCloud();
+            saveData();
             updateRoleSelects();
             renderRoles();
             renderUsers();
@@ -1966,31 +1913,31 @@
             });
         }
 
-        async function changeUserRole(index, newRole) {
+        function changeUserRole(index, newRole) {
             globalData.users[index].role = newRole;
-            await syncToCloud();
+            saveData();
             renderUsersBadges();
         }
 
-        async function addUser() {
+        function addUser() {
             const newUsername = document.getElementById('newUsername').value.trim();
             const newPin = document.getElementById('newPin').value.trim();
             const newRole = document.getElementById('newRole').value;
             if (newUsername && newPin) {
                 globalData.users.push({ username: newUsername, pin: newPin, role: newRole });
-                await syncToCloud();
+                saveData();
                 renderUsers();
                 renderUsersBadges();
                 renderLeaderboard();
                 document.getElementById('newUsername').value = '';
                 document.getElementById('newPin').value = '';
-                alert("המשתמש נוסף בהצלחה לענן לכל המכשירים!");
+                alert("המשתמש נוסף בהצלחה!");
             }
         }
 
-        async function deleteUser(index) {
+        function deleteUser(index) {
             globalData.users.splice(index, 1);
-            await syncToCloud();
+            saveData();
             renderUsers();
             renderUsersBadges();
             renderLeaderboard();
