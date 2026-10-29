@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ג'פניטה</title>
+    <title>ג'פניטה - ענן גלובלי</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Noto+Serif+JP:wght@600;900&display=swap" rel="stylesheet">
@@ -1185,7 +1185,7 @@
     </div>
     <div class="overlay"></div>
 
-    <!-- חלון אדמין -->
+    <!-- חלון אדמין F9 -->
     <div class="modal" id="adminModal">
         <div class="admin-panel">
             <span class="close-modal" onclick="closeAdmin()">✕</span>
@@ -1209,7 +1209,7 @@
                     <select id="newDishCategory" class="admin-select" style="margin-bottom: 6px;" onchange="handleCategorySelect(this.value)"></select>
                     <input type="text" id="customCategoryInput" class="admin-input" placeholder="הקלד שם קטגוריה חדשה (למשל: מנות פתיחה)" style="display: none; margin-bottom: 6px;">
                     
-                    <button class="admin-btn" onclick="addCustomDish()">הוסף מנה לתפריט</button>
+                    <button class="admin-btn" onclick="addCustomDish()">הוסף מנה לתפריט לענן</button>
                 </div>
 
                 <div class="admin-form" style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
@@ -1232,9 +1232,9 @@
                     <input type="text" id="newUsername" class="admin-input" placeholder="שם משתמש חדש">
                     <input type="text" id="newPin" class="admin-input" placeholder="קוד מספרי חדש" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                     <select id="newRole" class="admin-select"></select>
-                    <button class="admin-btn" onclick="addUser()">הוסף משתמש</button>
+                    <button class="admin-btn" onclick="addUser()">הוסף משתמש לענן</button>
                 </div>
-                <div style="font-size:0.9rem; color:#aaa; margin-bottom:8px;">משתמשים קיימים (שינוי דרגה מידי):</div>
+                <div style="font-size:0.9rem; color:#aaa; margin-bottom:8px;">משתמשים קיימים (שינוי דרגה גלובלי):</div>
                 <div class="user-list" id="userList" style="max-height: 90px;"></div>
             </div>
         </div>
@@ -1251,45 +1251,129 @@
                 <div class="error-msg" id="f1ErrorMsg" style="color:#ff5555; text-align:center; margin-top:5px; display:none;">קוד שגוי!</div>
             </div>
             <div id="f1DashboardSection" style="display: none;">
-                <div class="f1-header">שליטה באתר</div>
+                <div class="f1-header">שליטה גלובלית באתר</div>
                 <div class="f1-status-box" id="f1StatusBox">סטטוס אתר: פעיל תקין</div>
                 <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
-                    <button class="f1-btn" style="background: linear-gradient(135deg, #aa1111, #550000);" onclick="setGlobalSiteState(false)">כבה את האתר לחלוטין (קראש)</button>
-                    <button class="f1-btn" style="background: linear-gradient(135deg, #11aa44, #005522);" onclick="setGlobalSiteState(true)">הפעל מחדש את האתר</button>
-                    <!-- כפתור איפוס כללי חדש -->
-                    <button class="f1-btn" style="background: linear-gradient(135deg, #ff8800, #cc4400); margin-top: 10px;" onclick="fullSiteReset()">🔄 איפוס מלא (מחיקת משתמשים ונתונים)</button>
+                    <button class="f1-btn" style="background: linear-gradient(135deg, #aa1111, #550000);" onclick="setGlobalSiteState(false)">כבה את האתר לכולם (קראש)</button>
+                    <button class="f1-btn" style="background: linear-gradient(135deg, #11aa44, #005522);" onclick="setGlobalSiteState(true)">הפעל מחדש את האתר לכולם</button>
+                    <button class="f1-btn" style="background: linear-gradient(135deg, #ff8800, #cc4400); margin-top: 10px;" onclick="fullSiteReset()">🔄 איפוס מלא לכל האתר בעולם</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // אתחול ראשוני במידה ולא קיים מידע
-        if (!localStorage.getItem('japanita_users')) {
-            localStorage.setItem('japanita_users', JSON.stringify([]));
-        }
-        if (!localStorage.getItem('japanita_roles')) {
-            localStorage.setItem('japanita_roles', JSON.stringify(['מנכ"ל', 'סמנכ״ל', 'אחראי עובדים', 'עובד רגיל']));
-        }
-        if (!localStorage.getItem('japanita_global_revenue')) {
-            localStorage.setItem('japanita_global_revenue', '0');
-        }
-        if (!localStorage.getItem('japanita_user_sales')) {
-            localStorage.setItem('japanita_user_sales', JSON.stringify({}));
+        // מפתחות החיבור לענן של JSONbin.io
+        const MASTER_KEY = "$2a$10$cJlLyrBIJ/gEJACCNGGXAuP/LsL3KJC4XEKQw/mIKSHexHUcP742y";
+        const BIN_ID = "67554316ad19ca34f8d75e47";
+
+        let currentLoggedUser = '';
+        let currentOrder = [];
+
+        // ברירת מחדל של נתונים התחלתיים
+        let defaultMenu = [
+            { category: 'מבצעים מיוחדים', name: 'מבצע קטן (5 ראמן + 10 שתייה)', price: 1950 },
+            { category: 'מבצעים מיוחדים', name: 'מבצע גדול (10 ראמן + 20 שתייה)', price: 3900 },
+            { category: 'מבצעים מיוחדים', name: 'מבצע משפחתי (15 ראמן + 30 שתייה)', price: 5850 },
+            { category: 'עובדי מדינה', name: 'מבצע קטן', price: 1462, originalPrice: 1950 },
+            { category: 'עובדי מדינה', name: 'מבצע גדול', price: 2925, originalPrice: 3900 },
+            { category: 'עובדי מדינה', name: 'מבצע משפחתי', price: 4387, originalPrice: 5850 },
+            { category: 'שתייה', name: 'לימונדה יפנית', price: 100 },
+            { category: 'שתייה', name: 'תה ירוק', price: 100 },
+            { category: 'שתייה', name: "מים - ג'פניטה", price: 100 },
+            { category: 'קינוחים', name: 'קאסטולה יפנית', price: 160 },
+            { category: 'קינוחים', name: 'פנקייק יפני', price: 125 },
+            { category: 'מנות עיקריות וארוחות', name: 'ראמן מסורתי', price: 390 },
+            { category: 'מנות עיקריות וארוחות', name: 'סושי מיקס', price: 390 },
+            { category: 'מנות עיקריות וארוחות', name: 'טריאקי סלמון', price: 350 },
+            { category: 'מנות עיקריות וארוחות', name: 'גיוזה לוקוס', price: 380 },
+            { category: 'מנות עיקריות וארוחות', name: "ארוחת ג'פניטה", price: 550 }
+        ];
+
+        let globalData = {
+            users: [{ username: "mia", pin: "1234", role: "מנכ\"ל" }],
+            roles: ['מנכ"ל', 'סמנכ״ל', 'אחראי עובדים', 'עובד רגיל'],
+            menuItems: defaultMenu,
+            revenue: 0,
+            sales: {},
+            invoices: {},
+            crash: false
+        };
+
+        // טעינה וסנכרון אוטומטי מהענן בכל 2.5 שניות
+        async function fetchFromCloud() {
+            try {
+                let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                    headers: { 'X-Master-Key': MASTER_KEY }
+                });
+                if (res.ok) {
+                    let json = await res.json();
+                    if (json && json.record) {
+                        globalData = json.record;
+                        if (!globalData.users) globalData.users = [];
+                        if (!globalData.roles) globalData.roles = ['מנכ"ל', 'סמנכ״ל', 'אחראי עובדים', 'עובד רגיל'];
+                        if (!globalData.menuItems) globalData.menuItems = defaultMenu;
+                        if (!globalData.sales) globalData.sales = {};
+                        if (!globalData.invoices) globalData.invoices = {};
+                        updateUIFromGlobal();
+                    }
+                }
+            } catch (e) {}
         }
 
+        async function syncToCloud() {
+            try {
+                await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': MASTER_KEY
+                    },
+                    body: JSON.stringify(globalData)
+                });
+            } catch (e) {}
+        }
+
+        setInterval(fetchFromCloud, 2500);
+        fetchFromCloud();
+
+        function updateUIFromGlobal() {
+            // בדיקת מסך קראש
+            const crashScreen = document.getElementById('crashScreen');
+            if (globalData.crash) {
+                crashScreen.classList.add('active');
+            } else {
+                crashScreen.classList.remove('active');
+            }
+
+            // עדכון רווחים ומשכורת
+            let totalRev = globalData.revenue || 0;
+            let mySales = globalData.sales[currentLoggedUser] || 0;
+            let mySalary = mySales * 0.20;
+
+            document.getElementById('totalRestaurantRevenue').innerText = '₪' + Math.round(totalRev).toLocaleString();
+            document.getElementById('mySalaryRevenue').innerText = '₪' + Math.round(mySalary).toLocaleString();
+
+            renderMenu();
+            renderUsersBadges();
+            renderLeaderboard();
+            if (document.getElementById('adminModal').classList.contains('active')) {
+                renderRoles();
+                renderUsers();
+                updateAdminCategoriesSelect();
+                renderDishesForDelete();
+            }
+            updateF1StatusDisplay();
+        }
+
+        // --- נגן יוטיוב ---
         let ytPlayer;
-
         function onYouTubeIframeAPIReady() {
             ytPlayer = new YT.Player('youtube-audio-container', {
                 height: '0',
                 width: '0',
                 videoId: '8kjAA-kDhv8',
-                playerVars: {
-                    'start': 30,
-                    'autoplay': 1,
-                    'controls': 0
-                },
+                playerVars: { 'start': 30, 'autoplay': 1, 'controls': 0 },
                 events: {
                     'onReady': (event) => {
                         event.target.seekTo(30, true);
@@ -1325,88 +1409,11 @@
             }, 100);
         }
 
-        let currentLoggedUser = '';
-        let currentOrder = [];
-
-        function checkGlobalCrashStatus() {
-            let isCrashed = localStorage.getItem('japanita_global_crash') === 'true';
-            const crashScreen = document.getElementById('crashScreen');
-            if (isCrashed) {
-                if (crashScreen) crashScreen.classList.add('active');
-            } else {
-                if (crashScreen) crashScreen.classList.remove('active');
-            }
-        }
-        checkGlobalCrashStatus();
-
-        function loadUsers() {
-            try {
-                let savedUsers = localStorage.getItem('japanita_users');
-                if (savedUsers) {
-                    return JSON.parse(savedUsers);
-                }
-            } catch(e) {}
-            return [];
-        }
-
-        let users = loadUsers();
-        let roles, menuItems;
-
-        try { roles = JSON.parse(localStorage.getItem('japanita_roles')); } catch(e) { roles = null; }
-        if (!roles || !Array.isArray(roles)) roles = ['מנכ"ל', 'סמנכ״ל', 'אחראי עובדים', 'עובד רגיל'];
-
-        try { menuItems = JSON.parse(localStorage.getItem('japanita_menu_items')); } catch(e) { menuItems = null; }
-        if (!menuItems || !Array.isArray(menuItems)) {
-            menuItems = [
-                { category: 'מבצעים מיוחדים', name: 'מבצע קטן (5 ראמן + 10 שתייה)', price: 1950 },
-                { category: 'מבצעים מיוחדים', name: 'מבצע גדול (10 ראמן + 20 שתייה)', price: 3900 },
-                { category: 'מבצעים מיוחדים', name: 'מבצע משפחתי (15 ראמן + 30 שתייה)', price: 5850 },
-                { category: 'עובדי מדינה', name: 'מבצע קטן', price: 1462, originalPrice: 1950 },
-                { category: 'עובדי מדינה', name: 'מבצע גדול', price: 2925, originalPrice: 3900 },
-                { category: 'עובדי מדינה', name: 'מבצע משפחתי', price: 4387, originalPrice: 5850 },
-                { category: 'שתייה', name: 'לימונדה יפנית', price: 100 },
-                { category: 'שתייה', name: 'תה ירוק', price: 100 },
-                { category: 'שתייה', name: "מים - ג'פניטה", price: 100 },
-                { category: 'קינוחים', name: 'קאסטולה יפנית', price: 160 },
-                { category: 'קינוחים', name: 'פנקייק יפני', price: 125 },
-                { category: 'מנות עיקריות וארוחות', name: 'ראמן מסורתי', price: 390 },
-                { category: 'מנות עיקריות וארוחות', name: 'סושי מיקס', price: 390 },
-                { category: 'מנות עיקריות וארוחות', name: 'טריאקי סלמון', price: 350 },
-                { category: 'מנות עיקריות וארוחות', name: 'גיוזה לוקוס', price: 380 },
-                { category: 'מנות עיקריות וארוחות', name: "ארוחת ג'פניטה", price: 550 }
-            ];
-            localStorage.setItem('japanita_menu_items', JSON.stringify(menuItems));
-        }
-
-        function saveStorage() {
-            localStorage.setItem('japanita_users', JSON.stringify(users));
-            localStorage.setItem('japanita_roles', JSON.stringify(roles));
-            localStorage.setItem('japanita_menu_items', JSON.stringify(menuItems));
-        }
-
-        // סנכרון חי אוטומטי שמעדכן את כל נתוני המכירות והמשתמשים בזמן אמת בין כל המכשירים
-        setInterval(() => {
-            users = loadUsers();
-            if (document.getElementById('mainAppContent').classList.contains('active')) {
-                updateEarningsDisplay();
-                renderLeaderboard();
-                renderUsersBadges();
-            }
-            checkGlobalCrashStatus();
-        }, 800);
-
-        window.addEventListener('storage', (e) => {
-            users = loadUsers();
-            renderUsersBadges();
-            renderLeaderboard();
-            updateEarningsDisplay();
-            if (e.key === 'japanita_global_crash') checkGlobalCrashStatus();
-        });
-
+        // --- רנדור תפריט ---
         function renderMenu() {
             const container = document.getElementById('dynamicMenuContainer');
             let categoriesMap = {};
-            menuItems.forEach((item, index) => {
+            (globalData.menuItems || []).forEach((item, index) => {
                 if (!categoriesMap[item.category]) categoriesMap[item.category] = [];
                 categoriesMap[item.category].push({ ...item, originalIndex: index });
             });
@@ -1431,11 +1438,11 @@
             }
             container.innerHTML = html;
         }
-        renderMenu();
 
         function updateAdminCategoriesSelect() {
             const selectElem = document.getElementById('newDishCategory');
-            let existingCategories = [...new Set(menuItems.map(item => item.category))];
+            if (!selectElem) return;
+            let existingCategories = [...new Set((globalData.menuItems || []).map(item => item.category))];
             
             let html = existingCategories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
             html += `<option value="__NEW_CATEGORY__">➕ יצירת קטגוריה חדשה...</option>`;
@@ -1452,7 +1459,7 @@
             }
         }
 
-        function addCustomDish() {
+        async function addCustomDish() {
             const name = document.getElementById('newDishName').value.trim();
             const price = parseFloat(document.getElementById('newDishPrice').value);
             const origPriceVal = document.getElementById('newDishOriginalPrice').value.trim();
@@ -1464,15 +1471,14 @@
             }
 
             if (name && !isNaN(price) && finalCategory) {
+                await fetchFromCloud();
                 let dishObj = { category: finalCategory, name: name, price: price };
                 if (origPriceVal && !isNaN(parseFloat(origPriceVal))) {
                     dishObj.originalPrice = parseFloat(origPriceVal);
                 }
-                menuItems.push(dishObj);
-                saveStorage();
-                renderMenu();
-                updateAdminCategoriesSelect();
-                renderDishesForDelete();
+                globalData.menuItems.push(dishObj);
+                await syncToCloud();
+                updateUIFromGlobal();
 
                 document.getElementById('newDishName').value = '';
                 document.getElementById('newDishPrice').value = '';
@@ -1484,8 +1490,9 @@
 
         function renderDishesForDelete() {
             const container = document.getElementById('dishesListForDelete');
+            if (!container) return;
             container.innerHTML = '';
-            menuItems.forEach((dish, index) => {
+            (globalData.menuItems || []).forEach((dish, index) => {
                 const div = document.createElement('div');
                 div.className = 'user-item';
                 div.innerHTML = `
@@ -1496,35 +1503,20 @@
             });
         }
 
-        function deleteDish(index) {
-            menuItems.splice(index, 1);
-            saveStorage();
-            renderMenu();
-            updateAdminCategoriesSelect();
-            renderDishesForDelete();
-        }
-
-        function updateEarningsDisplay() {
-            let totalRev = parseFloat(localStorage.getItem('japanita_global_revenue') || '0');
-            let userSales = JSON.parse(localStorage.getItem('japanita_user_sales') || '{}');
-            
-            let myPersonalSales = userSales[currentLoggedUser] || 0;
-            let mySalary = myPersonalSales * 0.20;
-
-            document.getElementById('totalRestaurantRevenue').innerText = '₪' + Math.round(totalRev).toLocaleString();
-            document.getElementById('mySalaryRevenue').innerText = '₪' + Math.round(mySalary).toLocaleString();
+        async function deleteDish(index) {
+            await fetchFromCloud();
+            globalData.menuItems.splice(index, 1);
+            await syncToCloud();
+            updateUIFromGlobal();
         }
 
         function renderUsersBadges() {
-            users = loadUsers();
-            try { roles = JSON.parse(localStorage.getItem('japanita_roles')) || roles; } catch(e) {}
-
             const container = document.getElementById('usersBadgesContainer');
             container.innerHTML = '';
             
-            let sortedUsers = [...users].sort((a, b) => {
-                let indexA = roles.indexOf(a.role);
-                let indexB = roles.indexOf(b.role);
+            let sortedUsers = [...(globalData.users || [])].sort((a, b) => {
+                let indexA = (globalData.roles || []).indexOf(a.role);
+                let indexB = (globalData.roles || []).indexOf(b.role);
                 if (indexA === -1) indexA = 999;
                 if (indexB === -1) indexB = 999;
                 return indexA - indexB;
@@ -1542,12 +1534,11 @@
         }
 
         function renderLeaderboard() {
-            users = loadUsers();
             const listElem = document.getElementById('leaderboardList');
-            let userSales = JSON.parse(localStorage.getItem('japanita_user_sales') || '{}');
+            let userSales = globalData.sales || {};
             
             let activeUserSales = {};
-            users.forEach(u => {
+            (globalData.users || []).forEach(u => {
                 activeUserSales[u.username] = userSales[u.username] || 0;
             });
 
@@ -1614,41 +1605,36 @@
             totalContainer.innerText = 'סך הכל: ₪' + totalSum.toLocaleString();
         }
 
-        function confirmOrder() {
+        async function confirmOrder() {
             if (currentOrder.length === 0) return;
+            await fetchFromCloud();
 
             let totalSum = currentOrder.reduce((sum, item) => sum + (item.price * item.qty), 0);
             
-            let currentRev = parseFloat(localStorage.getItem('japanita_global_revenue') || '0');
-            currentRev += totalSum;
-            localStorage.setItem('japanita_global_revenue', currentRev);
+            globalData.revenue = (globalData.revenue || 0) + totalSum;
+            if (!globalData.sales) globalData.sales = {};
+            globalData.sales[currentLoggedUser] = (globalData.sales[currentLoggedUser] || 0) + totalSum;
 
-            let userSales = JSON.parse(localStorage.getItem('japanita_user_sales') || '{}');
-            userSales[currentLoggedUser] = (userSales[currentLoggedUser] || 0) + totalSum;
-            localStorage.setItem('japanita_user_sales', JSON.stringify(userSales));
+            if (!globalData.invoices) globalData.invoices = {};
+            if (!globalData.invoices[currentLoggedUser]) globalData.invoices[currentLoggedUser] = [];
             
-            updateEarningsDisplay();
-            renderLeaderboard();
-
-            let invoices = JSON.parse(localStorage.getItem('japanita_invoices') || '{}');
-            if (!invoices[currentLoggedUser]) invoices[currentLoggedUser] = [];
-            
-            invoices[currentLoggedUser].push({
+            globalData.invoices[currentLoggedUser].push({
                 date: new Date().toLocaleString('he-IL'),
                 items: [...currentOrder],
                 total: totalSum
             });
-            localStorage.setItem('japanita_invoices', JSON.stringify(invoices));
 
+            await syncToCloud();
             currentOrder = [];
             renderOrderSidebar();
+            updateUIFromGlobal();
+            alert("ההזמנה בוצעה וסונכרנה בהצלחה לכל המכשירים בענן!");
         }
 
         function openInvoicesModal() {
             const modal = document.getElementById('invoiceModal');
             const container = document.getElementById('invoicesListContainer');
-            let invoices = JSON.parse(localStorage.getItem('japanita_invoices') || '{}');
-            let userInvoices = invoices[currentLoggedUser] || [];
+            let userInvoices = (globalData.invoices && globalData.invoices[currentLoggedUser]) ? globalData.invoices[currentLoggedUser] : [];
 
             if (userInvoices.length === 0) {
                 container.innerHTML = '<div style="text-align:center; color:#aaa;">אין עדיין חשבוניות שמורות לחשבון זה.</div>';
@@ -1677,8 +1663,7 @@
         }
 
         function copyInvoiceText(username, index) {
-            let invoices = JSON.parse(localStorage.getItem('japanita_invoices') || '{}');
-            let inv = invoices[username][index];
+            let inv = globalData.invoices[username][index];
             if (!inv) return;
 
             let itemsList = inv.items.map(it => `- ${it.name} (כמות: ${it.qty}) - ₪${it.price * it.qty}`).join('\n');
@@ -1687,38 +1672,24 @@
             navigator.clipboard.writeText(textToCopy).catch(err => {});
         }
 
-        function deleteInvoice(username, index) {
-            let invoices = JSON.parse(localStorage.getItem('japanita_invoices') || '{}');
-            if (invoices[username]) {
-                invoices[username].splice(index, 1);
-                localStorage.setItem('japanita_invoices', JSON.stringify(invoices));
+        async function deleteInvoice(username, index) {
+            await fetchFromCloud();
+            if (globalData.invoices[username]) {
+                globalData.invoices[username].splice(index, 1);
+                await syncToCloud();
                 openInvoicesModal();
             }
         }
 
         function closeInvoicesModal() { document.getElementById('invoiceModal').classList.remove('active'); }
 
+        // --- הדרכה ---
         const tutorialSteps = [
-            {
-                title: "ברוכים הבאים למערכת ג'פניטה",
-                text: "מדריך קצר שיעזור לכם להכיר את המערכת ואת אפשרויות הניהול שבה."
-            },
-            {
-                title: "מבנה המסך הראשי",
-                text: "המסך מחולק לעמודות: רשימת העובדים, טבלת דירוג המכירות, תפריט המוצרים והמבצעים, ועגלת ההזמנה."
-            },
-            {
-                title: "ביצוע הזמנות וניהול חשבוניות",
-                text: "לחיצה על מנה בתפריט תוסיף אותה לעגלה. לאחר אישור ההזמנה, הנתונים יתעדכנו אוטומטית ברווחי המסעדה ובטבלת המכירות."
-            },
-            {
-                title: "פאנל ניהול מתקדם (F9)",
-                text: "לחיצה על מקש **F9** במקלדת והזנת קוד הניהול תפתח את פאנל הניהול להוספת מנות, משתמשים וניהול דרגות."
-            },
-            {
-                title: "סיום ההדרכה",
-                text: "אתם מוכנים להתחיל לעבוד במערכת. המשך משמרת נעימה!"
-            }
+            { title: "ברוכים הבאים למערכת ג'פניטה", text: "מדריך קצר שיעזור לכם להכיר את המערכת ואת אפשרויות הניהול שבה." },
+            { title: "מבנה המסך הראשי", text: "המסך מחולק לעמודות: רשימת העובדים, טבלת דירוג המכירות, תפריט המוצרים והמבצעים, ועגלת ההזמנה." },
+            { title: "ביצוע הזמנות וניהול חשבוניות", text: "לחיצה על מנה בתפריט תוסיף אותה לעגלה. לאחר אישור ההזמנה, הנתונים יתעדכנו אוטומטית ברווחי המסעדה ובטבלת המכירות." },
+            { title: "פאנל ניהול מתקדם (F9)", text: "לחיצה על מקש **F9** במקלדת והזנת קוד הניהול תפתח את פאנל הניהול להוספת מנות, משתמשים וניהול דרגות." },
+            { title: "סיום ההדרכה", text: "אתם מוכנים להתחיל לעבוד במערכת. המשך משמרת נעימה!" }
         ];
         let currentTutorialStep = 0;
 
@@ -1773,15 +1744,14 @@
         function closeTutorialWithAnimation() {
             const tutModal = document.getElementById('tutorialModal');
             tutModal.classList.add('closing');
-            
             localStorage.setItem('japanita_device_tutorial_seen', 'true');
-
             setTimeout(() => {
                 tutModal.classList.remove('active');
                 tutModal.classList.remove('closing');
             }, 400);
         }
 
+        // --- עלי סאקורה ברקע ---
         const intro = document.getElementById('introScreen');
         for (let i = 0; i < 30; i++) {
             let petal = document.createElement('div');
@@ -1801,13 +1771,13 @@
             document.getElementById('loginBox').classList.add('active');
         }
 
-        function enterSite() {
+        async function enterSite() {
+            await fetchFromCloud();
             const username = document.getElementById('usernameInput').value.trim();
             const pin = document.getElementById('pinInput').value.trim();
             const errorMsg = document.getElementById('errorMsg');
             
-            users = loadUsers();
-            const validUser = users.find(u => u.username.toLowerCase() === username.toLowerCase() && u.pin === pin);
+            const validUser = (globalData.users || []).find(u => u.username.toLowerCase() === username.toLowerCase() && u.pin === pin);
 
             if (validUser) {
                 currentLoggedUser = validUser.username;
@@ -1817,10 +1787,7 @@
                     document.getElementById('mainAppContent').classList.add('active');
                     document.getElementById('earningsTopBar').classList.add('active');
 
-                    updateEarningsDisplay();
-                    renderUsersBadges();
-                    renderLeaderboard();
-
+                    updateUIFromGlobal();
                     checkAndShowTutorial();
                 });
             } else {
@@ -1835,9 +1802,7 @@
             bgContainer.style.transform = `scale(1.05) translate(${mouseX * -35}px, ${mouseY * -25}px)`;
         });
 
-        let f1HoldTimer = null;
-        let f1HoldDuration = 10000;
-
+        // --- מקשים חמים F9 ו-F1 ---
         window.addEventListener('keydown', (e) => {
             if (e.key === 'F9') {
                 e.preventDefault();
@@ -1854,26 +1819,14 @@
 
             if (e.key === 'F1') {
                 e.preventDefault();
-                if (!f1HoldTimer) {
-                    f1HoldTimer = setTimeout(() => {
-                        f1HoldTimer = null;
-                        const f1Modal = document.getElementById('f1Modal');
-                        f1Modal.classList.add('active');
-                        document.getElementById('f1LoginSection').style.display = 'block';
-                        document.getElementById('f1DashboardSection').style.display = 'none';
-                        document.getElementById('f1PasswordInput').value = '';
-                        document.getElementById('f1ErrorMsg').style.display = 'none';
-                        document.getElementById('f1PasswordInput').focus();
-                    }, f1HoldDuration);
-                }
-            }
-        });
-
-        window.addEventListener('keyup', (e) => {
-            if (e.key === 'F1') {
-                if (f1HoldTimer) {
-                    clearTimeout(f1HoldTimer);
-                    f1HoldTimer = null;
+                const f1Modal = document.getElementById('f1Modal');
+                f1Modal.classList.toggle('active');
+                if (f1Modal.classList.contains('active')) {
+                    document.getElementById('f1LoginSection').style.display = 'block';
+                    document.getElementById('f1DashboardSection').style.display = 'none';
+                    document.getElementById('f1PasswordInput').value = '';
+                    document.getElementById('f1ErrorMsg').style.display = 'none';
+                    document.getElementById('f1PasswordInput').focus();
                 }
             }
         });
@@ -1892,37 +1845,39 @@
 
         function closeF1() { document.getElementById('f1Modal').classList.remove('active'); }
 
-        function setGlobalSiteState(isWorking) {
-            if (isWorking) {
-                localStorage.removeItem('japanita_global_crash');
-            } else {
-                localStorage.setItem('japanita_global_crash', 'true');
-            }
-            checkGlobalCrashStatus();
-            updateF1StatusDisplay();
+        async function setGlobalSiteState(isWorking) {
+            await fetchFromCloud();
+            globalData.crash = !isWorking;
+            await syncToCloud();
+            updateUIFromGlobal();
         }
 
-        // פונקציית איפוס כללי המופעלת מהכפתור החדש ב-F1
-        function fullSiteReset() {
-            if (confirm("האם אתה בטוח שברצונך לאפס את כל האתר? כל המשתמשים, המכירות והכסף יימחקו לצמיתות!")) {
-                localStorage.setItem('japanita_users', JSON.stringify([]));
-                localStorage.setItem('japanita_global_revenue', '0');
-                localStorage.setItem('japanita_user_sales', JSON.stringify({}));
-                localStorage.setItem('japanita_invoices', JSON.stringify({}));
-                alert("האתר אופס בהצלחה! הדף רענן את עצמו.");
+        async function fullSiteReset() {
+            if (confirm("האם אתה בטוח שברצונך לאפס את כל האתר? כל המשתמשים, המכירות והכסף יימחקו לצמיתות בענן לכולם!")) {
+                globalData = {
+                    users: [{ username: "mia", pin: "1234", role: "מנכ\"ל" }],
+                    roles: ['מנכ"ל', 'סמנכ״ל', 'אחראי עובדים', 'עובד רגיל'],
+                    menuItems: defaultMenu,
+                    revenue: 0,
+                    sales: {},
+                    invoices: {},
+                    crash: false
+                };
+                await syncToCloud();
+                alert("האתר אופס בהצלחה בענן לכל העולם! הדף יתרענן.");
                 location.reload();
             }
         }
 
         function updateF1StatusDisplay() {
             const box = document.getElementById('f1StatusBox');
-            let isCrashed = localStorage.getItem('japanita_global_crash') === 'true';
-            if (isCrashed) {
+            if (!box) return;
+            if (globalData.crash) {
                 box.className = 'f1-status-box offline';
-                box.innerText = 'סטטוס אתר: מושבת / קרס';
+                box.innerText = 'סטטוס אתר: מושבת / קרס לכולם';
             } else {
                 box.className = 'f1-status-box online';
-                box.innerText = 'סטטוס אתר: פעיל ותקין לחלוטין';
+                box.innerText = 'סטטוס אתר: פעיל ותקין לחלוטין בענן';
             }
         }
 
@@ -1946,14 +1901,16 @@
 
         function updateRoleSelects() {
             const selectElem = document.getElementById('newRole');
-            selectElem.innerHTML = roles.map(r => `<option value="${r}">${r}</option>`).join('');
+            if (!selectElem) return;
+            selectElem.innerHTML = (globalData.roles || []).map(r => `<option value="${r}">${r}</option>`).join('');
         }
 
-        function addNewRole() {
+        async function addNewRole() {
             const roleName = document.getElementById('newRoleName').value.trim();
-            if (roleName && !roles.includes(roleName)) {
-                roles.push(roleName);
-                saveStorage();
+            if (roleName && !(globalData.roles || []).includes(roleName)) {
+                await fetchFromCloud();
+                globalData.roles.push(roleName);
+                await syncToCloud();
                 updateRoleSelects();
                 renderRoles();
                 renderUsers();
@@ -1962,14 +1919,13 @@
             }
         }
 
-        function deleteRole(index) {
-            if (roles.length <= 1) {
-                return;
-            }
-            const removedRole = roles[index];
-            roles.splice(index, 1);
-            users.forEach(u => { if (u.role === removedRole) u.role = roles[0]; });
-            saveStorage();
+        async function deleteRole(index) {
+            if ((globalData.roles || []).length <= 1) return;
+            await fetchFromCloud();
+            const removedRole = globalData.roles[index];
+            globalData.roles.splice(index, 1);
+            globalData.users.forEach(u => { if (u.role === removedRole) u.role = globalData.roles[0]; });
+            await syncToCloud();
             updateRoleSelects();
             renderRoles();
             renderUsers();
@@ -1978,8 +1934,9 @@
 
         function renderRoles() {
             const roleList = document.getElementById('roleList');
+            if (!roleList) return;
             roleList.innerHTML = '';
-            roles.forEach((r, index) => {
+            (globalData.roles || []).forEach((r, index) => {
                 const div = document.createElement('div');
                 div.className = 'user-item';
                 div.innerHTML = `<span><b>${r}</b></span><button class="delete-btn" onclick="deleteRole(${index})">מחק</button>`;
@@ -1988,49 +1945,50 @@
         }
 
         function renderUsers() {
-            users = loadUsers();
             const userList = document.getElementById('userList');
+            if (!userList) return;
             userList.innerHTML = '';
-            users.forEach((u, index) => {
+            (globalData.users || []).forEach((u, index) => {
                 const div = document.createElement('div');
                 div.className = 'user-item';
-                let roleOptions = roles.map(r => `<option value="${r}" ${u.role === r ? 'selected' : ''}>${r}</option>`).join('');
+                let roleOptions = (globalData.roles || []).map(r => `<option value="${r}" ${u.role === r ? 'selected' : ''}>${r}</option>`).join('');
                 div.innerHTML = `<span><b>${u.username}</b> (קוד: ${u.pin})</span><div style="display: flex; gap: 6px; align-items: center;"><select class="admin-select" style="padding: 3px 6px; font-size: 0.8rem;" onchange="changeUserRole(${index}, this.value)">${roleOptions}</select><button class="delete-btn" onclick="deleteUser(${index})">מחק</button></div>`;
                 userList.appendChild(div);
             });
         }
 
-        function changeUserRole(index, newRole) {
-            users[index].role = newRole;
-            saveStorage();
+        async function changeUserRole(index, newRole) {
+            await fetchFromCloud();
+            globalData.users[index].role = newRole;
+            await syncToCloud();
             renderUsersBadges();
         }
 
-        function addUser() {
+        async function addUser() {
             const newUsername = document.getElementById('newUsername').value.trim();
             const newPin = document.getElementById('newPin').value.trim();
             const newRole = document.getElementById('newRole').value;
             if (newUsername && newPin) {
-                users.push({ username: newUsername, pin: newPin, role: newRole });
-                saveStorage();
+                await fetchFromCloud();
+                globalData.users.push({ username: newUsername, pin: newPin, role: newRole });
+                await syncToCloud();
                 renderUsers();
                 renderUsersBadges();
                 renderLeaderboard();
                 document.getElementById('newUsername').value = '';
                 document.getElementById('newPin').value = '';
+                alert("המשתמש נוסף בהצלחה לענן לכל המכשירים!");
             }
         }
 
-        function deleteUser(index) {
-            users.splice(index, 1);
-            saveStorage();
+        async function deleteUser(index) {
+            await fetchFromCloud();
+            globalData.users.splice(index, 1);
+            await syncToCloud();
             renderUsers();
             renderUsersBadges();
             renderLeaderboard();
         }
-
-        saveStorage();
     </script>
-
 </body>
 </html>
