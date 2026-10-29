@@ -14,7 +14,7 @@
             box-sizing: border-box;
         }
 
-        /* הסתרת פסי גלילה בכל האתר */
+        /* הסתרת פסי גלילה */
         *::-webkit-scrollbar {
             width: 0px;
             height: 0px;
@@ -111,7 +111,7 @@
             pointer-events: none;
         }
 
-        /* ----- מד רווחים ומשכורת עליון ----- */
+        /* ----- מד רווחים ומשכורת אישית ----- */
         .earnings-top-bar {
             position: fixed;
             top: 15px;
@@ -397,15 +397,36 @@
             background: rgba(255,255,255,0.04);
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 8px;
-            padding: 10px;
+            padding: 12px;
             margin-bottom: 10px;
             font-size: 0.9rem;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        /* ----- מודל הדרכה (Tutorial) ----- */
+        .invoice-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .copy-btn {
+            background: rgba(0, 150, 255, 0.2);
+            color: #66b3ff;
+            border: 1px solid rgba(0, 150, 255, 0.4);
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .copy-btn:hover {
+            background: rgba(0, 150, 255, 0.4);
+        }
+
+        /* ----- מודל הדרכה ----- */
         .tutorial-modal {
             position: fixed;
             top: 0;
@@ -996,11 +1017,7 @@
             animation: fall infinite linear;
         }
 
-        /* ========================================================== */
-        /* ------------- רספונסיביות מושלמת לטלפונים וטאבלטים ------- */
-        /* ========================================================== */
-
-        /* טאבלטים ואייפדים (עד 1024px) */
+        /* ----- רספונסיביות מלאה לכל המכשירים ----- */
         @media (max-width: 1024px) {
             .main-app-content {
                 flex-wrap: wrap;
@@ -1017,7 +1034,6 @@
             }
         }
 
-        /* טלפונים ניידים (עד 768px) */
         @media (max-width: 768px) {
             .main-app-content {
                 flex-direction: column !important;
@@ -1030,8 +1046,8 @@
                 width: 100% !important;
                 max-width: 100% !important;
                 height: auto !important;
-                min-height: 400px !important;
-                max-height: 500px !important;
+                min-height: 380px !important;
+                max-height: 480px !important;
             }
             .earnings-top-bar {
                 top: 8px;
@@ -1084,10 +1100,10 @@
         <div class="crash-text">אי אפשר להיכנס לאתר כרגע.</div>
     </div>
 
-    <!-- מד רווחים ומשכורת עליון (ללא אנימציה/תזוזה) -->
+    <!-- מד רווחים ומשכורת אישית עליון -->
     <div class="earnings-top-bar" id="earningsTopBar">
         <div class="earning-item">רווחי מסעדה: <span id="totalRestaurantRevenue">₪50,202</span></div>
-        <div class="earning-item">המשכורת שלי (20%): <span id="mySalaryRevenue">₪10,040</span></div>
+        <div class="earning-item">המשכורת שלי (20%): <span id="mySalaryRevenue">₪0</span></div>
     </div>
 
     <!-- תוכן האתר הראשי -->
@@ -1129,7 +1145,7 @@
         </div>
     </div>
 
-    <!-- מודל הדרכה (Tutorial) -->
+    <!-- מודל הדרכה -->
     <div class="tutorial-modal" id="tutorialModal">
         <div class="tutorial-panel">
             <div class="tutorial-title" id="tutorialTitle">ברוכים הבאים לג'פניטה</div>
@@ -1202,12 +1218,12 @@
                 </div>
 
                 <div class="admin-form" style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
-                    <div style="font-size: 0.85rem; color: #ff8888; margin-bottom: 5px;">ניהול דרגות במערכת (ניתן לגרור ולסדר מחדש):</div>
+                    <div style="font-size: 0.85rem; color: #ff8888; margin-bottom: 5px;">ניהול דרגות במערכת:</div>
                     <div style="display: flex; gap: 8px; margin-bottom: 8px;">
                         <input type="text" id="newRoleName" class="admin-input" placeholder="שם דרגה חדשה" style="flex: 1; margin-bottom: 0;">
                         <button class="admin-btn" onclick="addNewRole()" style="background: linear-gradient(135deg, #333, #555);">הוסף</button>
                     </div>
-                    <div style="font-size:0.80rem; color:#aaa; margin-bottom:4px;">דרגות קיימות (גרור את סמל ☰ לשינוי סדר, או לחץ על מחיקה):</div>
+                    <div style="font-size:0.80rem; color:#aaa; margin-bottom:4px;">דרגות קיימות:</div>
                     <div class="user-list" id="roleList" style="max-height: 90px;"></div>
                 </div>
 
@@ -1288,7 +1304,6 @@
             });
         }
 
-        // הפעלת מוזיקה כבר בלחיצה הראשונה בכל מקום במסך הפתיחה
         window.addEventListener('click', () => {
             if (ytPlayer && typeof ytPlayer.playVideo === 'function') {
                 ytPlayer.playVideo();
@@ -1328,21 +1343,21 @@
         }
         checkGlobalCrashStatus();
 
-        window.addEventListener('storage', (e) => {
-            if (e.key === 'japanita_global_crash') checkGlobalCrashStatus();
-            if (e.key === 'japanita_global_revenue') updateEarningsDisplay();
-            if (e.key === 'japanita_user_sales' || e.key === 'japanita_users' || e.key === 'japanita_roles') {
-                renderLeaderboard();
-                renderUsersBadges();
-            }
-        });
+        function loadUsers() {
+            try {
+                let savedUsers = localStorage.getItem('japanita_users');
+                if (savedUsers) {
+                    return JSON.parse(savedUsers);
+                }
+            } catch(e) {}
+            return [{ username: 'Mia', pin: '1234', role: 'מנכ"ל' }];
+        }
 
-        let roles, users, menuItems;
+        let users = loadUsers();
+        let roles, menuItems;
+
         try { roles = JSON.parse(localStorage.getItem('japanita_roles')); } catch(e) { roles = null; }
         if (!roles || !Array.isArray(roles)) roles = ['מנכ"ל', 'סמנכ״ל', 'אחראי עובדים', 'עובד רגיל'];
-
-        try { users = JSON.parse(localStorage.getItem('japanita_users')); } catch(e) { users = null; }
-        if (!users || !Array.isArray(users)) users = [{ username: 'Mia', pin: '1234', role: 'מנכ"ל' }];
 
         try { menuItems = JSON.parse(localStorage.getItem('japanita_menu_items')); } catch(e) { menuItems = null; }
         if (!menuItems || !Array.isArray(menuItems)) {
@@ -1373,6 +1388,32 @@
             localStorage.setItem('japanita_menu_items', JSON.stringify(menuItems));
         }
 
+        setInterval(() => {
+            users = loadUsers();
+            if (document.getElementById('mainAppContent').classList.contains('active')) {
+                updateEarningsDisplay();
+                renderLeaderboard();
+                renderUsersBadges();
+            }
+            checkGlobalCrashStatus();
+        }, 1000);
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'japanita_users') {
+                users = loadUsers();
+                renderUsersBadges();
+                renderLeaderboard();
+                if (document.getElementById('adminDashboardSection').style.display !== 'none') {
+                    renderUsers();
+                }
+            }
+            if (e.key === 'japanita_global_crash') checkGlobalCrashStatus();
+            if (e.key === 'japanita_global_revenue') updateEarningsDisplay();
+            if (e.key === 'japanita_user_sales') {
+                renderLeaderboard();
+            }
+        });
+
         function renderMenu() {
             const container = document.getElementById('dynamicMenuContainer');
             let categoriesMap = {};
@@ -1389,8 +1430,10 @@
                     if (dish.originalPrice) {
                         priceDisplay = `₪${dish.price.toLocaleString()} <s style="font-size:0.7rem; color:#aaa;">₪${dish.originalPrice.toLocaleString()}</s>`;
                     }
+                    // שימוש ב-escape תקין עבור שמות מנות שמכילות מרכאות/גרשיים
+                    let safeDishName = dish.name.replace(/'/g, "\\'");
                     html += `
-                        <div class="menu-item-btn" onclick="addToOrder('${dish.name} (${cat})', ${dish.price})">
+                        <div class="menu-item-btn" onclick="addToOrder('${safeDishName}', ${dish.price})">
                             <span>${dish.name}</span>
                             <span class="item-price">${priceDisplay}</span>
                         </div>
@@ -1448,9 +1491,6 @@
                 document.getElementById('newDishOriginalPrice').value = '';
                 document.getElementById('customCategoryInput').value = '';
                 document.getElementById('customCategoryInput').style.display = 'none';
-                alert('המנה נוספה בהצלחה לתפריט!');
-            } else {
-                alert('נא למלא את כל השדות בצורה תקינה.');
             }
         }
 
@@ -1478,12 +1518,19 @@
 
         function updateEarningsDisplay() {
             let totalRev = parseFloat(localStorage.getItem('japanita_global_revenue') || '50202');
-            let salary = totalRev * 0.20;
+            let userSales = JSON.parse(localStorage.getItem('japanita_user_sales') || '{}');
+            
+            let myPersonalSales = userSales[currentLoggedUser] || (currentLoggedUser === 'Mia' ? 50202 : 0);
+            let mySalary = myPersonalSales * 0.20;
+
             document.getElementById('totalRestaurantRevenue').innerText = '₪' + Math.round(totalRev).toLocaleString();
-            document.getElementById('mySalaryRevenue').innerText = '₪' + Math.round(salary).toLocaleString();
+            document.getElementById('mySalaryRevenue').innerText = '₪' + Math.round(mySalary).toLocaleString();
         }
 
         function renderUsersBadges() {
+            users = loadUsers();
+            try { roles = JSON.parse(localStorage.getItem('japanita_roles')) || roles; } catch(e) {}
+
             const container = document.getElementById('usersBadgesContainer');
             container.innerHTML = '';
             
@@ -1507,6 +1554,7 @@
         }
 
         function renderLeaderboard() {
+            users = loadUsers();
             const listElem = document.getElementById('leaderboardList');
             let userSales = JSON.parse(localStorage.getItem('japanita_user_sales') || '{}');
             
@@ -1579,21 +1627,19 @@
         }
 
         function confirmOrder() {
-            if (currentOrder.length === 0) {
-                alert('העגלה ריקה!');
-                return;
-            }
+            if (currentOrder.length === 0) return;
 
             let totalSum = currentOrder.reduce((sum, item) => sum + (item.price * item.qty), 0);
             
             let currentRev = parseFloat(localStorage.getItem('japanita_global_revenue') || '50202');
             currentRev += totalSum;
             localStorage.setItem('japanita_global_revenue', currentRev);
-            updateEarningsDisplay();
 
             let userSales = JSON.parse(localStorage.getItem('japanita_user_sales') || '{}');
             userSales[currentLoggedUser] = (userSales[currentLoggedUser] || (currentLoggedUser === 'Mia' ? 50202 : 0)) + totalSum;
             localStorage.setItem('japanita_user_sales', JSON.stringify(userSales));
+            
+            updateEarningsDisplay();
             renderLeaderboard();
 
             let invoices = JSON.parse(localStorage.getItem('japanita_invoices') || '{}');
@@ -1606,7 +1652,6 @@
             });
             localStorage.setItem('japanita_invoices', JSON.stringify(invoices));
 
-            alert('ההזמנה אושרה בהצלחה!');
             currentOrder = [];
             renderOrderSidebar();
         }
@@ -1622,7 +1667,7 @@
             } else {
                 let html = '';
                 userInvoices.forEach((inv, i) => {
-                    let itemsDesc = inv.items.map(it => `${it.name} (כמות: ${it.qty})`).join(', ');
+                    let itemsDesc = inv.items.map(it => `${it.name} x${it.qty}`).join(', ');
                     html += `
                         <div class="invoice-item-box">
                             <div>
@@ -1630,7 +1675,10 @@
                                 <div style="color:#ccc; font-size:0.85rem; margin:4px 0;">פרטים: ${itemsDesc}</div>
                                 <div style="color:#ff8888; font-weight:700;">סה״כ שולם: ₪${inv.total.toLocaleString()}</div>
                             </div>
-                            <button class="delete-btn" onclick="deleteInvoice('${currentLoggedUser}', ${i})">מחק חשבונית</button>
+                            <div class="invoice-actions">
+                                <button class="copy-btn" onclick="copyInvoiceText('${currentLoggedUser}', ${i})">העתק קבלה</button>
+                                <button class="delete-btn" onclick="deleteInvoice('${currentLoggedUser}', ${i})">מחק חשבונית</button>
+                            </div>
                         </div>
                     `;
                 });
@@ -1638,6 +1686,17 @@
             }
 
             modal.classList.add('active');
+        }
+
+        function copyInvoiceText(username, index) {
+            let invoices = JSON.parse(localStorage.getItem('japanita_invoices') || '{}');
+            let inv = invoices[username][index];
+            if (!inv) return;
+
+            let itemsList = inv.items.map(it => `- ${it.name} (כמות: ${it.qty}) - ₪${it.price * it.qty}`).join('\n');
+            let textToCopy = `קבלה - ג'פניטה\nתאריך: ${inv.date}\nעובד: ${username}\n------------------\n${itemsList}\n------------------\nסה"כ לתשלום: ₪${inv.total.toLocaleString()}`;
+
+            navigator.clipboard.writeText(textToCopy).catch(err => {});
         }
 
         function deleteInvoice(username, index) {
@@ -1758,6 +1817,8 @@
             const username = document.getElementById('usernameInput').value.trim();
             const pin = document.getElementById('pinInput').value.trim();
             const errorMsg = document.getElementById('errorMsg');
+            
+            users = loadUsers();
             const validUser = users.find(u => u.username.toLowerCase() === username.toLowerCase() && u.pin === pin);
 
             if (validUser) {
@@ -1903,7 +1964,6 @@
 
         function deleteRole(index) {
             if (roles.length <= 1) {
-                alert('חייבת להישאר לפחות דרגה אחת במערכת!');
                 return;
             }
             const removedRole = roles[index];
@@ -1922,50 +1982,13 @@
             roles.forEach((r, index) => {
                 const div = document.createElement('div');
                 div.className = 'user-item';
-                div.draggable = true;
-                div.style.cursor = 'grab';
-                div.innerHTML = `<span><b>☰ ${r}</b></span><button class="delete-btn" onclick="deleteRole(${index})">מחק</button>`;
-
-                div.addEventListener('dragstart', (e) => {
-                    e.dataTransfer.setData('text/plain', index);
-                    div.style.opacity = '0.4';
-                });
-
-                div.addEventListener('dragend', (e) => {
-                    div.style.opacity = '1';
-                });
-
-                div.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    div.style.borderColor = '#ff3b3b';
-                });
-
-                div.addEventListener('dragleave', (e) => {
-                    div.style.borderColor = 'rgba(255, 255, 255, 0.05)';
-                });
-
-                div.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    div.style.borderColor = 'rgba(255, 255, 255, 0.05)';
-                    const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
-                    const toIndex = index;
-
-                    if (fromIndex !== toIndex && !isNaN(fromIndex)) {
-                        const moved = roles.splice(fromIndex, 1)[0];
-                        roles.splice(toIndex, 0, moved);
-                        saveStorage();
-                        updateRoleSelects();
-                        renderRoles();
-                        renderUsers();
-                        renderUsersBadges();
-                    }
-                });
-
+                div.innerHTML = `<span><b>${r}</b></span><button class="delete-btn" onclick="deleteRole(${index})">מחק</button>`;
                 roleList.appendChild(div);
             });
         }
 
         function renderUsers() {
+            users = loadUsers();
             const userList = document.getElementById('userList');
             userList.innerHTML = '';
             users.forEach((u, index) => {
