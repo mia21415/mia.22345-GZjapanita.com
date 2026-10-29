@@ -1256,19 +1256,25 @@
                 <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
                     <button class="f1-btn" style="background: linear-gradient(135deg, #aa1111, #550000);" onclick="setGlobalSiteState(false)">כבה את האתר לחלוטין (קראש)</button>
                     <button class="f1-btn" style="background: linear-gradient(135deg, #11aa44, #005522);" onclick="setGlobalSiteState(true)">הפעל מחדש את האתר</button>
+                    <!-- כפתור איפוס כללי חדש -->
+                    <button class="f1-btn" style="background: linear-gradient(135deg, #ff8800, #cc4400); margin-top: 10px;" onclick="fullSiteReset()">🔄 איפוס מלא (מחיקת משתמשים ונתונים)</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // איפוס מוחלט של כל המשתמשים והנתונים לגרסה נקייה חדשה לגמרי (V4)
-        if (!localStorage.getItem('japanita_fully_reset_v4')) {
-            localStorage.clear();
-            localStorage.setItem('japanita_fully_reset_v4', 'true');
-            localStorage.setItem('japanita_users', JSON.stringify([])); // ריק לחלוטין בלי משתמשים!
+        // אתחול ראשוני במידה ולא קיים מידע
+        if (!localStorage.getItem('japanita_users')) {
+            localStorage.setItem('japanita_users', JSON.stringify([]));
+        }
+        if (!localStorage.getItem('japanita_roles')) {
             localStorage.setItem('japanita_roles', JSON.stringify(['מנכ"ל', 'סמנכ״ל', 'אחראי עובדים', 'עובד רגיל']));
+        }
+        if (!localStorage.getItem('japanita_global_revenue')) {
             localStorage.setItem('japanita_global_revenue', '0');
+        }
+        if (!localStorage.getItem('japanita_user_sales')) {
             localStorage.setItem('japanita_user_sales', JSON.stringify({}));
         }
 
@@ -1395,9 +1401,6 @@
             renderLeaderboard();
             updateEarningsDisplay();
             if (e.key === 'japanita_global_crash') checkGlobalCrashStatus();
-            if (e.key === 'japanita_admin_open' && e.newValue === 'true') {
-                // סנכרון פתיחת פאנל אדמין במידת הצורך
-            }
         });
 
         function renderMenu() {
@@ -1897,6 +1900,18 @@
             }
             checkGlobalCrashStatus();
             updateF1StatusDisplay();
+        }
+
+        // פונקציית איפוס כללי המופעלת מהכפתור החדש ב-F1
+        function fullSiteReset() {
+            if (confirm("האם אתה בטוח שברצונך לאפס את כל האתר? כל המשתמשים, המכירות והכסף יימחקו לצמיתות!")) {
+                localStorage.setItem('japanita_users', JSON.stringify([]));
+                localStorage.setItem('japanita_global_revenue', '0');
+                localStorage.setItem('japanita_user_sales', JSON.stringify({}));
+                localStorage.setItem('japanita_invoices', JSON.stringify({}));
+                alert("האתר אופס בהצלחה! הדף רענן את עצמו.");
+                location.reload();
+            }
         }
 
         function updateF1StatusDisplay() {
