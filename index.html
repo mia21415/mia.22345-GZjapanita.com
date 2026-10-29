@@ -111,7 +111,7 @@
             pointer-events: none;
         }
 
-        /* ----- מד רווחים ומשכורת עליון ----- */
+        /* ----- מד רווחים ומשכורת עליון (ללא אנימציית תזוזה) ----- */
         .earnings-top-bar {
             position: fixed;
             top: 20px;
@@ -127,7 +127,6 @@
             gap: 25px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             font-size: 0.95rem;
-            animation: fadeInDown 0.8s ease forwards;
             white-space: nowrap;
         }
 
@@ -1064,7 +1063,6 @@
             }
         }
 
-        @keyframes fadeInDown { to { opacity: 1; transform: translateY(0); } }
         @keyframes zoomInTitle { to { opacity: 1; transform: scale(1); } }
         @keyframes expandLine { to { transform: translateX(-50%) scaleX(1); } }
         @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
@@ -1090,7 +1088,7 @@
         <div class="crash-text">אי אפשר להיכנס לאתר כרגע.</div>
     </div>
 
-    <!-- מד רווחים ומשכורת עליון -->
+    <!-- מד רווחים ומשכורת עליון (ללא אנימציית תזוזה) -->
     <div class="earnings-top-bar" id="earningsTopBar">
         <div class="earning-item">רווחי מסעדה: <span id="totalRestaurantRevenue">₪50,202</span></div>
         <div class="earning-item">המשכורת שלי (20%): <span id="mySalaryRevenue">₪10,040</span></div>
