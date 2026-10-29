@@ -1290,8 +1290,7 @@
 
         let globalData = {
             users: [
-                { username: "mia", pin: "1234", role: "מנכ\"ל" },
-                { username: "יונתן", pin: "0000", role: "מנכ\"ל" }
+                { username: "mia", pin: "1234", role: "מנכ\"ל" }
             ],
             roles: ['מנכ"ל', 'סמנכ״ל', 'אחראי עובדים', 'עובד רגיל'],
             menuItems: defaultMenu,
@@ -1310,7 +1309,7 @@
                     let json = await res.json();
                     if (json && json.record) {
                         let remoteData = json.record;
-                        // מוודאים שאם יש נתונים קיימים בענן, אנחנו לא דורסים אותם אלא שומרים אותם
+                        // אם הענן מכיל משתמשים, ניקח אותם תמיד (בלי לדרוס בחזרה למשתמשי ברירת מחדל)
                         if (remoteData.users && remoteData.users.length > 0) {
                             globalData.users = remoteData.users;
                         }
@@ -1344,7 +1343,6 @@
             } catch (e) {}
         }
 
-        // טעינה ראשונית מהירה מהענן לפני הצגת כל דבר
         async function initApp() {
             await fetchFromCloud();
         }
@@ -1361,7 +1359,7 @@
             }
 
             let totalRev = globalData.revenue || 0;
-            let mySales = globalData.sales[currentLoggedUser] || 0;
+            let mySales = (globalData.sales && globalData.sales[currentLoggedUser]) ? globalData.sales[currentLoggedUser] : 0;
             let mySalary = mySales * 0.20;
 
             document.getElementById('totalRestaurantRevenue').innerText = '₪' + Math.round(totalRev).toLocaleString();
@@ -1868,8 +1866,7 @@
             if (confirm("האם אתה בטוח שברצונך לאפס את כל האתר? כל המשתמשים, המכירות והכסף יימחקו לצמיתות בענן לכולם!")) {
                 globalData = {
                     users: [
-                        { username: "mia", pin: "1234", role: "מנכ\"ל" },
-                        { username: "יונתן", pin: "0000", role: "מנכ\"ל" }
+                        { username: "mia", pin: "1234", role: "מנכ\"ל" }
                     ],
                     roles: ['מנכ"ל', 'סמנכ״ל', 'אחראי עובדים', 'עובד רגיל'],
                     menuItems: defaultMenu,
