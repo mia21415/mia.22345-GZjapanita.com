@@ -28,7 +28,7 @@
         body, html {
             width: 100%;
             height: 100%;
-            overflow: hidden;
+            overflow-x: hidden;
             font-family: 'Heebo', sans-serif;
             background-color: #050505;
             color: #ffffff;
@@ -73,13 +73,14 @@
 
         /* מעטפת לרקע */
         .bg-wrapper {
-            position: absolute;
+            position: fixed;
             top: -5%;
             left: -5%;
             width: 110%;
             height: 110vh;
             overflow: hidden;
             z-index: 1;
+            pointer-events: none;
         }
 
         .bg-container {
@@ -100,7 +101,7 @@
         }
 
         .overlay {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -141,19 +142,15 @@
 
         /* ----- מסך האתר הראשי ----- */
         .main-app-content {
-            position: absolute;
-            top: 0;
-            left: 0;
+            position: relative;
             width: 100%;
-            height: 100%;
+            min-height: 100vh;
             z-index: 5;
             display: none;
             justify-content: space-between;
             align-items: stretch;
             padding: 20px;
-            padding-top: 80px;
-            overflow: hidden;
-            pointer-events: auto;
+            padding-top: 85px;
             gap: 16px;
         }
 
@@ -170,7 +167,7 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             display: flex;
             flex-direction: column;
-            height: 85vh;
+            height: 84vh;
             overflow: hidden;
         }
 
@@ -186,6 +183,7 @@
 
         .column-employees {
             flex: 1;
+            min-width: 220px;
             max-width: 260px;
         }
 
@@ -219,6 +217,7 @@
 
         .column-leaderboard {
             flex: 1.2;
+            min-width: 260px;
             max-width: 320px;
         }
 
@@ -249,6 +248,7 @@
 
         .column-menu {
             flex: 2.5;
+            min-width: 300px;
             overflow-y: auto;
         }
 
@@ -298,6 +298,7 @@
 
         .column-order {
             flex: 1.3;
+            min-width: 280px;
             max-width: 350px;
         }
 
@@ -381,6 +382,7 @@
             display: none;
             justify-content: center;
             align-items: center;
+            padding: 15px;
         }
 
         .invoice-modal.active {
@@ -392,6 +394,7 @@
             border: 1px solid rgba(255, 59, 59, 0.3);
             border-radius: 16px;
             width: 500px;
+            max-width: 100%;
             max-height: 80vh;
             overflow-y: auto;
             padding: 25px;
@@ -410,7 +413,7 @@
             align-items: center;
         }
 
-        /* ----- מודל הדרכה (Tutorial) עם אנימציות כניסה ויציאה ----- */
+        /* ----- מודל הדרכה (Tutorial) ----- */
         .tutorial-modal {
             position: fixed;
             top: 0;
@@ -425,6 +428,7 @@
             align-items: center;
             opacity: 0;
             transition: opacity 0.4s ease;
+            padding: 15px;
         }
 
         .tutorial-modal.active {
@@ -437,6 +441,7 @@
             border: 2px solid rgba(255, 59, 59, 0.5);
             border-radius: 20px;
             width: 480px;
+            max-width: 100%;
             padding: 35px;
             text-align: center;
             box-shadow: 0 0 50px rgba(255, 59, 59, 0.3);
@@ -528,6 +533,7 @@
             align-items: center;
             transition: opacity 1.2s ease, visibility 1.2s ease;
             overflow: hidden;
+            padding: 20px;
         }
 
         .intro-screen.fade-out {
@@ -550,7 +556,6 @@
             100% { transform: scale(1.15); opacity: 1; }
         }
 
-        /* סימן מים באותיות סיניות/יפניות בלבד ברקע */
         .japanese-watermark {
             position: absolute;
             font-family: 'Noto Serif JP', serif;
@@ -569,6 +574,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            width: 100%;
         }
 
         .sub-kanji {
@@ -640,6 +646,7 @@
             flex-direction: column;
             gap: 15px;
             width: 300px;
+            max-width: 100%;
             margin-top: 35px;
             background: rgba(15, 10, 10, 0.85);
             padding: 25px;
@@ -725,6 +732,7 @@
             z-index: 10;
             pointer-events: none;
             font-family: 'Heebo', sans-serif;
+            white-space: nowrap;
         }
 
         /* ----- חלון אדמין ----- */
@@ -743,6 +751,7 @@
             opacity: 0;
             pointer-events: none;
             transition: background 0.4s ease, backdrop-filter 0.4s ease, opacity 0.4s ease;
+            padding: 15px;
         }
 
         .modal.active {
@@ -757,6 +766,7 @@
             border: 1px solid rgba(255, 59, 59, 0.3);
             border-radius: 16px;
             width: 520px;
+            max-width: 100%;
             max-height: 90vh;
             overflow-y: auto;
             padding: 28px;
@@ -788,6 +798,7 @@
             opacity: 0;
             pointer-events: none;
             transition: background 0.5s ease, backdrop-filter 0.5s ease, opacity 0.5s ease;
+            padding: 15px;
         }
 
         .f1-modal.active {
@@ -802,6 +813,7 @@
             border: 2px solid rgba(255, 59, 59, 0.6);
             border-radius: 20px;
             width: 440px;
+            max-width: 100%;
             padding: 30px;
             box-shadow: 0 0 60px rgba(255, 0, 0, 0.3);
             position: relative;
@@ -993,6 +1005,65 @@
             animation: fall infinite linear;
         }
 
+        /* ========================================== */
+        /* --------- רספונסיביות לכל המכשירים ------- */
+        /* ========================================== */
+
+        /* טאבלטים ואייפדים (עד 1024px) */
+        @media (max-width: 1024px) {
+            .main-app-content {
+                flex-wrap: wrap;
+                height: auto !important;
+                min-height: 100vh;
+                padding-bottom: 30px;
+            }
+            .app-column {
+                height: 480px !important;
+                flex: 1 1 calc(50% - 12px) !important;
+                max-width: none !important;
+            }
+        }
+
+        /* טלפונים ניידים (עד 768px) */
+        @media (max-width: 768px) {
+            .main-app-content {
+                flex-direction: column !important;
+                flex-wrap: nowrap !important;
+                height: auto !important;
+                padding: 10px;
+                padding-top: 100px;
+                gap: 15px;
+            }
+            .app-column {
+                width: 100% !important;
+                max-width: 100% !important;
+                height: 450px !important;
+            }
+            .main-title {
+                font-size: 3.8rem !important;
+            }
+            .sub-kanji {
+                font-size: 1.3rem !important;
+            }
+            .earnings-top-bar {
+                top: 10px;
+                flex-direction: column;
+                gap: 4px;
+                text-align: center;
+                padding: 8px 16px;
+                font-size: 0.85rem;
+                width: 92%;
+                white-space: normal;
+            }
+            .login-box {
+                width: 90% !important;
+                padding: 20px !important;
+            }
+            .japanese-watermark {
+                font-size: 8rem !important;
+            }
+        }
+
         @keyframes fadeInDown { to { opacity: 1; transform: translateY(0); } }
         @keyframes zoomInTitle { to { opacity: 1; transform: scale(1); } }
         @keyframes expandLine { to { transform: translateX(-50%) scaleX(1); } }
@@ -1079,7 +1150,6 @@
     <!-- מסך INTRO -->
     <div class="intro-screen" id="introScreen">
         <div class="sun-bg"></div>
-        <!-- סימן מים באותיות סיניות/יפניות בלבד ברקע -->
         <div class="japanese-watermark">日本料理レストラン</div>
         
         <div class="intro-content">
@@ -1120,29 +1190,23 @@
             <div id="adminDashboardSection" style="display: none;">
                 <div class="admin-header">פאנל ניהול - ג'פניטה</div>
                 
-                <!-- ניהול והוספת מנות מותאמות אישית -->
                 <div class="admin-form" style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; margin-bottom: 15px;">
                     <div style="font-size: 0.9rem; color: #ff8888; margin-bottom: 6px;">הוספת מנה חדשה לתפריט:</div>
                     <input type="text" id="newDishName" class="admin-input" placeholder="שם המנה" style="margin-bottom: 6px;">
                     <input type="text" id="newDishPrice" class="admin-input" placeholder="מחיר למכירה (מחיר סופי ב-₪)" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="margin-bottom: 6px;">
                     <input type="text" id="newDishOriginalPrice" class="admin-input" placeholder="מחיר מקורי לפני הנחה (רשות, למשל 1950)" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="margin-bottom: 6px;">
                     
-                    <select id="newDishCategory" class="admin-select" style="margin-bottom: 6px;" onchange="handleCategorySelect(this.value)">
-                        <!-- נטען דינמית -->
-                    </select>
-                    
+                    <select id="newDishCategory" class="admin-select" style="margin-bottom: 6px;" onchange="handleCategorySelect(this.value)"></select>
                     <input type="text" id="customCategoryInput" class="admin-input" placeholder="הקלד שם קטגוריה חדשה (למשל: מנות פתיחה)" style="display: none; margin-bottom: 6px;">
                     
                     <button class="admin-btn" onclick="addCustomDish()">הוסף מנה לתפריט</button>
                 </div>
 
-                <!-- מחיקת מנות קיימות -->
                 <div class="admin-form" style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
                     <div style="font-size: 0.85rem; color: #ff8888; margin-bottom: 5px;">מחיקת מנות מהתפריט:</div>
                     <div class="user-list" id="dishesListForDelete" style="max-height: 110px;"></div>
                 </div>
 
-                <!-- ניהול דרגות (עם אפשרות גרירה וסידור מחדש) -->
                 <div class="admin-form" style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
                     <div style="font-size: 0.85rem; color: #ff8888; margin-bottom: 5px;">ניהול דרגות במערכת (ניתן לגרור ולסדר מחדש):</div>
                     <div style="display: flex; gap: 8px; margin-bottom: 8px;">
@@ -1153,7 +1217,6 @@
                     <div class="user-list" id="roleList" style="max-height: 90px;"></div>
                 </div>
 
-                <!-- יצירת משתמש -->
                 <div class="admin-form">
                     <div style="font-size: 0.85rem; color: #ff8888; margin-bottom: 5px;">יצירת משתמש חדש:</div>
                     <input type="text" id="newUsername" class="admin-input" placeholder="שם משתמש חדש">
@@ -1189,10 +1252,9 @@
     </div>
 
     <script>
-        // בדיקה ואיפוס שבועי אוטומטי (בין שבת לראשון בשעה 00:00)
         function checkWeeklyReset() {
             const now = new Date();
-            const day = now.getDay(); // 0 = ראשון
+            const day = now.getDay();
             const hours = now.getHours();
             const minutes = now.getMinutes();
 
@@ -1210,7 +1272,6 @@
         setInterval(checkWeeklyReset, 60000);
         checkWeeklyReset();
 
-        // ניהול נגן יוטיוב ומוזיקה - מתחיל אוטומטית מיד בכניסה לאתר
         let ytPlayer;
 
         function onYouTubeIframeAPIReady() {
@@ -1233,7 +1294,6 @@
             });
         }
 
-        // גיבוי למקרה שהדפדפן חוסם ניגון אוטומטי עד ללחיצה ראשונה במסך
         window.addEventListener('click', () => {
             if (ytPlayer && typeof ytPlayer.playVideo === 'function') {
                 if (document.getElementById('introScreen').style.display !== 'none' && !document.getElementById('mainAppContent').classList.contains('active')) {
@@ -1291,7 +1351,6 @@
         try { users = JSON.parse(localStorage.getItem('japanita_users')); } catch(e) { users = null; }
         if (!users || !Array.isArray(users)) users = [{ username: 'Mia', pin: '1234', role: 'מנכ"ל' }];
 
-        // תפריט מנות ברירת מחדל
         try { menuItems = JSON.parse(localStorage.getItem('japanita_menu_items')); } catch(e) { menuItems = null; }
         if (!menuItems || !Array.isArray(menuItems)) {
             menuItems = [
@@ -1321,7 +1380,6 @@
             localStorage.setItem('japanita_menu_items', JSON.stringify(menuItems));
         }
 
-        // הצגת התפריט דינמית
         function renderMenu() {
             const container = document.getElementById('dynamicMenuContainer');
             let categoriesMap = {};
@@ -1351,7 +1409,6 @@
         }
         renderMenu();
 
-        // עידכון הרשימה הנפתחת של הקטגוריות באדמין
         function updateAdminCategoriesSelect() {
             const selectElem = document.getElementById('newDishCategory');
             let existingCategories = [...new Set(menuItems.map(item => item.category))];
@@ -1601,7 +1658,6 @@
 
         function closeInvoicesModal() { document.getElementById('invoiceModal').classList.remove('active'); }
 
-        // ----- ניהול הדרכה (Tutorial) פעם אחת לכל מכשיר עם אנימציות -----
         const tutorialSteps = [
             {
                 title: "ברוכים הבאים למערכת ג'פניטה",
@@ -1609,15 +1665,15 @@
             },
             {
                 title: "מבנה המסך הראשי",
-                text: "המסך מחולק ל-4 עמודות: רשימת העובדים, טבלת דירוג המכירות, תפריט המוצרים והמבצעים, ומסך המשמש כעגלה לקבלת ההזמנה וחישוב המחיר הסופי."
+                text: "המסך מחולק לעמודות: רשימת העובדים, טבלת דירוג המכירות, תפריט המוצרים והמבצעים, ועגלת ההזמנה."
             },
             {
                 title: "ביצוע הזמנות וניהול חשבוניות",
-                text: "לחיצה על מנה בתפריט תוסיף אותה לעגלה. לאחר אישור ההזמנה, הנתונים יתעדכנו אוטומטית ברווחי המסעדה ובטבלת המכירות. ניתן לצפות ולנהל חשבוניות דרך כפתור החשבוניות."
+                text: "לחיצה על מנה בתפריט תוסיף אותה לעגלה. לאחר אישור ההזמנה, הנתונים יתעדכנו אוטומטית ברווחי המסעדה ובטבלת המכירות."
             },
             {
                 title: "פאנל ניהול מתקדם (F9)",
-                text: "לחיצה על מקש **F9** במקלדת והזנת קוד הניהול תפתח את פאנל הניהול, שבו ניתן להוסיף ולמחוק מנות, ליצור קטגוריות חדשות, ולנהל משתמשים ודרגות."
+                text: "לחיצה על מקש **F9** במקלדת והזנת קוד הניהול תפתח את פאנל הניהול להוספת מנות, משתמשים וניהול דרגות."
             },
             {
                 title: "סיום ההדרכה",
@@ -1867,7 +1923,6 @@
             renderUsersBadges();
         }
 
-        // רינדור רשימת הדרגות עם אפשרות גרירה (Drag and Drop)
         function renderRoles() {
             const roleList = document.getElementById('roleList');
             roleList.innerHTML = '';
