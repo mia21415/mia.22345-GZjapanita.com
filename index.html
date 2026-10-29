@@ -1102,7 +1102,7 @@
 
     <!-- מד רווחים ומשכורת אישית עליון -->
     <div class="earnings-top-bar" id="earningsTopBar">
-        <div class="earning-item">רווחי מסעדה: <span id="totalRestaurantRevenue">₪50,202</span></div>
+        <div class="earning-item">רווחי מסעדה: <span id="totalRestaurantRevenue">₪0</span></div>
         <div class="earning-item">המשכורת שלי (20%): <span id="mySalaryRevenue">₪0</span></div>
     </div>
 
@@ -1262,6 +1262,16 @@
     </div>
 
     <script>
+        // איפוס מלא מוחלט של כל הנתונים, המשתמשים וההגדרות פעם אחת בלבד
+        if (!localStorage.getItem('japanita_fully_reset_v3')) {
+            localStorage.clear();
+            localStorage.setItem('japanita_fully_reset_v3', 'true');
+            // יצירת משתמש מנהל התחלתי בסיסי כדי שיהיה אפשר להיכנס לפאנל הניהול (F9)
+            localStorage.setItem('japanita_users', JSON.stringify([{ username: 'Mia', pin: '1234', role: 'מנכ"ל' }]));
+            localStorage.setItem('japanita_roles', JSON.stringify(['מנכ"ל', 'סמנכ״ל', 'אחראי עובדים', 'עובד רגיל']));
+            localStorage.setItem('japanita_global_revenue', '0');
+        }
+
         function checkWeeklyReset() {
             const now = new Date();
             const day = now.getDay();
@@ -1273,7 +1283,7 @@
                 let currentDateStr = now.toDateString();
 
                 if (lastResetDate !== currentDateStr) {
-                    localStorage.setItem('japanita_global_revenue', '50202');
+                    localStorage.setItem('japanita_global_revenue', '0');
                     localStorage.setItem('japanita_user_sales', JSON.stringify({}));
                     localStorage.setItem('japanita_last_reset_date', currentDateStr);
                 }
@@ -1430,7 +1440,6 @@
                     if (dish.originalPrice) {
                         priceDisplay = `₪${dish.price.toLocaleString()} <s style="font-size:0.7rem; color:#aaa;">₪${dish.originalPrice.toLocaleString()}</s>`;
                     }
-                    // שימוש ב-escape תקין עבור שמות מנות שמכילות מרכאות/גרשיים
                     let safeDishName = dish.name.replace(/'/g, "\\'");
                     html += `
                         <div class="menu-item-btn" onclick="addToOrder('${safeDishName}', ${dish.price})">
@@ -1517,10 +1526,10 @@
         }
 
         function updateEarningsDisplay() {
-            let totalRev = parseFloat(localStorage.getItem('japanita_global_revenue') || '50202');
+            let totalRev = parseFloat(localStorage.getItem('japanita_global_revenue') || '0');
             let userSales = JSON.parse(localStorage.getItem('japanita_user_sales') || '{}');
             
-            let myPersonalSales = userSales[currentLoggedUser] || (currentLoggedUser === 'Mia' ? 50202 : 0);
+            let myPersonalSales = userSales[currentLoggedUser] || 0;
             let mySalary = myPersonalSales * 0.20;
 
             document.getElementById('totalRestaurantRevenue').innerText = '₪' + Math.round(totalRev).toLocaleString();
@@ -1560,7 +1569,7 @@
             
             let activeUserSales = {};
             users.forEach(u => {
-                activeUserSales[u.username] = userSales[u.username] || (u.username === 'Mia' ? 50202 : 0);
+                activeUserSales[u.username] = userSales[u.username] || 0;
             });
 
             let sorted = Object.entries(activeUserSales).sort((a, b) => b[1] - a[1]);
@@ -1631,12 +1640,12 @@
 
             let totalSum = currentOrder.reduce((sum, item) => sum + (item.price * item.qty), 0);
             
-            let currentRev = parseFloat(localStorage.getItem('japanita_global_revenue') || '50202');
+            let currentRev = parseFloat(localStorage.getItem('japanita_global_revenue') || '0');
             currentRev += totalSum;
             localStorage.setItem('japanita_global_revenue', currentRev);
 
             let userSales = JSON.parse(localStorage.getItem('japanita_user_sales') || '{}');
-            userSales[currentLoggedUser] = (userSales[currentLoggedUser] || (currentLoggedUser === 'Mia' ? 50202 : 0)) + totalSum;
+            userSales[currentLoggedUser] = (userSales[currentLoggedUser] || 0) + totalSum;
             localStorage.setItem('japanita_user_sales', JSON.stringify(userSales));
             
             updateEarningsDisplay();
