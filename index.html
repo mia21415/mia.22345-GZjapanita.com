@@ -1262,35 +1262,15 @@
     </div>
 
     <script>
-        // איפוס מלא מוחלט של כל הנתונים, המשתמשים וההגדרות פעם אחת בלבד
-        if (!localStorage.getItem('japanita_fully_reset_v3')) {
+        // איפוס מוחלט של כל המשתמשים והנתונים לגרסה נקייה חדשה לגמרי (V4)
+        if (!localStorage.getItem('japanita_fully_reset_v4')) {
             localStorage.clear();
-            localStorage.setItem('japanita_fully_reset_v3', 'true');
-            // יצירת משתמש מנהל התחלתי בסיסי כדי שיהיה אפשר להיכנס לפאנל הניהול (F9)
-            localStorage.setItem('japanita_users', JSON.stringify([{ username: 'Mia', pin: '1234', role: 'מנכ"ל' }]));
+            localStorage.setItem('japanita_fully_reset_v4', 'true');
+            localStorage.setItem('japanita_users', JSON.stringify([])); // ריק לחלוטין בלי משתמשים!
             localStorage.setItem('japanita_roles', JSON.stringify(['מנכ"ל', 'סמנכ״ל', 'אחראי עובדים', 'עובד רגיל']));
             localStorage.setItem('japanita_global_revenue', '0');
+            localStorage.setItem('japanita_user_sales', JSON.stringify({}));
         }
-
-        function checkWeeklyReset() {
-            const now = new Date();
-            const day = now.getDay();
-            const hours = now.getHours();
-            const minutes = now.getMinutes();
-
-            if (day === 0 && hours === 0 && minutes === 0) {
-                let lastResetDate = localStorage.getItem('japanita_last_reset_date');
-                let currentDateStr = now.toDateString();
-
-                if (lastResetDate !== currentDateStr) {
-                    localStorage.setItem('japanita_global_revenue', '0');
-                    localStorage.setItem('japanita_user_sales', JSON.stringify({}));
-                    localStorage.setItem('japanita_last_reset_date', currentDateStr);
-                }
-            }
-        }
-        setInterval(checkWeeklyReset, 60000);
-        checkWeeklyReset();
 
         let ytPlayer;
 
@@ -1360,7 +1340,7 @@
                     return JSON.parse(savedUsers);
                 }
             } catch(e) {}
-            return [{ username: 'Mia', pin: '1234', role: 'מנכ"ל' }];
+            return [];
         }
 
         let users = loadUsers();
@@ -1398,6 +1378,7 @@
             localStorage.setItem('japanita_menu_items', JSON.stringify(menuItems));
         }
 
+        // סנכרון חי אוטומטי שמעדכן את כל נתוני המכירות והמשתמשים בזמן אמת בין כל המכשירים
         setInterval(() => {
             users = loadUsers();
             if (document.getElementById('mainAppContent').classList.contains('active')) {
@@ -1406,21 +1387,16 @@
                 renderUsersBadges();
             }
             checkGlobalCrashStatus();
-        }, 1000);
+        }, 800);
 
         window.addEventListener('storage', (e) => {
-            if (e.key === 'japanita_users') {
-                users = loadUsers();
-                renderUsersBadges();
-                renderLeaderboard();
-                if (document.getElementById('adminDashboardSection').style.display !== 'none') {
-                    renderUsers();
-                }
-            }
+            users = loadUsers();
+            renderUsersBadges();
+            renderLeaderboard();
+            updateEarningsDisplay();
             if (e.key === 'japanita_global_crash') checkGlobalCrashStatus();
-            if (e.key === 'japanita_global_revenue') updateEarningsDisplay();
-            if (e.key === 'japanita_user_sales') {
-                renderLeaderboard();
+            if (e.key === 'japanita_admin_open' && e.newValue === 'true') {
+                // סנכרון פתיחת פאנל אדמין במידת הצורך
             }
         });
 
