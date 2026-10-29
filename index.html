@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ג'פניטה - ענן גלובלי</title>
+    <title>ג'פניטה</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Noto+Serif+JP:wght@600;900&display=swap" rel="stylesheet">
@@ -1263,14 +1263,12 @@
     </div>
 
     <script>
-        // מפתחות החיבור לענן של JSONbin.io
         const MASTER_KEY = "$2a$10$cJlLyrBIJ/gEJACCNGGXAuP/LsL3KJC4XEKQw/mIKSHexHUcP742y";
         const BIN_ID = "67554316ad19ca34f8d75e47";
 
         let currentLoggedUser = '';
         let currentOrder = [];
 
-        // ברירת מחדל של נתונים התחלתיים
         let defaultMenu = [
             { category: 'מבצעים מיוחדים', name: 'מבצע קטן (5 ראמן + 10 שתייה)', price: 1950 },
             { category: 'מבצעים מיוחדים', name: 'מבצע גדול (10 ראמן + 20 שתייה)', price: 3900 },
@@ -1291,7 +1289,10 @@
         ];
 
         let globalData = {
-            users: [{ username: "mia", pin: "1234", role: "מנכ\"ל" }],
+            users: [
+                { username: "mia", pin: "1234", role: "מנכ\"ל" },
+                { username: "יונתן", pin: "0000", role: "מנכ\"ל" }
+            ],
             roles: ['מנכ"ל', 'סמנכ״ל', 'אחראי עובדים', 'עובד רגיל'],
             menuItems: defaultMenu,
             revenue: 0,
@@ -1300,7 +1301,6 @@
             crash: false
         };
 
-        // טעינה וסנכרון אוטומטי מהענן בכל 2.5 שניות
         async function fetchFromCloud() {
             try {
                 let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
@@ -1309,12 +1309,22 @@
                 if (res.ok) {
                     let json = await res.json();
                     if (json && json.record) {
-                        globalData = json.record;
-                        if (!globalData.users) globalData.users = [];
-                        if (!globalData.roles) globalData.roles = ['מנכ"ל', 'סמנכ״ל', 'אחראי עובדים', 'עובד רגיל'];
-                        if (!globalData.menuItems) globalData.menuItems = defaultMenu;
-                        if (!globalData.sales) globalData.sales = {};
-                        if (!globalData.invoices) globalData.invoices = {};
+                        let remoteData = json.record;
+                        // מוודאים שאם יש נתונים קיימים בענן, אנחנו לא דורסים אותם אלא שומרים אותם
+                        if (remoteData.users && remoteData.users.length > 0) {
+                            globalData.users = remoteData.users;
+                        }
+                        if (remoteData.roles && remoteData.roles.length > 0) {
+                            globalData.roles = remoteData.roles;
+                        }
+                        if (remoteData.menuItems && remoteData.menuItems.length > 0) {
+                            globalData.menuItems = remoteData.menuItems;
+                        }
+                        globalData.revenue = remoteData.revenue || 0;
+                        globalData.sales = remoteData.sales || {};
+                        globalData.invoices = remoteData.invoices || {};
+                        globalData.crash = remoteData.crash || false;
+
                         updateUIFromGlobal();
                     }
                 }
@@ -1334,11 +1344,15 @@
             } catch (e) {}
         }
 
+        // טעינה ראשונית מהירה מהענן לפני הצגת כל דבר
+        async function initApp() {
+            await fetchFromCloud();
+        }
+        initApp();
+
         setInterval(fetchFromCloud, 2500);
-        fetchFromCloud();
 
         function updateUIFromGlobal() {
-            // בדיקת מסך קראש
             const crashScreen = document.getElementById('crashScreen');
             if (globalData.crash) {
                 crashScreen.classList.add('active');
@@ -1346,7 +1360,6 @@
                 crashScreen.classList.remove('active');
             }
 
-            // עדכון רווחים ומשכורת
             let totalRev = globalData.revenue || 0;
             let mySales = globalData.sales[currentLoggedUser] || 0;
             let mySalary = mySales * 0.20;
@@ -1366,7 +1379,6 @@
             updateF1StatusDisplay();
         }
 
-        // --- נגן יוטיוב ---
         let ytPlayer;
         function onYouTubeIframeAPIReady() {
             ytPlayer = new YT.Player('youtube-audio-container', {
@@ -1409,9 +1421,9 @@
             }, 100);
         }
 
-        // --- רנדור תפריט ---
         function renderMenu() {
             const container = document.getElementById('dynamicMenuContainer');
+            if (!container) return;
             let categoriesMap = {};
             (globalData.menuItems || []).forEach((item, index) => {
                 if (!categoriesMap[item.category]) categoriesMap[item.category] = [];
@@ -1512,6 +1524,7 @@
 
         function renderUsersBadges() {
             const container = document.getElementById('usersBadgesContainer');
+            if (!container) return;
             container.innerHTML = '';
             
             let sortedUsers = [...(globalData.users || [])].sort((a, b) => {
@@ -1535,6 +1548,7 @@
 
         function renderLeaderboard() {
             const listElem = document.getElementById('leaderboardList');
+            if (!listElem) return;
             let userSales = globalData.sales || {};
             
             let activeUserSales = {};
@@ -1578,6 +1592,7 @@
         function renderOrderSidebar() {
             const listContainer = document.getElementById('orderItemsList');
             const totalContainer = document.getElementById('orderTotal');
+            if (!listContainer) return;
             
             if (currentOrder.length === 0) {
                 listContainer.innerHTML = '<div style="text-align:center; color:#777; font-size:0.85rem; margin-top:20px;">העגלה ריקה</div>';
@@ -1683,7 +1698,6 @@
 
         function closeInvoicesModal() { document.getElementById('invoiceModal').classList.remove('active'); }
 
-        // --- הדרכה ---
         const tutorialSteps = [
             { title: "ברוכים הבאים למערכת ג'פניטה", text: "מדריך קצר שיעזור לכם להכיר את המערכת ואת אפשרויות הניהול שבה." },
             { title: "מבנה המסך הראשי", text: "המסך מחולק לעמודות: רשימת העובדים, טבלת דירוג המכירות, תפריט המוצרים והמבצעים, ועגלת ההזמנה." },
@@ -1751,7 +1765,6 @@
             }, 400);
         }
 
-        // --- עלי סאקורה ברקע ---
         const intro = document.getElementById('introScreen');
         for (let i = 0; i < 30; i++) {
             let petal = document.createElement('div');
@@ -1802,7 +1815,6 @@
             bgContainer.style.transform = `scale(1.05) translate(${mouseX * -35}px, ${mouseY * -25}px)`;
         });
 
-        // --- מקשים חמים F9 ו-F1 ---
         window.addEventListener('keydown', (e) => {
             if (e.key === 'F9') {
                 e.preventDefault();
@@ -1855,7 +1867,10 @@
         async function fullSiteReset() {
             if (confirm("האם אתה בטוח שברצונך לאפס את כל האתר? כל המשתמשים, המכירות והכסף יימחקו לצמיתות בענן לכולם!")) {
                 globalData = {
-                    users: [{ username: "mia", pin: "1234", role: "מנכ\"ל" }],
+                    users: [
+                        { username: "mia", pin: "1234", role: "מנכ\"ל" },
+                        { username: "יונתן", pin: "0000", role: "מנכ\"ל" }
+                    ],
                     roles: ['מנכ"ל', 'סמנכ״ל', 'אחראי עובדים', 'עובד רגיל'],
                     menuItems: defaultMenu,
                     revenue: 0,
