@@ -1300,6 +1300,7 @@
             crash: false
         };
 
+        // פונקציית טעינה מהענן (מוציאה את המידע האמיתי ושומרת במשתנה)
         async function fetchFromCloud() {
             try {
                 let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
@@ -1308,21 +1309,21 @@
                 if (res.ok) {
                     let json = await res.json();
                     if (json && json.record) {
-                        let remoteData = json.record;
-                        // אם הענן מכיל משתמשים, ניקח אותם תמיד (בלי לדרוס בחזרה למשתמשי ברירת מחדל)
-                        if (remoteData.users && remoteData.users.length > 0) {
-                            globalData.users = remoteData.users;
+                        let remote = json.record;
+                        // מוודאים שנטען מידע מלא מהענן אם הוא קיים
+                        if (remote.users && Array.isArray(remote.users) && remote.users.length > 0) {
+                            globalData.users = remote.users;
                         }
-                        if (remoteData.roles && remoteData.roles.length > 0) {
-                            globalData.roles = remoteData.roles;
+                        if (remote.roles && Array.isArray(remote.roles)) {
+                            globalData.roles = remote.roles;
                         }
-                        if (remoteData.menuItems && remoteData.menuItems.length > 0) {
-                            globalData.menuItems = remoteData.menuItems;
+                        if (remote.menuItems && Array.isArray(remote.menuItems)) {
+                            globalData.menuItems = remote.menuItems;
                         }
-                        globalData.revenue = remoteData.revenue || 0;
-                        globalData.sales = remoteData.sales || {};
-                        globalData.invoices = remoteData.invoices || {};
-                        globalData.crash = remoteData.crash || false;
+                        globalData.revenue = remote.revenue || 0;
+                        globalData.sales = remote.sales || {};
+                        globalData.invoices = remote.invoices || {};
+                        globalData.crash = remote.crash || false;
 
                         updateUIFromGlobal();
                     }
@@ -1330,6 +1331,7 @@
             } catch (e) {}
         }
 
+        // פונקציית שמירה מיידית לענן שחוסכת כל בעיה
         async function syncToCloud() {
             try {
                 await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
@@ -1343,12 +1345,13 @@
             } catch (e) {}
         }
 
-        async function initApp() {
-            await fetchFromCloud();
-        }
-        initApp();
+        // טעינה ראשונית מידית בפתיחת האתר
+        fetchFromCloud();
 
-        setInterval(fetchFromCloud, 2500);
+        // סנכרון רקע שקט כל 4 שניות כדי להתעדכן בשינויים של אחרים בלי לדרוס
+        setInterval(() => {
+            fetchFromCloud();
+        }, 4000);
 
         function updateUIFromGlobal() {
             const crashScreen = document.getElementById('crashScreen');
@@ -1481,7 +1484,6 @@
             }
 
             if (name && !isNaN(price) && finalCategory) {
-                await fetchFromCloud();
                 let dishObj = { category: finalCategory, name: name, price: price };
                 if (origPriceVal && !isNaN(parseFloat(origPriceVal))) {
                     dishObj.originalPrice = parseFloat(origPriceVal);
@@ -1514,7 +1516,6 @@
         }
 
         async function deleteDish(index) {
-            await fetchFromCloud();
             globalData.menuItems.splice(index, 1);
             await syncToCloud();
             updateUIFromGlobal();
@@ -1620,7 +1621,6 @@
 
         async function confirmOrder() {
             if (currentOrder.length === 0) return;
-            await fetchFromCloud();
 
             let totalSum = currentOrder.reduce((sum, item) => sum + (item.price * item.qty), 0);
             
@@ -1641,7 +1641,7 @@
             currentOrder = [];
             renderOrderSidebar();
             updateUIFromGlobal();
-            alert("ההזמנה בוצעה וסונכרנה בהצלחה לכל המכשירים בענן!");
+            alert("ההזמנה בוצעה וסונכרנה בהצלחה לענן!");
         }
 
         function openInvoicesModal() {
@@ -1686,7 +1686,6 @@
         }
 
         async function deleteInvoice(username, index) {
-            await fetchFromCloud();
             if (globalData.invoices[username]) {
                 globalData.invoices[username].splice(index, 1);
                 await syncToCloud();
@@ -1783,6 +1782,7 @@
         }
 
         async function enterSite() {
+            // טעינה מהענן ברגע הכניסה כדי לוודא שהכל מעודכן
             await fetchFromCloud();
             const username = document.getElementById('usernameInput').value.trim();
             const pin = document.getElementById('pinInput').value.trim();
@@ -1856,7 +1856,6 @@
         function closeF1() { document.getElementById('f1Modal').classList.remove('active'); }
 
         async function setGlobalSiteState(isWorking) {
-            await fetchFromCloud();
             globalData.crash = !isWorking;
             await syncToCloud();
             updateUIFromGlobal();
@@ -1920,7 +1919,6 @@
         async function addNewRole() {
             const roleName = document.getElementById('newRoleName').value.trim();
             if (roleName && !(globalData.roles || []).includes(roleName)) {
-                await fetchFromCloud();
                 globalData.roles.push(roleName);
                 await syncToCloud();
                 updateRoleSelects();
@@ -1933,7 +1931,6 @@
 
         async function deleteRole(index) {
             if ((globalData.roles || []).length <= 1) return;
-            await fetchFromCloud();
             const removedRole = globalData.roles[index];
             globalData.roles.splice(index, 1);
             globalData.users.forEach(u => { if (u.role === removedRole) u.role = globalData.roles[0]; });
@@ -1970,7 +1967,6 @@
         }
 
         async function changeUserRole(index, newRole) {
-            await fetchFromCloud();
             globalData.users[index].role = newRole;
             await syncToCloud();
             renderUsersBadges();
@@ -1981,7 +1977,6 @@
             const newPin = document.getElementById('newPin').value.trim();
             const newRole = document.getElementById('newRole').value;
             if (newUsername && newPin) {
-                await fetchFromCloud();
                 globalData.users.push({ username: newUsername, pin: newPin, role: newRole });
                 await syncToCloud();
                 renderUsers();
@@ -1994,7 +1989,6 @@
         }
 
         async function deleteUser(index) {
-            await fetchFromCloud();
             globalData.users.splice(index, 1);
             await syncToCloud();
             renderUsers();
