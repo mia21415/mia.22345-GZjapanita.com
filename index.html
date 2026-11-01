@@ -426,6 +426,111 @@
             background: rgba(0, 150, 255, 0.4);
         }
 
+        /* ----- מודל הדרכה ----- */
+        .tutorial-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(12px);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            padding: 15px;
+        }
+
+        .tutorial-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .tutorial-panel {
+            background: linear-gradient(145deg, #180a0a, #0c0505);
+            border: 2px solid rgba(255, 59, 59, 0.5);
+            border-radius: 20px;
+            width: 480px;
+            max-width: 100%;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(255, 59, 59, 0.3);
+            position: relative;
+            transform: scale(0.85);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+        }
+
+        .tutorial-modal.active .tutorial-panel {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .tutorial-modal.closing {
+            opacity: 0;
+        }
+
+        .tutorial-modal.closing .tutorial-panel {
+            transform: scale(0.8);
+            opacity: 0;
+        }
+
+        .tutorial-title {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #ff3b3b;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            transition: opacity 0.2s ease;
+        }
+
+        .tutorial-text {
+            font-size: 1rem;
+            color: #e0e0e0;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            min-height: 80px;
+            transition: opacity 0.2s ease;
+        }
+
+        .tutorial-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .tutorial-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            background: linear-gradient(135deg, #ff3b3b, #b81414);
+            color: #fff;
+            transition: 0.3s;
+        }
+
+        .tutorial-btn:hover {
+            background: linear-gradient(135deg, #ff5555, #d91b1b);
+            transform: translateY(-2px);
+        }
+
+        .tutorial-btn.secondary {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ccc;
+        }
+
+        .tutorial-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
         /* ----- מסך INTRO ----- */
         .intro-screen {
             position: fixed;
@@ -511,6 +616,18 @@
             position: relative;
         }
 
+        .main-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%) scaleX(0);
+            width: 80%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #ff3b3b, transparent);
+            animation: expandLine 1s forwards 1.6s ease;
+        }
+
         .show-login-btn {
             margin-top: 50px;
             padding: 12px 40px;
@@ -528,6 +645,13 @@
             opacity: 0;
             transform: translateY(20px);
             animation: fadeInUp 1s forwards 1.8s ease;
+        }
+
+        .show-login-btn:hover {
+            background: linear-gradient(135deg, #d91b1b 0%, #8c0c0c 100%);
+            box-shadow: 0 0 40px rgba(230, 30, 30, 0.8);
+            transform: translateY(-2px) scale(1.04);
+            border-color: #ff7777;
         }
 
         .login-box {
@@ -572,6 +696,16 @@
             outline: none;
         }
 
+        .login-input::placeholder {
+            color: #dddddd;
+            font-weight: 400;
+        }
+
+        .login-input:focus {
+            border-color: #ff3b3b;
+            background: rgba(255, 255, 255, 0.18);
+        }
+
         .enter-btn {
             padding: 11px;
             font-size: 1rem;
@@ -585,6 +719,11 @@
             cursor: pointer;
             box-shadow: 0 0 20px rgba(184, 20, 20, 0.5);
             transition: all 0.3s ease;
+        }
+
+        .enter-btn:hover {
+            background: linear-gradient(135deg, #d91b1b 0%, #8c0c0c 100%);
+            box-shadow: 0 0 30px rgba(230, 30, 30, 0.8);
         }
 
         .error-msg {
@@ -655,6 +794,129 @@
             opacity: 1;
         }
 
+        /* ----- חלון F1 ייחודי ----- */
+        .f1-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0);
+            backdrop-filter: blur(0px);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: background 0.5s ease, backdrop-filter 0.5s ease, opacity 0.5s ease;
+            padding: 15px;
+        }
+
+        .f1-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+            background: rgba(5, 0, 0, 0.9);
+            backdrop-filter: blur(12px);
+        }
+
+        .f1-panel {
+            background: linear-gradient(145deg, #160a0a, #0a0404);
+            border: 2px solid rgba(255, 59, 59, 0.6);
+            border-radius: 20px;
+            width: 420px;
+            max-width: 100%;
+            padding: 28px;
+            box-shadow: 0 0 60px rgba(255, 0, 0, 0.3);
+            position: relative;
+            transform: scale(0.5) rotate(-5deg);
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+        }
+
+        .f1-modal.active .f1-panel {
+            transform: scale(1) rotate(0deg);
+            opacity: 1;
+        }
+
+        .f1-header {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #ff3b3b;
+            margin-bottom: 18px;
+            text-align: center;
+            letter-spacing: 1.5px;
+        }
+
+        .f1-input {
+            width: 100%;
+            padding: 11px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1.5px solid rgba(255, 59, 59, 0.4);
+            border-radius: 10px;
+            color: #fff;
+            outline: none;
+            font-family: 'Heebo', sans-serif;
+            font-size: 1rem;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .f1-btn {
+            width: 100%;
+            padding: 11px;
+            background: linear-gradient(135deg, #ff3b3b 0%, #8c0c0c 100%);
+            color: #fff;
+            border: 1px solid rgba(255, 100, 100, 0.5);
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-bottom: 8px;
+            transition: 0.3s;
+        }
+
+        .f1-btn:hover {
+            background: linear-gradient(135deg, #ff5555 0%, #b81414 100%);
+            transform: translateY(-2px);
+        }
+
+        .f1-status-box {
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .f1-status-box.offline {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.5);
+            color: #ff6b6b;
+        }
+
+        .f1-status-box.online {
+            background: rgba(0, 255, 100, 0.15);
+            border: 1px solid rgba(0, 255, 100, 0.4);
+            color: #55ff99;
+        }
+
+        .f1-close {
+            position: absolute;
+            top: 12px;
+            left: 15px;
+            color: #aaa;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: 0.3s;
+        }
+
+        .f1-close:hover {
+            color: #ff3b3b;
+        }
+
         .admin-header {
             font-size: 1.3rem;
             font-weight: 700;
@@ -681,6 +943,10 @@
             outline: none;
             font-family: 'Heebo', sans-serif;
             font-size: 0.88rem;
+        }
+
+        .admin-select {
+            cursor: pointer;
         }
 
         .admin-select option {
@@ -738,6 +1004,10 @@
             font-size: 1.1rem;
         }
 
+        .close-modal:hover {
+            color: #ff3b3b;
+        }
+
         .sakura {
             position: absolute;
             background: linear-gradient(135deg, #ffb7c5, #ff69b4);
@@ -747,41 +1017,114 @@
             animation: fall infinite linear;
         }
 
+        /* ----- רספונסיביות מלאה לכל המכשירים ----- */
+        @media (max-width: 1024px) {
+            .main-app-content {
+                flex-wrap: wrap;
+                height: auto !important;
+                min-height: 100vh;
+                padding-top: 85px;
+                padding-bottom: 30px;
+                justify-content: center;
+            }
+            .app-column {
+                height: 480px !important;
+                flex: 1 1 calc(50% - 10px) !important;
+                max-width: none !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-app-content {
+                flex-direction: column !important;
+                flex-wrap: nowrap !important;
+                height: auto !important;
+                padding: 75px 12px 25px 12px;
+                gap: 15px;
+            }
+            .app-column {
+                width: 100% !important;
+                max-width: 100% !important;
+                height: auto !important;
+                min-height: 380px !important;
+                max-height: 480px !important;
+            }
+            .earnings-top-bar {
+                top: 8px;
+                flex-direction: row;
+                justify-content: center;
+                gap: 12px;
+                padding: 6px 12px;
+                font-size: 0.78rem;
+                width: 96%;
+                white-space: nowrap;
+            }
+            .main-title {
+                font-size: 3.2rem !important;
+            }
+            .sub-kanji {
+                font-size: 1.2rem !important;
+            }
+            .login-box {
+                width: 90% !important;
+                padding: 18px !important;
+            }
+            .japanese-watermark {
+                font-size: 7rem !important;
+            }
+        }
+
         @keyframes fadeInDown { to { opacity: 1; transform: translateY(0); } }
         @keyframes zoomInTitle { to { opacity: 1; transform: scale(1); } }
+        @keyframes expandLine { to { transform: translateX(-50%) scaleX(1); } }
         @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
-        @keyframes popIn { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
-        @keyframes fall { 0% { top: -5%; transform: translateX(0) rotate(0deg); opacity: 0.8; } 100% { top: 105%; transform: translateX(120px) rotate(360deg); opacity: 0.2; } }
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes fall {
+            0% { top: -5%; transform: translateX(0) rotate(0deg); opacity: 0.8; }
+            100% { top: 105%; transform: translateX(120px) rotate(360deg); opacity: 0.2; }
+        }
     </style>
 </head>
 <body>
 
+    <!-- נגן יוטיוב נסתר למוזיקת רקע -->
     <div id="youtube-audio-container" style="display:none;"></div>
     <script src="https://www.youtube.com/iframe_api"></script>
 
+    <!-- מסך קראש -->
     <div class="crash-screen" id="crashScreen">
         <div class="crash-title">האתר קרס</div>
         <div class="crash-text">אי אפשר להיכנס לאתר כרגע.</div>
     </div>
 
+    <!-- מד רווחים ומשכורת אישית עליון -->
     <div class="earnings-top-bar" id="earningsTopBar">
         <div class="earning-item">רווחי מסעדה: <span id="totalRestaurantRevenue">₪0</span></div>
         <div class="earning-item">המשכורת שלי (20%): <span id="mySalaryRevenue">₪0</span></div>
     </div>
 
+    <!-- תוכן האתר הראשי -->
     <div class="main-app-content" id="mainAppContent">
+        
+        <!-- עמודה 1: תגיות עובדים -->
         <div class="app-column column-employees">
             <div class="column-title">רשימת עובדים</div>
             <div id="usersBadgesContainer" style="overflow-y: auto; flex: 1;"></div>
         </div>
 
+        <!-- עמודה 2: טבלת מכירות עובדים -->
         <div class="app-column column-leaderboard">
             <div class="column-title">טבלת מכירות</div>
             <div class="leaderboard-list" id="leaderboardList"></div>
         </div>
 
+        <!-- עמודה 3: תפריט דינמי -->
         <div class="app-column column-menu" id="dynamicMenuContainer"></div>
 
+        <!-- עמודה 4: הזמנה נוכחית -->
         <div class="app-column column-order">
             <div class="column-title">הזמנה נוכחית</div>
             <div class="order-items-list" id="orderItemsList">
@@ -793,6 +1136,7 @@
         </div>
     </div>
 
+    <!-- מודל חשבוניות -->
     <div class="invoice-modal" id="invoiceModal">
         <div class="invoice-panel">
             <span class="close-modal" onclick="closeInvoicesModal()">✕</span>
@@ -801,6 +1145,19 @@
         </div>
     </div>
 
+    <!-- מודל הדרכה -->
+    <div class="tutorial-modal" id="tutorialModal">
+        <div class="tutorial-panel">
+            <div class="tutorial-title" id="tutorialTitle">ברוכים הבאים לג'פניטה</div>
+            <div class="tutorial-text" id="tutorialText">טקסט הדרכה...</div>
+            <div class="tutorial-buttons">
+                <button class="tutorial-btn secondary" id="tutPrevBtn" onclick="prevTutorialStep()" style="display:none;">הקודם</button>
+                <button class="tutorial-btn" id="tutNextBtn" onclick="nextTutorialStep()">הבא</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- מסך INTRO -->
     <div class="intro-screen" id="introScreen">
         <div class="sun-bg"></div>
         <div class="japanese-watermark">日本料理レストラン</div>
@@ -814,7 +1171,7 @@
             <div class="login-box" id="loginBox">
                 <div class="login-title">הזן פרטי גישה</div>
                 <input type="text" id="usernameInput" class="login-input" placeholder="שם משתמש">
-                <input type="text" id="pinInput" class="login-input" placeholder="קוד מספרי" inputmode="numeric">
+                <input type="text" id="pinInput" class="login-input" placeholder="קוד מספרי" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 <button class="enter-btn" onclick="enterSite()">אישור וכניסה</button>
                 <div class="error-msg" id="errorMsg">שם משתמש או קוד שגויים!</div>
             </div>
@@ -828,6 +1185,7 @@
     </div>
     <div class="overlay"></div>
 
+    <!-- חלון אדמין F9 -->
     <div class="modal" id="adminModal">
         <div class="admin-panel">
             <span class="close-modal" onclick="closeAdmin()">✕</span>
@@ -845,15 +1203,34 @@
                 <div class="admin-form" style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; margin-bottom: 15px;">
                     <div style="font-size: 0.9rem; color: #ff8888; margin-bottom: 6px;">הוספת מנה חדשה לתפריט:</div>
                     <input type="text" id="newDishName" class="admin-input" placeholder="שם המנה" style="margin-bottom: 6px;">
-                    <input type="text" id="newDishPrice" class="admin-input" placeholder="מחיר למכירה (ב-₪)" style="margin-bottom: 6px;">
-                    <select id="newDishCategory" class="admin-select" style="margin-bottom: 6px;"></select>
+                    <input type="text" id="newDishPrice" class="admin-input" placeholder="מחיר למכירה (מחיר סופי ב-₪)" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="margin-bottom: 6px;">
+                    <input type="text" id="newDishOriginalPrice" class="admin-input" placeholder="מחיר מקורי לפני הנחה (רשות)" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="margin-bottom: 6px;">
+                    
+                    <select id="newDishCategory" class="admin-select" style="margin-bottom: 6px;" onchange="handleCategorySelect(this.value)"></select>
+                    <input type="text" id="customCategoryInput" class="admin-input" placeholder="הקלד שם קטגוריה חדשה" style="display: none; margin-bottom: 6px;">
+                    
                     <button class="admin-btn" onclick="addCustomDish()">הוסף מנה לתפריט</button>
+                </div>
+
+                <div class="admin-form" style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+                    <div style="font-size: 0.85rem; color: #ff8888; margin-bottom: 5px;">מחיקת מנות מהתפריט:</div>
+                    <div class="user-list" id="dishesListForDelete" style="max-height: 110px;"></div>
+                </div>
+
+                <div class="admin-form" style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+                    <div style="font-size: 0.85rem; color: #ff8888; margin-bottom: 5px;">ניהול דרגות במערכת:</div>
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                        <input type="text" id="newRoleName" class="admin-input" placeholder="שם דרגה חדשה" style="flex: 1; margin-bottom: 0;">
+                        <button class="admin-btn" onclick="addNewRole()" style="background: linear-gradient(135deg, #333, #555);">הוסף</button>
+                    </div>
+                    <div style="font-size:0.80rem; color:#aaa; margin-bottom:4px;">דרגות קיימות:</div>
+                    <div class="user-list" id="roleList" style="max-height: 90px;"></div>
                 </div>
 
                 <div class="admin-form">
                     <div style="font-size: 0.85rem; color: #ff8888; margin-bottom: 5px;">יצירת משתמש חדש:</div>
                     <input type="text" id="newUsername" class="admin-input" placeholder="שם משתמש חדש">
-                    <input type="text" id="newPin" class="admin-input" placeholder="קוד מספרי חדש">
+                    <input type="text" id="newPin" class="admin-input" placeholder="קוד מספרי חדש" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                     <select id="newRole" class="admin-select"></select>
                     <button class="admin-btn" onclick="addUser()">הוסף משתמש</button>
                 </div>
@@ -863,10 +1240,29 @@
         </div>
     </div>
 
-    <script>
-        const MASTER_KEY = "$2a$10$cJlLyrBIJ/gEJACCNGGXAuP/LsL3KJC4XEKQw/mIKSHexHUcP742y";
-        const BIN_ID = "67554316ad19ca34f8d75e47";
+    <!-- פאנל חירום F1 -->
+    <div class="f1-modal" id="f1Modal">
+        <div class="f1-panel">
+            <span class="f1-close" onclick="closeF1()">✕</span>
+            <div id="f1LoginSection">
+                <div class="f1-header">מערכת חירום</div>
+                <input type="password" id="f1PasswordInput" class="f1-input" placeholder="הזן קוד חירום">
+                <button class="f1-btn" onclick="verifyF1Code()">אישור קוד חירום</button>
+                <div class="error-msg" id="f1ErrorMsg" style="color:#ff5555; text-align:center; margin-top:5px; display:none;">קוד שגוי!</div>
+            </div>
+            <div id="f1DashboardSection" style="display: none;">
+                <div class="f1-header">שליטה גלובלית באתר</div>
+                <div class="f1-status-box" id="f1StatusBox">סטטוס אתר: פעיל תקין</div>
+                <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
+                    <button class="f1-btn" style="background: linear-gradient(135deg, #aa1111, #550000);" onclick="setGlobalSiteState(false)">כבה את האתר לכולם (קראש)</button>
+                    <button class="f1-btn" style="background: linear-gradient(135deg, #11aa44, #005522);" onclick="setGlobalSiteState(true)">הפעל מחדש את האתר</button>
+                    <button class="f1-btn" style="background: linear-gradient(135deg, #ff8800, #cc4400); margin-top: 10px;" onclick="fullSiteReset()">🔄 איפוס מלא לכל הנתונים</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <script>
         let currentLoggedUser = '';
         let currentOrder = [];
 
@@ -874,14 +1270,25 @@
             { category: 'מבצעים מיוחדים', name: 'מבצע קטן (5 ראמן + 10 שתייה)', price: 1950 },
             { category: 'מבצעים מיוחדים', name: 'מבצע גדול (10 ראמן + 20 שתייה)', price: 3900 },
             { category: 'מבצעים מיוחדים', name: 'מבצע משפחתי (15 ראמן + 30 שתייה)', price: 5850 },
+            { category: 'עובדי מדינה', name: 'מבצע קטן', price: 1462, originalPrice: 1950 },
+            { category: 'עובדי מדינה', name: 'מבצע גדול', price: 2925, originalPrice: 3900 },
+            { category: 'עובדי מדינה', name: 'מבצע משפחתי', price: 4387, originalPrice: 5850 },
             { category: 'שתייה', name: 'לימונדה יפנית', price: 100 },
             { category: 'שתייה', name: 'תה ירוק', price: 100 },
+            { category: 'שתייה', name: "מים - ג'פניטה", price: 100 },
+            { category: 'קינוחים', name: 'קאסטולה יפנית', price: 160 },
+            { category: 'קינוחים', name: 'פנקייק יפני', price: 125 },
             { category: 'מנות עיקריות וארוחות', name: 'ראמן מסורתי', price: 390 },
-            { category: 'מנות עיקריות וארוחות', name: 'סושי מיקס', price: 390 }
+            { category: 'מנות עיקריות וארוחות', name: 'סושי מיקס', price: 390 },
+            { category: 'מנות עיקריות וארוחות', name: 'טריאקי סלמון', price: 350 },
+            { category: 'מנות עיקריות וארוחות', name: 'גיוזה לוקוס', price: 380 },
+            { category: 'מנות עיקריות וארוחות', name: "ארוחת ג'פניטה", price: 550 }
         ];
 
         let globalData = {
-            users: [{ username: "mia", pin: "1234", role: "מנכ\"ל" }],
+            users: [
+                { username: "mia", pin: "1234", role: "מנכ\"ל" }
+            ],
             roles: ['מנכ"ל', 'סמנכ״ל', 'אחראי עובדים', 'עובד רגיל'],
             menuItems: defaultMenu,
             revenue: 0,
@@ -890,37 +1297,25 @@
             crash: false
         };
 
-        async function fetchFromCloud() {
-            try {
-                let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest?cacheBuster=${Date.now()}`, {
-                    headers: { 'X-Master-Key': MASTER_KEY }
-                });
-                if (res.ok) {
-                    let json = await res.json();
-                    if (json && json.record) {
-                        globalData = json.record;
-                        updateUIFromGlobal();
+        // מנגנון שמירה מקומית יציב שלא תלוי בשום שسرת חיצוני
+        function loadData() {
+            let saved = localStorage.getItem('japanita_stable_data');
+            if (saved) {
+                try {
+                    let parsed = JSON.parse(saved);
+                    if (parsed && parsed.users) {
+                        globalData = parsed;
                     }
-                }
-            } catch (e) {}
+                } catch(e) {}
+            }
         }
 
-        async function syncToCloud() {
-            try {
-                await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': MASTER_KEY
-                    },
-                    body: JSON.stringify(globalData)
-                });
-            } catch (e) {}
+        function saveData() {
+            localStorage.setItem('japanita_stable_data', JSON.stringify(globalData));
             updateUIFromGlobal();
         }
 
-        fetchFromCloud();
-        setInterval(fetchFromCloud, 1500);
+        loadData();
 
         function updateUIFromGlobal() {
             const crashScreen = document.getElementById('crashScreen');
@@ -941,27 +1336,78 @@
             renderUsersBadges();
             renderLeaderboard();
             if (document.getElementById('adminModal').classList.contains('active')) {
+                renderRoles();
                 renderUsers();
+                updateAdminCategoriesSelect();
+                renderDishesForDelete();
             }
+            updateF1StatusDisplay();
+        }
+
+        let ytPlayer;
+        function onYouTubeIframeAPIReady() {
+            ytPlayer = new YT.Player('youtube-audio-container', {
+                height: '0',
+                width: '0',
+                videoId: '8kjAA-kDhv8',
+                playerVars: { 'start': 30, 'autoplay': 1, 'controls': 0 },
+                events: {
+                    'onReady': (event) => {
+                        event.target.seekTo(30, true);
+                        event.target.setVolume(100);
+                        event.target.playVideo();
+                    }
+                }
+            });
+        }
+
+        window.addEventListener('click', () => {
+            if (ytPlayer && typeof ytPlayer.playVideo === 'function') {
+                ytPlayer.playVideo();
+            }
+        }, { once: true });
+
+        function fadeOutMusic(callback) {
+            if (!ytPlayer || typeof ytPlayer.getVolume !== 'function') {
+                if (callback) callback();
+                return;
+            }
+            let vol = ytPlayer.getVolume();
+            let fadeInterval = setInterval(() => {
+                vol -= 10;
+                if (vol <= 0) {
+                    vol = 0;
+                    clearInterval(fadeInterval);
+                    ytPlayer.pauseVideo();
+                    if (callback) callback();
+                } else {
+                    ytPlayer.setVolume(vol);
+                }
+            }, 100);
         }
 
         function renderMenu() {
             const container = document.getElementById('dynamicMenuContainer');
             if (!container) return;
             let categoriesMap = {};
-            (globalData.menuItems || []).forEach((item) => {
+            (globalData.menuItems || []).forEach((item, index) => {
                 if (!categoriesMap[item.category]) categoriesMap[item.category] = [];
-                categoriesMap[item.category].push(item);
+                categoriesMap[item.category].push({ ...item, originalIndex: index });
             });
 
             let html = `<div class="column-title">תפריט ומבצעים</div>`;
             for (let [cat, items] of Object.entries(categoriesMap)) {
                 html += `<div class="menu-section-title">${cat}</div><div class="menu-grid">`;
                 items.forEach(dish => {
+                    let priceDisplay = `₪${dish.price.toLocaleString()}`;
+                    if (dish.originalPrice) {
+                        priceDisplay = `₪${dish.price.toLocaleString()} <s style="font-size:0.7rem; color:#aaa;">₪${dish.originalPrice.toLocaleString()}</s>`;
+                    }
+                    let safeDishName = dish.name.replace(/'/g, "\\'");
                     html += `
-                        <div class="menu-item-btn" onclick="addToOrder('${dish.name.replace(/'/g, "\\'")}', ${dish.price})">
+                        <div class="menu-item-btn" onclick="addToOrder('${safeDishName}', ${dish.price})">
                             <span>${dish.name}</span>
-                            <span class="item-price">₪${dish.price.toLocaleString()}</span>
+                            <span class="item-price">${priceDisplay}</span>
                         </div>
                     `;
                 });
@@ -970,14 +1416,93 @@
             container.innerHTML = html;
         }
 
+        function updateAdminCategoriesSelect() {
+            const selectElem = document.getElementById('newDishCategory');
+            if (!selectElem) return;
+            let existingCategories = [...new Set((globalData.menuItems || []).map(item => item.category))];
+            
+            let html = existingCategories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+            html += `<option value="__NEW_CATEGORY__">➕ יצירת קטגוריה חדשה...</option>`;
+            selectElem.innerHTML = html;
+        }
+
+        function handleCategorySelect(val) {
+            const customInput = document.getElementById('customCategoryInput');
+            if (val === '__NEW_CATEGORY__') {
+                customInput.style.display = 'block';
+                customInput.focus();
+            } else {
+                customInput.style.display = 'none';
+            }
+        }
+
+        function addCustomDish() {
+            const name = document.getElementById('newDishName').value.trim();
+            const price = parseFloat(document.getElementById('newDishPrice').value);
+            const origPriceVal = document.getElementById('newDishOriginalPrice').value.trim();
+            const categorySelect = document.getElementById('newDishCategory').value;
+            let finalCategory = categorySelect;
+
+            if (categorySelect === '__NEW_CATEGORY__') {
+                finalCategory = document.getElementById('customCategoryInput').value.trim();
+            }
+
+            if (name && !isNaN(price) && finalCategory) {
+                let dishObj = { category: finalCategory, name: name, price: price };
+                if (origPriceVal && !isNaN(parseFloat(origPriceVal))) {
+                    dishObj.originalPrice = parseFloat(origPriceVal);
+                }
+                globalData.menuItems.push(dishObj);
+                saveData();
+
+                document.getElementById('newDishName').value = '';
+                document.getElementById('newDishPrice').value = '';
+                document.getElementById('newDishOriginalPrice').value = '';
+                document.getElementById('customCategoryInput').value = '';
+                document.getElementById('customCategoryInput').style.display = 'none';
+            }
+        }
+
+        function renderDishesForDelete() {
+            const container = document.getElementById('dishesListForDelete');
+            if (!container) return;
+            container.innerHTML = '';
+            (globalData.menuItems || []).forEach((dish, index) => {
+                const div = document.createElement('div');
+                div.className = 'user-item';
+                div.innerHTML = `
+                    <span><b>${dish.name}</b> (${dish.category}) - ₪${dish.price}</span>
+                    <button class="delete-btn" onclick="deleteDish(${index})">מחק מנה</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function deleteDish(index) {
+            globalData.menuItems.splice(index, 1);
+            saveData();
+        }
+
         function renderUsersBadges() {
             const container = document.getElementById('usersBadgesContainer');
             if (!container) return;
             container.innerHTML = '';
-            (globalData.users || []).forEach(u => {
+            
+            let sortedUsers = [...(globalData.users || [])].sort((a, b) => {
+                let indexA = (globalData.roles || []).indexOf(a.role);
+                let indexB = (globalData.roles || []).indexOf(b.role);
+                if (indexA === -1) indexA = 999;
+                if (indexB === -1) indexB = 999;
+                return indexA - indexB;
+            });
+
+            sortedUsers.forEach(u => {
                 const div = document.createElement('div');
                 div.className = 'user-card-badge';
-                div.innerHTML = `<span class="user-card-role">${u.role || 'עובד'}</span><span class="user-card-name">${u.username}</span>`;
+                div.innerHTML = `
+                    <span class="user-card-role">${u.role || 'עובד'}</span>
+                    <span class="user-card-name">${u.username}</span>
+                `;
                 container.appendChild(div);
             });
         }
@@ -986,28 +1511,42 @@
             const listElem = document.getElementById('leaderboardList');
             if (!listElem) return;
             let userSales = globalData.sales || {};
+            
             let activeUserSales = {};
             (globalData.users || []).forEach(u => {
                 activeUserSales[u.username] = userSales[u.username] || 0;
             });
 
             let sorted = Object.entries(activeUserSales).sort((a, b) => b[1] - a[1]);
+
             let html = '';
             sorted.forEach(([user, total], idx) => {
                 html += `
                     <div class="leaderboard-item">
-                        <div><span class="rank-num">#${idx + 1}</span><span><b>${user}</b></span></div>
+                        <div>
+                            <span class="rank-num">#${idx + 1}</span>
+                            <span><b>${user}</b></span>
+                        </div>
                         <span style="color:#ff8888; font-weight:700;">₪${total.toLocaleString()}</span>
                     </div>
                 `;
             });
+
             listElem.innerHTML = html;
         }
 
         function addToOrder(name, price) {
             let existing = currentOrder.find(item => item.name === name);
-            if (existing) { existing.qty += 1; } 
-            else { currentOrder.push({ name: name, price: price, qty: 1 }); }
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                currentOrder.push({ name: name, price: price, qty: 1 });
+            }
+            renderOrderSidebar();
+        }
+
+        function removeFromOrder(index) {
+            currentOrder.splice(index, 1);
             renderOrderSidebar();
         }
 
@@ -1030,26 +1569,172 @@
                 html += `
                     <div class="order-row">
                         <div><b>${item.name}</b> (${item.qty})</div>
-                        <div class="order-row-actions"><span>₪${itemTotal.toLocaleString()}</span></div>
+                        <div class="order-row-actions">
+                            <span>₪${itemTotal.toLocaleString()}</span>
+                            <button class="remove-item-btn" onclick="removeFromOrder(${index})">מחק</button>
+                        </div>
                     </div>
                 `;
             });
+
             listContainer.innerHTML = html;
             totalContainer.innerText = 'סך הכל: ₪' + totalSum.toLocaleString();
         }
 
-        async function confirmOrder() {
+        function confirmOrder() {
             if (currentOrder.length === 0) return;
+
             let totalSum = currentOrder.reduce((sum, item) => sum + (item.price * item.qty), 0);
             
             globalData.revenue = (globalData.revenue || 0) + totalSum;
             if (!globalData.sales) globalData.sales = {};
             globalData.sales[currentLoggedUser] = (globalData.sales[currentLoggedUser] || 0) + totalSum;
 
-            await syncToCloud();
+            if (!globalData.invoices) globalData.invoices = {};
+            if (!globalData.invoices[currentLoggedUser]) globalData.invoices[currentLoggedUser] = [];
+            
+            globalData.invoices[currentLoggedUser].push({
+                date: new Date().toLocaleString('he-IL'),
+                items: [...currentOrder],
+                total: totalSum
+            });
+
+            saveData();
             currentOrder = [];
             renderOrderSidebar();
-            alert("ההזמנה בוצעה וסונכרנה לכל המכשירים בלייב!");
+            alert("ההזמנה בוצעה ונשמרה בהצלחה!");
+        }
+
+        function openInvoicesModal() {
+            const modal = document.getElementById('invoiceModal');
+            const container = document.getElementById('invoicesListContainer');
+            let userInvoices = (globalData.invoices && globalData.invoices[currentLoggedUser]) ? globalData.invoices[currentLoggedUser] : [];
+
+            if (userInvoices.length === 0) {
+                container.innerHTML = '<div style="text-align:center; color:#aaa;">אין עדיין חשבוניות שמורות לחשבון זה.</div>';
+            } else {
+                let html = '';
+                userInvoices.forEach((inv, i) => {
+                    let itemsDesc = inv.items.map(it => `${it.name} x${it.qty}`).join(', ');
+                    html += `
+                        <div class="invoice-item-box">
+                            <div>
+                                <div><b>הזמנה #${i + 1}</b> - ${inv.date}</div>
+                                <div style="color:#ccc; font-size:0.85rem; margin:4px 0;">פרטים: ${itemsDesc}</div>
+                                <div style="color:#ff8888; font-weight:700;">סה״כ שולם: ₪${inv.total.toLocaleString()}</div>
+                            </div>
+                            <div class="invoice-actions">
+                                <button class="copy-btn" onclick="copyInvoiceText('${currentLoggedUser}', ${i})">העתק קבלה</button>
+                                <button class="delete-btn" onclick="deleteInvoice('${currentLoggedUser}', ${i})">מחק חשבונית</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            }
+
+            modal.classList.add('active');
+        }
+
+        function copyInvoiceText(username, index) {
+            let inv = globalData.invoices[username][index];
+            if (!inv) return;
+
+            let itemsList = inv.items.map(it => `- ${it.name} (כמות: ${it.qty}) - ₪${it.price * it.qty}`).join('\n');
+            let textToCopy = `קבלה - ג'פניטה\nתאריך: ${inv.date}\nעובד: ${username}\n------------------\n${itemsList}\n------------------\nסה"כ לתשלום: ₪${inv.total.toLocaleString()}`;
+
+            navigator.clipboard.writeText(textToCopy).catch(err => {});
+        }
+
+        function deleteInvoice(username, index) {
+            if (globalData.invoices[username]) {
+                globalData.invoices[username].splice(index, 1);
+                saveData();
+                openInvoicesModal();
+            }
+        }
+
+        function closeInvoicesModal() { document.getElementById('invoiceModal').classList.remove('active'); }
+
+        const tutorialSteps = [
+            { title: "ברוכים הבאים למערכת ג'פניטה", text: "מדריך קצר שיעזור לכם להכיר את המערכת ואת אפשרויות הניהול שבה." },
+            { title: "מבנה המסך הראשי", text: "המסך מחולק לעמודות: רשימת העובדים, טבלת דירוג המכירות, תפריט המוצרים והמבצעים, ועגלת ההזמנה." },
+            { title: "ביצוע הזמנות וניהול חשבוניות", text: "לחיצה על מנה בתפריט תוסיף אותה לעגלה. לאחר אישור ההזמנה, הנתונים יתעדכנו אוטומטית ברווחי המסעדה ובטבלת המכירות." },
+            { title: "פאנל ניהול מתקדם (F9)", text: "לחיצה על מקש **F9** במקלדת והזנת קוד הניהול תפתח את פאנל הניהול להוספת מנות, משתמשים וניהול דרגות." },
+            { title: "סיום ההדרכה", text: "אתם מוכנים להתחיל לעבוד במערכת. המשך משמרת נעימה!" }
+        ];
+        let currentTutorialStep = 0;
+
+        function checkAndShowTutorial() {
+            if (!localStorage.getItem('japanita_device_tutorial_seen')) {
+                currentTutorialStep = 0;
+                showTutorialStep();
+                const tutModal = document.getElementById('tutorialModal');
+                tutModal.classList.remove('closing');
+                tutModal.classList.add('active');
+            }
+        }
+
+        function showTutorialStep() {
+            const step = tutorialSteps[currentTutorialStep];
+            const titleElem = document.getElementById('tutorialTitle');
+            const textElem = document.getElementById('tutorialText');
+
+            titleElem.style.opacity = '0';
+            textElem.style.opacity = '0';
+
+            setTimeout(() => {
+                titleElem.innerText = step.title;
+                textElem.innerHTML = step.text;
+                titleElem.style.opacity = '1';
+                textElem.style.opacity = '1';
+            }, 150);
+
+            const prevBtn = document.getElementById('tutPrevBtn');
+            const nextBtn = document.getElementById('tutNextBtn');
+
+            prevBtn.style.display = currentTutorialStep > 0 ? 'block' : 'none';
+            nextBtn.innerText = currentTutorialStep === tutorialSteps.length - 1 ? 'סיום' : 'הבא';
+        }
+
+        function nextTutorialStep() {
+            currentTutorialStep++;
+            if (currentTutorialStep >= tutorialSteps.length) {
+                closeTutorialWithAnimation();
+            } else {
+                showTutorialStep();
+            }
+        }
+
+        function prevTutorialStep() {
+            if (currentTutorialStep > 0) {
+                currentTutorialStep--;
+                showTutorialStep();
+            }
+        }
+
+        function closeTutorialWithAnimation() {
+            const tutModal = document.getElementById('tutorialModal');
+            tutModal.classList.add('closing');
+            localStorage.setItem('japanita_device_tutorial_seen', 'true');
+            setTimeout(() => {
+                tutModal.classList.remove('active');
+                tutModal.classList.remove('closing');
+            }, 400);
+        }
+
+        const intro = document.getElementById('introScreen');
+        for (let i = 0; i < 30; i++) {
+            let petal = document.createElement('div');
+            petal.className = 'sakura';
+            let size = Math.random() * 12 + 8;
+            petal.style.width = size + 'px';
+            petal.style.height = size + 'px';
+            petal.style.left = Math.random() * 100 + '%';
+            petal.style.top = (Math.random() * -100) + '%';
+            petal.style.animationDuration = (Math.random() * 5 + 4) + 's';
+            petal.style.animationDelay = (Math.random() * 5) + 's';
+            intro.appendChild(petal);
         }
 
         function openLoginForm() {
@@ -1057,24 +1742,35 @@
             document.getElementById('loginBox').classList.add('active');
         }
 
-        async function enterSite() {
-            await fetchFromCloud();
+        function enterSite() {
             const username = document.getElementById('usernameInput').value.trim();
             const pin = document.getElementById('pinInput').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
             
             const validUser = (globalData.users || []).find(u => u.username.toLowerCase() === username.toLowerCase() && u.pin === pin);
 
             if (validUser) {
                 currentLoggedUser = validUser.username;
-                document.getElementById('introScreen').classList.add('fade-out');
-                document.getElementById('bgContainer').classList.add('active');
-                document.getElementById('mainAppContent').classList.add('active');
-                document.getElementById('earningsTopBar').classList.add('active');
-                updateUIFromGlobal();
+                fadeOutMusic(() => {
+                    document.getElementById('introScreen').classList.add('fade-out');
+                    document.getElementById('bgContainer').classList.add('active');
+                    document.getElementById('mainAppContent').classList.add('active');
+                    document.getElementById('earningsTopBar').classList.add('active');
+
+                    updateUIFromGlobal();
+                    checkAndShowTutorial();
+                });
             } else {
-                document.getElementById('errorMsg').style.display = 'block';
+                errorMsg.style.display = 'block';
             }
         }
+
+        const bgContainer = document.getElementById('bgContainer');
+        window.addEventListener('mousemove', (e) => {
+            const mouseX = (e.clientX / window.innerWidth) - 0.5;
+            const mouseY = (e.clientY / window.innerHeight) - 0.5;
+            bgContainer.style.transform = `scale(1.05) translate(${mouseX * -35}px, ${mouseY * -25}px)`;
+        });
 
         window.addEventListener('keydown', (e) => {
             if (e.key === 'F9') {
@@ -1084,21 +1780,125 @@
                 if (modal.classList.contains('active')) {
                     document.getElementById('adminLoginSection').style.display = 'block';
                     document.getElementById('adminDashboardSection').style.display = 'none';
+                    document.getElementById('adminPasswordInput').value = '';
+                    document.getElementById('adminErrorMsg').style.display = 'none';
+                    document.getElementById('adminPasswordInput').focus();
+                }
+            }
+
+            if (e.key === 'F1') {
+                e.preventDefault();
+                const f1Modal = document.getElementById('f1Modal');
+                f1Modal.classList.toggle('active');
+                if (f1Modal.classList.contains('active')) {
+                    document.getElementById('f1LoginSection').style.display = 'block';
+                    document.getElementById('f1DashboardSection').style.display = 'none';
+                    document.getElementById('f1PasswordInput').value = '';
+                    document.getElementById('f1ErrorMsg').style.display = 'none';
+                    document.getElementById('f1PasswordInput').focus();
                 }
             }
         });
 
+        function verifyF1Code() {
+            const pass = document.getElementById('f1PasswordInput').value;
+            const err = document.getElementById('f1ErrorMsg');
+            if (pass === 'nadirnadirnashirbeyachad') {
+                document.getElementById('f1LoginSection').style.display = 'none';
+                document.getElementById('f1DashboardSection').style.display = 'block';
+                updateF1StatusDisplay();
+            } else {
+                err.style.display = 'block';
+            }
+        }
+
+        function closeF1() { document.getElementById('f1Modal').classList.remove('active'); }
+
+        function setGlobalSiteState(isWorking) {
+            globalData.crash = !isWorking;
+            saveData();
+            updateUIFromGlobal();
+        }
+
+        function fullSiteReset() {
+            if (confirm("האם אתה בטוח שברצונך לאפס את כל האתר? כל המשתמשים והנתונים יימחקו לצמיתות!")) {
+                localStorage.removeItem('japanita_stable_data');
+                location.reload();
+            }
+        }
+
+        function updateF1StatusDisplay() {
+            const box = document.getElementById('f1StatusBox');
+            if (!box) return;
+            if (globalData.crash) {
+                box.className = 'f1-status-box offline';
+                box.innerText = 'סטטוס אתר: מושבת / קרס';
+            } else {
+                box.className = 'f1-status-box online';
+                box.innerText = 'סטטוס אתר: פעיל ותקין לחלוטין';
+            }
+        }
+
         function verifyAdminCode() {
-            if (document.getElementById('adminPasswordInput').value === 'mafuyama1245') {
+            const passInput = document.getElementById('adminPasswordInput').value;
+            const errorMsg = document.getElementById('adminErrorMsg');
+            if (passInput === 'mafuyama1245') {
                 document.getElementById('adminLoginSection').style.display = 'none';
                 document.getElementById('adminDashboardSection').style.display = 'block';
+                updateRoleSelects();
+                renderRoles();
                 renderUsers();
+                updateAdminCategoriesSelect();
+                renderDishesForDelete();
             } else {
-                document.getElementById('adminErrorMsg').style.display = 'block';
+                errorMsg.style.display = 'block';
             }
         }
 
         function closeAdmin() { document.getElementById('adminModal').classList.remove('active'); }
+
+        function updateRoleSelects() {
+            const selectElem = document.getElementById('newRole');
+            if (!selectElem) return;
+            selectElem.innerHTML = (globalData.roles || []).map(r => `<option value="${r}">${r}</option>`).join('');
+        }
+
+        function addNewRole() {
+            const roleName = document.getElementById('newRoleName').value.trim();
+            if (roleName && !(globalData.roles || []).includes(roleName)) {
+                globalData.roles.push(roleName);
+                saveData();
+                updateRoleSelects();
+                renderRoles();
+                renderUsers();
+                renderUsersBadges();
+                document.getElementById('newRoleName').value = '';
+            }
+        }
+
+        function deleteRole(index) {
+            if ((globalData.roles || []).length <= 1) return;
+            const removedRole = globalData.roles[index];
+            globalData.roles.splice(index, 1);
+            globalData.users.forEach(u => { if (u.role === removedRole) u.role = globalData.roles[0]; });
+            saveData();
+            updateRoleSelects();
+            renderRoles();
+            renderUsers();
+            renderUsersBadges();
+        }
+
+        function renderRoles() {
+            const roleList = document.getElementById('roleList');
+            if (!roleList) return;
+            roleList.innerHTML = '';
+            (globalData.roles || []).forEach((r, index) => {
+                const div = document.createElement('div');
+                div.className = 'user-item';
+                div.innerHTML = `<span><b>${r}</b></span><button class="delete-btn" onclick="deleteRole(${index})">מחק</button>`;
+                roleList.appendChild(div);
+            });
+        }
 
         function renderUsers() {
             const userList = document.getElementById('userList');
@@ -1107,44 +1907,40 @@
             (globalData.users || []).forEach((u, index) => {
                 const div = document.createElement('div');
                 div.className = 'user-item';
-                div.innerHTML = `<span><b>${u.username}</b> (קוד: ${u.pin})</span><button class="delete-btn" onclick="deleteUser(${index})">מחק</button>`;
+                let roleOptions = (globalData.roles || []).map(r => `<option value="${r}" ${u.role === r ? 'selected' : ''}>${r}</option>`).join('');
+                div.innerHTML = `<span><b>${u.username}</b> (קוד: ${u.pin})</span><div style="display: flex; gap: 6px; align-items: center;"><select class="admin-select" style="padding: 3px 6px; font-size: 0.8rem;" onchange="changeUserRole(${index}, this.value)">${roleOptions}</select><button class="delete-btn" onclick="deleteUser(${index})">מחק</button></div>`;
                 userList.appendChild(div);
             });
-            document.getElementById('newRole').innerHTML = (globalData.roles || []).map(r => `<option value="${r}">${r}</option>`).join('');
-            document.getElementById('newDishCategory').innerHTML = [...new Set((globalData.menuItems || []).map(item => item.category))].map(c => `<option value="${c}">${c}</option>`).join('');
         }
 
-        async function addUser() {
+        function changeUserRole(index, newRole) {
+            globalData.users[index].role = newRole;
+            saveData();
+            renderUsersBadges();
+        }
+
+        function addUser() {
             const newUsername = document.getElementById('newUsername').value.trim();
             const newPin = document.getElementById('newPin').value.trim();
             const newRole = document.getElementById('newRole').value;
             if (newUsername && newPin) {
                 globalData.users.push({ username: newUsername, pin: newPin, role: newRole });
-                await syncToCloud();
+                saveData();
                 renderUsers();
+                renderUsersBadges();
+                renderLeaderboard();
                 document.getElementById('newUsername').value = '';
                 document.getElementById('newPin').value = '';
-                alert("המשתמש נוצר וסונכרן מיידית לכל המכשירים!");
+                alert("המשתמש נוסף בהצלחה!");
             }
         }
 
-        async function deleteUser(index) {
+        function deleteUser(index) {
             globalData.users.splice(index, 1);
-            await syncToCloud();
+            saveData();
             renderUsers();
-        }
-
-        async function addCustomDish() {
-            const name = document.getElementById('newDishName').value.trim();
-            const price = parseFloat(document.getElementById('newDishPrice').value);
-            const category = document.getElementById('newDishCategory').value;
-            if (name && !isNaN(price)) {
-                globalData.menuItems.push({ category: category, name: name, price: price });
-                await syncToCloud();
-                document.getElementById('newDishName').value = '';
-                document.getElementById('newDishPrice').value = '';
-                alert("המנה נוספה בהצלחה!");
-            }
+            renderUsersBadges();
+            renderLeaderboard();
         }
     </script>
 </body>
