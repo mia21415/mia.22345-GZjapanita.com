@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
@@ -140,28 +141,6 @@
         .earning-item span {
             color: #ff8888;
             font-weight: 700;
-        }
-
-        .sync-indicator {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.78rem;
-            color: #55ff99;
-        }
-
-        .sync-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #55ff99;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #55ff99;
-            animation: pulseDot 2s infinite;
-        }
-
-        @keyframes pulseDot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(0.8); }
         }
 
         /* ----- מסך האתר הראשי ----- */
@@ -1125,12 +1104,8 @@
         <div class="crash-text">אי אפשר להיכנס לאתר כרגע.</div>
     </div>
 
-    <!-- מד רווחים ומשכורת אישית עליון -->
+    <!-- מד רווחים אישיים ומשכורת אישית עליון -->
     <div class="earnings-top-bar" id="earningsTopBar">
-        <div class="sync-indicator" title="מסונכרן בזמן אמת בכל המכשירים">
-            <div class="sync-dot" id="topSyncDot"></div>
-            <span id="topSyncText">מסונכרן חי</span>
-        </div>
         <div class="earning-item">רווחי מסעדה: <span id="totalRestaurantRevenue">₪0</span></div>
         <div class="earning-item">המשכורת שלי (20%): <span id="mySalaryRevenue">₪0</span></div>
     </div>
@@ -1453,11 +1428,11 @@
                 crashScreen.classList.remove('active');
             }
 
-            let totalRev = globalData.revenue || 0;
+            // חישוב לפי המשתמש האישי שמחובר כרגע בלבד!
             let mySales = getUserSalesAmount(currentLoggedUser);
             let mySalary = mySales * 0.20;
 
-            document.getElementById('totalRestaurantRevenue').innerText = '₪' + Math.round(totalRev).toLocaleString();
+            document.getElementById('totalRestaurantRevenue').innerText = '₪' + Math.round(mySales).toLocaleString();
             document.getElementById('mySalaryRevenue').innerText = '₪' + Math.round(mySalary).toLocaleString();
 
             renderMenu();
@@ -2115,3 +2090,4 @@
     </script>
 </body>
 </html>
+```
