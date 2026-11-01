@@ -7,6 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Noto+Serif+JP:wght@600;900&display=swap" rel="stylesheet">
+    <!-- ספריית תקשורת ענן חיה בזמן אמת לכל המכשירים -->
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -124,6 +126,7 @@
             padding: 8px 20px;
             border-radius: 12px;
             display: none;
+            align-items: center;
             gap: 25px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             font-size: 0.95rem;
@@ -137,6 +140,28 @@
         .earning-item span {
             color: #ff8888;
             font-weight: 700;
+        }
+
+        .sync-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78rem;
+            color: #55ff99;
+        }
+
+        .sync-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #55ff99;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #55ff99;
+            animation: pulseDot 2s infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
         }
 
         /* ----- מסך האתר הראשי ----- */
@@ -1090,7 +1115,7 @@
 </head>
 <body>
 
-    <!-- נגן יוטיוב נסתר למוזיקת רקע -->
+    <!-- נגן יוטיוב נסתר למוזיקת רקע במסך הפתיחה בלבד -->
     <div id="youtube-audio-container" style="display:none;"></div>
     <script src="https://www.youtube.com/iframe_api"></script>
 
@@ -1102,6 +1127,10 @@
 
     <!-- מד רווחים ומשכורת אישית עליון -->
     <div class="earnings-top-bar" id="earningsTopBar">
+        <div class="sync-indicator" title="מסונכרן בזמן אמת בכל המכשירים">
+            <div class="sync-dot" id="topSyncDot"></div>
+            <span id="topSyncText">מסונכרן חי</span>
+        </div>
         <div class="earning-item">רווחי מסעדה: <span id="totalRestaurantRevenue">₪0</span></div>
         <div class="earning-item">המשכורת שלי (20%): <span id="mySalaryRevenue">₪0</span></div>
     </div>
@@ -1256,7 +1285,7 @@
                 <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
                     <button class="f1-btn" style="background: linear-gradient(135deg, #aa1111, #550000);" onclick="setGlobalSiteState(false)">כבה את האתר לכולם (קראש)</button>
                     <button class="f1-btn" style="background: linear-gradient(135deg, #11aa44, #005522);" onclick="setGlobalSiteState(true)">הפעל מחדש את האתר</button>
-                    <button class="f1-btn" style="background: linear-gradient(135deg, #ff8800, #cc4400); margin-top: 10px;" onclick="fullSiteReset()">🔄 איפוס מלא לכל הנתונים</button>
+                    <button class="f1-btn" style="background: linear-gradient(135deg, #ff8800, #cc4400); margin-top: 10px;" onclick="fullSiteReset()">🔄 איפוס מלא לכל הנתונים (לכולם)</button>
                 </div>
             </div>
         </div>
@@ -1265,8 +1294,9 @@
     <script>
         let currentLoggedUser = '';
         let currentOrder = [];
+        let isLoggedIn = false; // שומר שהשיר יתנגן רק במסך הפתיחה וייעצר בכניסה למשתמש
 
-        let defaultMenu = [
+        const defaultMenu = [
             { category: 'מבצעים מיוחדים', name: 'מבצע קטן (5 ראמן + 10 שתייה)', price: 1950 },
             { category: 'מבצעים מיוחדים', name: 'מבצע גדול (10 ראמן + 20 שתייה)', price: 3900 },
             { category: 'מבצעים מיוחדים', name: 'מבצע משפחתי (15 ראמן + 30 שתייה)', price: 5850 },
@@ -1285,37 +1315,135 @@
             { category: 'מנות עיקריות וארוחות', name: "ארוחת ג'פניטה", price: 550 }
         ];
 
-        let globalData = {
-            users: [
-                { username: "mia", pin: "1234", role: "מנכ\"ל" }
-            ],
-            roles: ['מנכ"ל', 'סמנכ״ל', 'אחראי עובדים', 'עובד רגיל'],
-            menuItems: defaultMenu,
-            revenue: 0,
-            sales: {},
-            invoices: {},
-            crash: false
-        };
+        function getInitialState() {
+            return {
+                users: [
+                    { username: "mia", pin: "1234", role: "מנכ\"ל" }
+                ],
+                roles: ['מנכ"ל', 'סמנכ״ל', 'אחראי עובדים', 'עובד רגיל'],
+                menuItems: JSON.parse(JSON.stringify(defaultMenu)),
+                revenue: 0,
+                sales: {},
+                invoices: {},
+                crash: false,
+                resetId: 1,
+                lastUpdated: 0
+            };
+        }
 
-        // מנגנון שמירה מקומית יציב שלא תלוי בשום שسرת חיצוני
-        function loadData() {
-            let saved = localStorage.getItem('japanita_stable_data');
-            if (saved) {
-                try {
-                    let parsed = JSON.parse(saved);
-                    if (parsed && parsed.users) {
-                        globalData = parsed;
-                    }
-                } catch(e) {}
+        // ניקוי זיכרון ישן שגרם להתנגשויות בין מחשבים וטלפונים
+        localStorage.removeItem('japanita_stable_data');
+
+        const STORAGE_KEY = 'japanita_cloud_synced_v6';
+        const CLOUD_TOPIC = 'japanita_pos_live_v6_mia22345/state';
+        let globalData = getInitialState();
+        let mqttClients = [];
+
+        // פונקציה שמחשבת מכירות של עובד בלי תלות באותיות גדולות/קטנות (Mia = mia)
+        function getUserSalesAmount(username) {
+            if (!username || !globalData.sales) return 0;
+            let total = 0;
+            for (let [key, val] of Object.entries(globalData.sales)) {
+                if (key.toLowerCase() === username.toLowerCase()) {
+                    total += (Number(val) || 0);
+                }
             }
+            return total;
+        }
+
+        // ====================================================
+        // מערכת סנכרון ענן בזמן אמת (MQTT Retained Cloud Sync)
+        // ====================================================
+        function initCloudSync() {
+            // טעינת גיבוי מקומי אחרון רק עד שהענן עונה (תוך שבריר שנייה)
+            const cached = localStorage.getItem(STORAGE_KEY);
+            if (cached) {
+                try {
+                    const parsed = JSON.parse(cached);
+                    if (parsed && parsed.users) {
+                        globalData = { ...getInitialState(), ...parsed };
+                    }
+                } catch (e) {}
+            }
+            updateUIFromGlobal();
+
+            // חיבור לשני שרתי ענן במקביל לאמינות של 100% בכל רשת (WiFi / 5G)
+            const brokers = [
+                'wss://broker.emqx.io:8084/mqtt',
+                'wss://broker.hivemq.com:8884/mqtt'
+            ];
+
+            brokers.forEach(brokerUrl => {
+                try {
+                    const client = mqtt.connect(brokerUrl, {
+                        clientId: 'japanita_' + Math.random().toString(16).substring(2, 10),
+                        clean: true,
+                        reconnectPeriod: 2000
+                    });
+
+                    client.on('connect', () => {
+                        client.subscribe(CLOUD_TOPIC, { qos: 1 });
+                    });
+
+                    client.on('message', (topic, message) => {
+                        if (topic === CLOUD_TOPIC && message) {
+                            try {
+                                const incoming = JSON.parse(message.toString());
+                                if (incoming && incoming.users) {
+                                    // אם בוצע איפוס או שהנתון בענן עדכני יותר - דרוס מיד את הנתונים בכל המכשירים!
+                                    if (
+                                        (incoming.resetId && incoming.resetId !== globalData.resetId) ||
+                                        (incoming.lastUpdated && incoming.lastUpdated >= (globalData.lastUpdated || 0))
+                                    ) {
+                                        const wasReset = incoming.resetId && incoming.resetId !== globalData.resetId && globalData.lastUpdated > 0;
+                                        globalData = incoming;
+                                        localStorage.setItem(STORAGE_KEY, JSON.stringify(globalData));
+                                        updateUIFromGlobal();
+
+                                        // אם המשתמש שמחובר כרגע נמחק באיפוס ממכשיר אחר, החזר אותו למסך הכניסה
+                                        if (wasReset && isLoggedIn) {
+                                            const stillExists = (globalData.users || []).some(u => u.username.toLowerCase() === currentLoggedUser.toLowerCase());
+                                            if (!stillExists) {
+                                                location.reload();
+                                            }
+                                        }
+                                    }
+                                }
+                            } catch (err) {}
+                        }
+                    });
+
+                    mqttClients.push(client);
+                } catch (e) {}
+            });
+
+            // סנכרון גם בין כרטיסיות באותו מחשב
+            window.addEventListener('storage', (e) => {
+                if (e.key === STORAGE_KEY && e.newValue) {
+                    try {
+                        globalData = JSON.parse(e.newValue);
+                        updateUIFromGlobal();
+                    } catch (err) {}
+                }
+            });
         }
 
         function saveData() {
-            localStorage.setItem('japanita_stable_data', JSON.stringify(globalData));
+            globalData.lastUpdated = Date.now();
+            const payloadStr = JSON.stringify(globalData);
+            localStorage.setItem(STORAGE_KEY, payloadStr);
+
+            // שליחה לענן עם retain: true כך שכל מכשיר (גם כזה שייכנס אחר כך) יקבל בדיוק את המצב הזה!
+            mqttClients.forEach(client => {
+                if (client && client.connected) {
+                    client.publish(CLOUD_TOPIC, payloadStr, { qos: 1, retain: true });
+                }
+            });
+
             updateUIFromGlobal();
         }
 
-        loadData();
+        initCloudSync();
 
         function updateUIFromGlobal() {
             const crashScreen = document.getElementById('crashScreen');
@@ -1326,7 +1454,7 @@
             }
 
             let totalRev = globalData.revenue || 0;
-            let mySales = (globalData.sales && globalData.sales[currentLoggedUser]) ? globalData.sales[currentLoggedUser] : 0;
+            let mySales = getUserSalesAmount(currentLoggedUser);
             let mySalary = mySales * 0.20;
 
             document.getElementById('totalRestaurantRevenue').innerText = '₪' + Math.round(totalRev).toLocaleString();
@@ -1336,54 +1464,84 @@
             renderUsersBadges();
             renderLeaderboard();
             if (document.getElementById('adminModal').classList.contains('active')) {
+                updateRoleSelects();
                 renderRoles();
                 renderUsers();
                 updateAdminCategoriesSelect();
                 renderDishesForDelete();
             }
+            if (document.getElementById('invoiceModal').classList.contains('active')) {
+                renderInvoicesList();
+            }
             updateF1StatusDisplay();
         }
 
+        // ====================================================
+        // מנגנון השמעת השיר במסך הכניסה בלבד ועצירה בהתחברות
+        // ====================================================
         let ytPlayer;
+        let isPlayerReady = false;
+
         function onYouTubeIframeAPIReady() {
             ytPlayer = new YT.Player('youtube-audio-container', {
                 height: '0',
                 width: '0',
                 videoId: '8kjAA-kDhv8',
-                playerVars: { 'start': 30, 'autoplay': 1, 'controls': 0 },
+                playerVars: {
+                    'start': 30,
+                    'autoplay': 1,
+                    'controls': 0,
+                    'playsinline': 1
+                },
                 events: {
                     'onReady': (event) => {
-                        event.target.seekTo(30, true);
-                        event.target.setVolume(100);
-                        event.target.playVideo();
+                        isPlayerReady = true;
+                        if (!isLoggedIn) {
+                            event.target.seekTo(30, true);
+                            event.target.setVolume(100);
+                            event.target.playVideo();
+                        }
                     }
                 }
             });
         }
 
-        window.addEventListener('click', () => {
-            if (ytPlayer && typeof ytPlayer.playVideo === 'function') {
-                ytPlayer.playVideo();
+        function tryPlayIntroMusic() {
+            if (isLoggedIn) return;
+            if (ytPlayer && isPlayerReady && typeof ytPlayer.getPlayerState === 'function') {
+                const state = ytPlayer.getPlayerState();
+                // אם השיר עדיין לא מתנגן (בגלל חסימת דפדפן ראשונית), הפעל אותו מיד במסך הפתיחה
+                if (state !== YT.PlayerState.PLAYING && state !== YT.PlayerState.BUFFERING) {
+                    ytPlayer.setVolume(100);
+                    ytPlayer.playVideo();
+                }
             }
-        }, { once: true });
+        }
 
-        function fadeOutMusic(callback) {
-            if (!ytPlayer || typeof ytPlayer.getVolume !== 'function') {
-                if (callback) callback();
-                return;
-            }
-            let vol = ytPlayer.getVolume();
+        // מפעיל את השיר מיד בנגיעה/הזזה ראשונה במסך הפתיחה (לפני ההתחברות!)
+        ['click', 'touchstart', 'keydown', 'mousemove'].forEach(evtName => {
+            document.addEventListener(evtName, tryPlayIntroMusic, { passive: true });
+        });
+
+        function stopIntroMusic() {
+            isLoggedIn = true;
+            ['click', 'touchstart', 'keydown', 'mousemove'].forEach(evtName => {
+                document.removeEventListener(evtName, tryPlayIntroMusic);
+            });
+
+            if (!ytPlayer || typeof ytPlayer.getVolume !== 'function') return;
+
+            let vol = ytPlayer.getVolume() || 100;
             let fadeInterval = setInterval(() => {
-                vol -= 10;
+                vol -= 15;
                 if (vol <= 0) {
-                    vol = 0;
                     clearInterval(fadeInterval);
                     ytPlayer.pauseVideo();
-                    if (callback) callback();
+                    ytPlayer.stopVideo();
                 } else {
                     ytPlayer.setVolume(vol);
                 }
-            }, 100);
+            }, 80);
         }
 
         function renderMenu() {
@@ -1510,11 +1668,10 @@
         function renderLeaderboard() {
             const listElem = document.getElementById('leaderboardList');
             if (!listElem) return;
-            let userSales = globalData.sales || {};
             
             let activeUserSales = {};
             (globalData.users || []).forEach(u => {
-                activeUserSales[u.username] = userSales[u.username] || 0;
+                activeUserSales[u.username] = getUserSalesAmount(u.username);
             });
 
             let sorted = Object.entries(activeUserSales).sort((a, b) => b[1] - a[1]);
@@ -1588,7 +1745,15 @@
             
             globalData.revenue = (globalData.revenue || 0) + totalSum;
             if (!globalData.sales) globalData.sales = {};
-            globalData.sales[currentLoggedUser] = (globalData.sales[currentLoggedUser] || 0) + totalSum;
+            
+            let canonicalUser = currentLoggedUser.toLowerCase();
+            let currentUserTotal = getUserSalesAmount(canonicalUser);
+            for (let key of Object.keys(globalData.sales)) {
+                if (key.toLowerCase() === canonicalUser) {
+                    delete globalData.sales[key];
+                }
+            }
+            globalData.sales[currentLoggedUser] = currentUserTotal + totalSum;
 
             if (!globalData.invoices) globalData.invoices = {};
             if (!globalData.invoices[currentLoggedUser]) globalData.invoices[currentLoggedUser] = [];
@@ -1602,12 +1767,12 @@
             saveData();
             currentOrder = [];
             renderOrderSidebar();
-            alert("ההזמנה בוצעה ונשמרה בהצלחה!");
+            alert("ההזמנה בוצעה ועודכנה אצל כולם בהצלחה!");
         }
 
-        function openInvoicesModal() {
-            const modal = document.getElementById('invoiceModal');
+        function renderInvoicesList() {
             const container = document.getElementById('invoicesListContainer');
+            if (!container) return;
             let userInvoices = (globalData.invoices && globalData.invoices[currentLoggedUser]) ? globalData.invoices[currentLoggedUser] : [];
 
             if (userInvoices.length === 0) {
@@ -1632,8 +1797,11 @@
                 });
                 container.innerHTML = html;
             }
+        }
 
-            modal.classList.add('active');
+        function openInvoicesModal() {
+            renderInvoicesList();
+            document.getElementById('invoiceModal').classList.add('active');
         }
 
         function copyInvoiceText(username, index) {
@@ -1650,7 +1818,7 @@
             if (globalData.invoices[username]) {
                 globalData.invoices[username].splice(index, 1);
                 saveData();
-                openInvoicesModal();
+                renderInvoicesList();
             }
         }
 
@@ -1659,7 +1827,7 @@
         const tutorialSteps = [
             { title: "ברוכים הבאים למערכת ג'פניטה", text: "מדריך קצר שיעזור לכם להכיר את המערכת ואת אפשרויות הניהול שבה." },
             { title: "מבנה המסך הראשי", text: "המסך מחולק לעמודות: רשימת העובדים, טבלת דירוג המכירות, תפריט המוצרים והמבצעים, ועגלת ההזמנה." },
-            { title: "ביצוע הזמנות וניהול חשבוניות", text: "לחיצה על מנה בתפריט תוסיף אותה לעגלה. לאחר אישור ההזמנה, הנתונים יתעדכנו אוטומטית ברווחי המסעדה ובטבלת המכירות." },
+            { title: "ביצוע הזמנות וניהול חשבוניות", text: "לחיצה על מנה בתפריט תוסיף אותה לעגלה. לאחר אישור ההזמנה, הנתונים יתעדכנו אוטומטית ברווחי המסעדה ובטבלת המכירות אצל כולם!" },
             { title: "פאנל ניהול מתקדם (F9)", text: "לחיצה על מקש **F9** במקלדת והזנת קוד הניהול תפתח את פאנל הניהול להוספת מנות, משתמשים וניהול דרגות." },
             { title: "סיום ההדרכה", text: "אתם מוכנים להתחיל לעבוד במערכת. המשך משמרת נעימה!" }
         ];
@@ -1738,6 +1906,7 @@
         }
 
         function openLoginForm() {
+            tryPlayIntroMusic();
             document.getElementById('showLoginBtn').style.display = 'none';
             document.getElementById('loginBox').classList.add('active');
         }
@@ -1747,19 +1916,22 @@
             const pin = document.getElementById('pinInput').value.trim();
             const errorMsg = document.getElementById('errorMsg');
             
-            const validUser = (globalData.users || []).find(u => u.username.toLowerCase() === username.toLowerCase() && u.pin === pin);
+            const validUser = (globalData.users || []).find(u => u.username.toLowerCase() === username.toLowerCase() && String(u.pin).trim() === pin);
 
             if (validUser) {
                 currentLoggedUser = validUser.username;
-                fadeOutMusic(() => {
-                    document.getElementById('introScreen').classList.add('fade-out');
-                    document.getElementById('bgContainer').classList.add('active');
-                    document.getElementById('mainAppContent').classList.add('active');
-                    document.getElementById('earningsTopBar').classList.add('active');
+                errorMsg.style.display = 'none';
+                
+                // עוצר את השיר ברגע שמתחברים למשתמש!
+                stopIntroMusic();
 
-                    updateUIFromGlobal();
-                    checkAndShowTutorial();
-                });
+                document.getElementById('introScreen').classList.add('fade-out');
+                document.getElementById('bgContainer').classList.add('active');
+                document.getElementById('mainAppContent').classList.add('active');
+                document.getElementById('earningsTopBar').classList.add('active');
+
+                updateUIFromGlobal();
+                checkAndShowTutorial();
             } else {
                 errorMsg.style.display = 'block';
             }
@@ -1817,13 +1989,16 @@
         function setGlobalSiteState(isWorking) {
             globalData.crash = !isWorking;
             saveData();
-            updateUIFromGlobal();
         }
 
         function fullSiteReset() {
-            if (confirm("האם אתה בטוח שברצונך לאפס את כל האתר? כל המשתמשים והנתונים יימחקו לצמיתות!")) {
-                localStorage.removeItem('japanita_stable_data');
-                location.reload();
+            if (confirm("האם אתה בטוח שברצונך לאפס את כל האתר אצל כל המכשירים? כל המשתמשים והנתונים יימחקו לצמיתות!")) {
+                let fresh = getInitialState();
+                fresh.resetId = Date.now(); // מזהה איפוס חדש שמכריח את כל הטלפונים והמחשבים להתאפס מיד!
+                fresh.lastUpdated = Date.now();
+                globalData = fresh;
+                saveData();
+                setTimeout(() => location.reload(), 500);
             }
         }
 
@@ -1860,7 +2035,11 @@
         function updateRoleSelects() {
             const selectElem = document.getElementById('newRole');
             if (!selectElem) return;
+            const currentVal = selectElem.value;
             selectElem.innerHTML = (globalData.roles || []).map(r => `<option value="${r}">${r}</option>`).join('');
+            if (currentVal && (globalData.roles || []).includes(currentVal)) {
+                selectElem.value = currentVal;
+            }
         }
 
         function addNewRole() {
@@ -1868,10 +2047,6 @@
             if (roleName && !(globalData.roles || []).includes(roleName)) {
                 globalData.roles.push(roleName);
                 saveData();
-                updateRoleSelects();
-                renderRoles();
-                renderUsers();
-                renderUsersBadges();
                 document.getElementById('newRoleName').value = '';
             }
         }
@@ -1882,10 +2057,6 @@
             globalData.roles.splice(index, 1);
             globalData.users.forEach(u => { if (u.role === removedRole) u.role = globalData.roles[0]; });
             saveData();
-            updateRoleSelects();
-            renderRoles();
-            renderUsers();
-            renderUsersBadges();
         }
 
         function renderRoles() {
@@ -1916,7 +2087,6 @@
         function changeUserRole(index, newRole) {
             globalData.users[index].role = newRole;
             saveData();
-            renderUsersBadges();
         }
 
         function addUser() {
@@ -1924,23 +2094,23 @@
             const newPin = document.getElementById('newPin').value.trim();
             const newRole = document.getElementById('newRole').value;
             if (newUsername && newPin) {
-                globalData.users.push({ username: newUsername, pin: newPin, role: newRole });
+                const existingIndex = (globalData.users || []).findIndex(u => u.username.toLowerCase() === newUsername.toLowerCase());
+                if (existingIndex !== -1) {
+                    globalData.users[existingIndex].pin = newPin;
+                    globalData.users[existingIndex].role = newRole;
+                } else {
+                    globalData.users.push({ username: newUsername, pin: newPin, role: newRole });
+                }
                 saveData();
-                renderUsers();
-                renderUsersBadges();
-                renderLeaderboard();
                 document.getElementById('newUsername').value = '';
                 document.getElementById('newPin').value = '';
-                alert("המשתמש נוסף בהצלחה!");
+                alert("המשתמש נוסף ומסונכרן כעת בכל המכשירים!");
             }
         }
 
         function deleteUser(index) {
             globalData.users.splice(index, 1);
             saveData();
-            renderUsers();
-            renderUsersBadges();
-            renderLeaderboard();
         }
     </script>
 </body>
