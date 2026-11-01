@@ -1343,7 +1343,8 @@
                 <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
                     <button class="f1-btn" style="background: linear-gradient(135deg, #aa1111, #550000);" onclick="setGlobalSiteState(false)">כבה את האתר לכולם (קראש)</button>
                     <button class="f1-btn" style="background: linear-gradient(135deg, #11aa44, #005522);" onclick="setGlobalSiteState(true)">הפעל מחדש את האתר</button>
-                    <button class="f1-btn" style="background: linear-gradient(135deg, #ff8800, #cc4400); margin-top: 10px;" onclick="fullSiteReset()">🔄 איפוס מלא לכל הנתונים (לכולם)</button>
+                    <button class="f1-btn" style="background: linear-gradient(135deg, #2b6cb0, #1a365d); margin-top: 6px;" onclick="resetAllSalariesAndSales()">💰 איפוס משכורות, מכירות וחשבוניות (לכולם)</button>
+                    <button class="f1-btn" style="background: linear-gradient(135deg, #ff8800, #cc4400); margin-top: 4px;" onclick="fullSiteReset()">🔄 איפוס מלא לכל הנתונים (לכולם)</button>
                 </div>
             </div>
         </div>
@@ -1486,6 +1487,7 @@
 
         // ====================================================
         // מערכת סנכרון ענן בזמן אמת (MQTT Retained Cloud Sync)
+        // ללא איפוס שבועי אוטומטי - איפוס מתבצע ידנית ב-F1 בלבד
         // ====================================================
         function initCloudSync() {
             const cached = localStorage.getItem(STORAGE_KEY);
@@ -1939,16 +1941,11 @@
             const container = document.getElementById('invoicesListContainer');
             if (!container) return;
             let userInvoices = getUserInvoicesList(currentLoggedUser);
-            let currentSales = getUserSalesAmount(currentLoggedUser);
 
-            if (userInvoices.length === 0 && currentSales === 0) {
+            if (userInvoices.length === 0) {
                 container.innerHTML = '<div style="text-align:center; color:#aaa;">אין עדיין חשבוניות שמורות לחשבון זה.</div>';
             } else {
-                let html = `
-                    <button class="admin-btn" style="margin-bottom: 8px; background: linear-gradient(135deg, #aa1111, #550000);" onclick="clearAllUserInvoices('${currentLoggedUser}')">
-                        מחק את כל החשבוניות ואפס רווחים ומשכורת
-                    </button>
-                `;
+                let html = '';
                 userInvoices.forEach((inv, i) => {
                     let itemsDesc = (inv.items || []).map(it => `${it.name} x${it.qty}`).join(', ');
                     html += `
@@ -1960,7 +1957,6 @@
                             </div>
                             <div class="invoice-actions">
                                 <button class="copy-btn" onclick="copyInvoiceText('${currentLoggedUser}', ${i})">העתק קבלה</button>
-                                <button class="delete-btn" onclick="deleteInvoice('${currentLoggedUser}', ${i})">מחק חשבונית</button>
                             </div>
                         </div>
                     `;
@@ -1983,27 +1979,6 @@
             let textToCopy = `קבלה - ג'פניטה\nתאריך: ${inv.date}\nעובד: ${username}\n------------------\n${itemsList}\n------------------\nסה"כ לתשלום: ₪${inv.total.toLocaleString()}`;
 
             navigator.clipboard.writeText(textToCopy).catch(err => {});
-        }
-
-        function deleteInvoice(username, index) {
-            let userInvoices = getUserInvoicesList(username);
-            if (userInvoices.length > index) {
-                userInvoices.splice(index, 1);
-                setUserInvoicesList(username, userInvoices);
-
-                let remainingTotal = userInvoices.reduce((sum, inv) => sum + (Number(inv.total) || 0), 0);
-                setUserSalesAmount(username, remainingTotal);
-
-                saveData();
-                renderInvoicesList();
-            }
-        }
-
-        function clearAllUserInvoices(username) {
-            setUserInvoicesList(username, []);
-            setUserSalesAmount(username, 0);
-            saveData();
-            renderInvoicesList();
         }
 
         function closeInvoicesModal() { document.getElementById('invoiceModal').classList.remove('active'); }
@@ -2172,6 +2147,20 @@
         function setGlobalSiteState(isWorking) {
             globalData.crash = !isWorking;
             saveData();
+        }
+
+        // איפוס משכורות, מכירות וחשבוניות בלבד דרך F1
+        function resetAllSalariesAndSales() {
+            globalData.sales = {};
+            globalData.revenue = 0;
+            globalData.invoices = {};
+            saveData();
+
+            const box = document.getElementById('f1StatusBox');
+            if (box) {
+                box.className = 'f1-status-box online';
+                box.innerText = 'המשכורות, המכירות והחשבוניות אופסו לכולם!';
+            }
         }
 
         function fullSiteReset() {
@@ -2354,4 +2343,3 @@
     </script>
 </body>
 </html>
-```
