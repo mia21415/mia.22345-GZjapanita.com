@@ -1,3 +1,6 @@
+
+
+```html
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
@@ -280,6 +283,7 @@
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
+            gap: 6px;
         }
 
         .menu-item-btn:hover {
@@ -291,6 +295,7 @@
         .item-price {
             color: #ff8888;
             font-weight: 700;
+            white-space: nowrap;
         }
 
         .column-order {
@@ -780,7 +785,7 @@
             background: rgba(18, 18, 18, 0.95);
             border: 1px solid rgba(255, 59, 59, 0.3);
             border-radius: 16px;
-            width: 500px;
+            width: 520px;
             max-width: 100%;
             max-height: 90vh;
             overflow-y: auto;
@@ -969,7 +974,7 @@
         }
 
         .user-list {
-            max-height: 120px;
+            max-height: 150px;
             overflow-y: auto;
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 8px;
@@ -981,10 +986,42 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 6px;
+            padding: 7px 8px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             font-size: 0.85rem;
             gap: 8px;
+            border-radius: 6px;
+            transition: background 0.2s, transform 0.15s;
+        }
+
+        /* עיצוב גרירת משתמשים (Drag & Drop) */
+        .user-item.draggable-user {
+            cursor: grab;
+            user-select: none;
+        }
+
+        .user-item.draggable-user:active {
+            cursor: grabbing;
+        }
+
+        .user-item.dragging {
+            opacity: 0.4;
+            background: rgba(255, 59, 59, 0.2);
+            border: 1px dashed #ff3b3b;
+        }
+
+        .user-item.drag-over {
+            border-top: 2px solid #ff3b3b;
+            background: rgba(255, 59, 59, 0.12);
+        }
+
+        .drag-handle {
+            color: #ff6b6b;
+            font-size: 1rem;
+            cursor: grab;
+            margin-left: 6px;
+            display: inline-flex;
+            align-items: center;
         }
 
         .delete-btn {
@@ -1202,7 +1239,19 @@
             </div>
             <div id="adminDashboardSection" style="display: none;">
                 <div class="admin-header">פאנל ניהול - ג'פניטה</div>
+
+                <!-- יצירת וניהול קטגוריות בעצמכם -->
+                <div class="admin-form" style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+                    <div style="font-size: 0.9rem; color: #ff8888; margin-bottom: 6px;">יצירה וניהול קטגוריות תפריט:</div>
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                        <input type="text" id="newCategoryStandaloneInput" class="admin-input" placeholder="שם קטגוריה חדשה..." style="flex: 1; margin-bottom: 0;">
+                        <button class="admin-btn" onclick="addStandaloneCategory()" style="background: linear-gradient(135deg, #333, #555);">צור קטגוריה</button>
+                    </div>
+                    <div style="font-size:0.80rem; color:#aaa; margin-bottom:4px;">קטגוריות קיימות:</div>
+                    <div class="user-list" id="categoriesListAdmin" style="max-height: 95px;"></div>
+                </div>
                 
+                <!-- הוספת מנה חדשה לתפריט -->
                 <div class="admin-form" style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; margin-bottom: 15px;">
                     <div style="font-size: 0.9rem; color: #ff8888; margin-bottom: 6px;">הוספת מנה חדשה לתפריט:</div>
                     <input type="text" id="newDishName" class="admin-input" placeholder="שם המנה" style="margin-bottom: 6px;">
@@ -1215,11 +1264,13 @@
                     <button class="admin-btn" onclick="addCustomDish()">הוסף מנה לתפריט</button>
                 </div>
 
+                <!-- מחיקת מנות מהתפריט -->
                 <div class="admin-form" style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
                     <div style="font-size: 0.85rem; color: #ff8888; margin-bottom: 5px;">מחיקת מנות מהתפריט:</div>
                     <div class="user-list" id="dishesListForDelete" style="max-height: 110px;"></div>
                 </div>
 
+                <!-- ניהול דרגות -->
                 <div class="admin-form" style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
                     <div style="font-size: 0.85rem; color: #ff8888; margin-bottom: 5px;">ניהול דרגות במערכת:</div>
                     <div style="display: flex; gap: 8px; margin-bottom: 8px;">
@@ -1230,6 +1281,7 @@
                     <div class="user-list" id="roleList" style="max-height: 90px;"></div>
                 </div>
 
+                <!-- יצירת משתמשים + גרירה לסידור הרשימה -->
                 <div class="admin-form">
                     <div style="font-size: 0.85rem; color: #ff8888; margin-bottom: 5px;">יצירת משתמש חדש:</div>
                     <input type="text" id="newUsername" class="admin-input" placeholder="שם משתמש חדש">
@@ -1237,8 +1289,8 @@
                     <select id="newRole" class="admin-select"></select>
                     <button class="admin-btn" onclick="addUser()">הוסף משתמש</button>
                 </div>
-                <div style="font-size:0.9rem; color:#aaa; margin-bottom:8px;">משתמשים קיימים:</div>
-                <div class="user-list" id="userList" style="max-height: 90px;"></div>
+                <div style="font-size:0.85rem; color:#ff8888; margin-bottom:6px;">משתמשים קיימים (גרור ☰ למעלה/למטה כדי לשנות את סדר הופעתם ברשימת העובדים):</div>
+                <div class="user-list" id="userList" style="max-height: 160px;"></div>
             </div>
         </div>
     </div>
@@ -1273,24 +1325,45 @@
         let currentLoggedUser = '';
         let currentOrder = [];
         let isLoggedIn = false; // שומר שהשיר יתנגן רק במסך הפתיחה וייעצר בכניסה למשתמש
+        let draggedUserIndex = null;
+
+        const defaultCategories = [
+            'מבצעים',
+            'הנחה לעובדי מדינה 25%',
+            'מנות עיקריות',
+            'ארוחות',
+            'קינוחים',
+            'שתייה'
+        ];
 
         const defaultMenu = [
-            { category: 'מבצעים מיוחדים', name: 'מבצע קטן (5 ראמן + 10 שתייה)', price: 1950 },
-            { category: 'מבצעים מיוחדים', name: 'מבצע גדול (10 ראמן + 20 שתייה)', price: 3900 },
-            { category: 'מבצעים מיוחדים', name: 'מבצע משפחתי (15 ראמן + 30 שתייה)', price: 5850 },
-            { category: 'עובדי מדינה', name: 'מבצע קטן', price: 1462, originalPrice: 1950 },
-            { category: 'עובדי מדינה', name: 'מבצע גדול', price: 2925, originalPrice: 3900 },
-            { category: 'עובדי מדינה', name: 'מבצע משפחתי', price: 4387, originalPrice: 5850 },
+            // מבצעים רגילים
+            { category: 'מבצעים', name: 'מבצע קטן', price: 1950 },
+            { category: 'מבצעים', name: 'מבצע גדול', price: 3900 },
+            { category: 'מבצעים', name: 'מבצע משפחתי', price: 5850 },
+
+            // הנחה לעובדי מדינה 25%
+            { category: 'הנחה לעובדי מדינה 25%', name: 'מבצע קטן', price: 1462, originalPrice: 1950 },
+            { category: 'הנחה לעובדי מדינה 25%', name: 'מבצע גדול', price: 2925, originalPrice: 3900 },
+            { category: 'הנחה לעובדי מדינה 25%', name: 'מבצע משפחתי', price: 4387, originalPrice: 5850 },
+
+            // מנות עיקריות (לפי התמונות)
+            { category: 'מנות עיקריות', name: 'ראמן מסורתי', price: 390 },
+            { category: 'מנות עיקריות', name: 'סושי מיקס', price: 390 },
+            { category: 'מנות עיקריות', name: 'טריאקי סלמון', price: 350 },
+            { category: 'מנות עיקריות', name: 'גיוזה לוקוס', price: 380 },
+
+            // ארוחות (לפי התמונות)
+            { category: 'ארוחות', name: "ארוחת ג'פניטה", price: 550 },
+
+            // קינוחים (לפי התמונות)
+            { category: 'קינוחים', name: 'קאסטלה יפנית', price: 160 },
+            { category: 'קינוחים', name: 'פנקייק יפני', price: 125 },
+
+            // שתייה (לפי התמונות)
             { category: 'שתייה', name: 'לימונדה יפנית', price: 100 },
             { category: 'שתייה', name: 'תה ירוק', price: 100 },
-            { category: 'שתייה', name: "מים - ג'פניטה", price: 100 },
-            { category: 'קינוחים', name: 'קאסטולה יפנית', price: 160 },
-            { category: 'קינוחים', name: 'פנקייק יפני', price: 125 },
-            { category: 'מנות עיקריות וארוחות', name: 'ראמן מסורתי', price: 390 },
-            { category: 'מנות עיקריות וארוחות', name: 'סושי מיקס', price: 390 },
-            { category: 'מנות עיקריות וארוחות', name: 'טריאקי סלמון', price: 350 },
-            { category: 'מנות עיקריות וארוחות', name: 'גיוזה לוקוס', price: 380 },
-            { category: 'מנות עיקריות וארוחות', name: "ארוחת ג'פניטה", price: 550 }
+            { category: 'שתייה', name: "מים - ג'פניטה", price: 100 }
         ];
 
         function getInitialState() {
@@ -1299,6 +1372,7 @@
                     { username: "mia", pin: "1234", role: "מנכ\"ל" }
                 ],
                 roles: ['מנכ"ל', 'סמנכ״ל', 'אחראי עובדים', 'עובד רגיל'],
+                categories: JSON.parse(JSON.stringify(defaultCategories)),
                 menuItems: JSON.parse(JSON.stringify(defaultMenu)),
                 revenue: 0,
                 sales: {},
@@ -1309,15 +1383,14 @@
             };
         }
 
-        // ניקוי זיכרון ישן שגרם להתנגשויות בין מחשבים וטלפונים
+        // ניקוי זיכרון ישן
         localStorage.removeItem('japanita_stable_data');
 
-        const STORAGE_KEY = 'japanita_cloud_synced_v6';
-        const CLOUD_TOPIC = 'japanita_pos_live_v6_mia22345/state';
+        const STORAGE_KEY = 'japanita_cloud_synced_v7';
+        const CLOUD_TOPIC = 'japanita_pos_live_v7_mia22345/state';
         let globalData = getInitialState();
         let mqttClients = [];
 
-        // פונקציה שמחשבת מכירות של עובד בלי תלות באותיות גדולות/קטנות (Mia = mia)
         function getUserSalesAmount(username) {
             if (!username || !globalData.sales) return 0;
             let total = 0;
@@ -1329,7 +1402,6 @@
             return total;
         }
 
-        // פונקציה שמחזירה את רשימת החשבוניות של עובד בלי תלות באותיות גדולות/קטנות
         function getUserInvoicesList(username) {
             if (!username || !globalData.invoices) return [];
             let list = [];
@@ -1362,7 +1434,6 @@
             }
             globalData.sales[username] = Math.max(0, Number(newAmount) || 0);
 
-            // עדכון סך רווחי המסעדה הכוללים
             let totalRev = 0;
             for (let val of Object.values(globalData.sales)) {
                 totalRev += (Number(val) || 0);
@@ -1370,23 +1441,33 @@
             globalData.revenue = totalRev;
         }
 
+        function ensureCategoriesList() {
+            if (!Array.isArray(globalData.categories)) {
+                globalData.categories = JSON.parse(JSON.stringify(defaultCategories));
+            }
+            (globalData.menuItems || []).forEach(item => {
+                if (item.category && !globalData.categories.includes(item.category)) {
+                    globalData.categories.push(item.category);
+                }
+            });
+        }
+
         // ====================================================
         // מערכת סנכרון ענן בזמן אמת (MQTT Retained Cloud Sync)
         // ====================================================
         function initCloudSync() {
-            // טעינת גיבוי מקומי אחרון רק עד שהענן עונה (תוך שבריר שנייה)
             const cached = localStorage.getItem(STORAGE_KEY);
             if (cached) {
                 try {
                     const parsed = JSON.parse(cached);
                     if (parsed && parsed.users) {
                         globalData = { ...getInitialState(), ...parsed };
+                        ensureCategoriesList();
                     }
                 } catch (e) {}
             }
             updateUIFromGlobal();
 
-            // חיבור לשני שרתי ענן במקביל לאמינות של 100% בכל רשת (WiFi / 5G)
             const brokers = [
                 'wss://broker.emqx.io:8084/mqtt',
                 'wss://broker.hivemq.com:8884/mqtt'
@@ -1409,17 +1490,16 @@
                             try {
                                 const incoming = JSON.parse(message.toString());
                                 if (incoming && incoming.users) {
-                                    // אם בוצע איפוס או שהנתון בענן עדכני יותר - דרוס מיד את הנתונים בכל המכשירים!
                                     if (
                                         (incoming.resetId && incoming.resetId !== globalData.resetId) ||
                                         (incoming.lastUpdated && incoming.lastUpdated >= (globalData.lastUpdated || 0))
                                     ) {
                                         const wasReset = incoming.resetId && incoming.resetId !== globalData.resetId && globalData.lastUpdated > 0;
                                         globalData = incoming;
+                                        ensureCategoriesList();
                                         localStorage.setItem(STORAGE_KEY, JSON.stringify(globalData));
                                         updateUIFromGlobal();
 
-                                        // אם המשתמש שמחובר כרגע נמחק באיפוס ממכשיר אחר, החזר אותו למסך הכניסה
                                         if (wasReset && isLoggedIn) {
                                             const stillExists = (globalData.users || []).some(u => u.username.toLowerCase() === currentLoggedUser.toLowerCase());
                                             if (!stillExists) {
@@ -1436,11 +1516,11 @@
                 } catch (e) {}
             });
 
-            // סנכרון גם בין כרטיסיות באותו מחשב
             window.addEventListener('storage', (e) => {
                 if (e.key === STORAGE_KEY && e.newValue) {
                     try {
                         globalData = JSON.parse(e.newValue);
+                        ensureCategoriesList();
                         updateUIFromGlobal();
                     } catch (err) {}
                 }
@@ -1448,11 +1528,11 @@
         }
 
         function saveData() {
+            ensureCategoriesList();
             globalData.lastUpdated = Date.now();
             const payloadStr = JSON.stringify(globalData);
             localStorage.setItem(STORAGE_KEY, payloadStr);
 
-            // שליחה לענן עם retain: true כך שכל מכשיר (גם כזה שייכנס אחר כך) יקבל בדיוק את המצב הזה!
             mqttClients.forEach(client => {
                 if (client && client.connected) {
                     client.publish(CLOUD_TOPIC, payloadStr, { qos: 1, retain: true });
@@ -1472,7 +1552,6 @@
                 crashScreen.classList.remove('active');
             }
 
-            // חישוב לפי המשתמש האישי שמחובר כרגע בלבד!
             let mySales = getUserSalesAmount(currentLoggedUser);
             let mySalary = mySales * 0.20;
 
@@ -1486,6 +1565,7 @@
                 updateRoleSelects();
                 renderRoles();
                 renderUsers();
+                renderCategoriesAdmin();
                 updateAdminCategoriesSelect();
                 renderDishesForDelete();
             }
@@ -1529,7 +1609,6 @@
             if (isLoggedIn) return;
             if (ytPlayer && isPlayerReady && typeof ytPlayer.getPlayerState === 'function') {
                 const state = ytPlayer.getPlayerState();
-                // אם השיר עדיין לא מתנגן (בגלל חסימת דפדפן ראשונית), הפעל אותו מיד במסך הפתיחה
                 if (state !== YT.PlayerState.PLAYING && state !== YT.PlayerState.BUFFERING) {
                     ytPlayer.setVolume(100);
                     ytPlayer.playVideo();
@@ -1537,7 +1616,6 @@
             }
         }
 
-        // מפעיל את השיר מיד בנגיעה/הזזה ראשונה במסך הפתיחה (לפני ההתחברות!)
         ['click', 'touchstart', 'keydown', 'mousemove'].forEach(evtName => {
             document.addEventListener(evtName, tryPlayIntroMusic, { passive: true });
         });
@@ -1566,7 +1644,13 @@
         function renderMenu() {
             const container = document.getElementById('dynamicMenuContainer');
             if (!container) return;
+            ensureCategoriesList();
+
             let categoriesMap = {};
+            (globalData.categories || []).forEach(cat => {
+                categoriesMap[cat] = [];
+            });
+
             (globalData.menuItems || []).forEach((item, index) => {
                 if (!categoriesMap[item.category]) categoriesMap[item.category] = [];
                 categoriesMap[item.category].push({ ...item, originalIndex: index });
@@ -1574,11 +1658,12 @@
 
             let html = `<div class="column-title">תפריט ומבצעים</div>`;
             for (let [cat, items] of Object.entries(categoriesMap)) {
+                if (items.length === 0) continue; // מציג בתפריט קטגוריות שיש בהן מנות
                 html += `<div class="menu-section-title">${cat}</div><div class="menu-grid">`;
                 items.forEach(dish => {
-                    let priceDisplay = `₪${dish.price.toLocaleString()}`;
+                    let priceDisplay = `${dish.price.toLocaleString()} ₪`;
                     if (dish.originalPrice) {
-                        priceDisplay = `₪${dish.price.toLocaleString()} <s style="font-size:0.7rem; color:#aaa;">₪${dish.originalPrice.toLocaleString()}</s>`;
+                        priceDisplay = `<s style="font-size:0.72rem; color:#aaa;">${dish.originalPrice.toLocaleString()} ₪</s> → ${dish.price.toLocaleString()} ₪`;
                     }
                     let safeDishName = dish.name.replace(/'/g, "\\'");
                     html += `
@@ -1593,14 +1678,57 @@
             container.innerHTML = html;
         }
 
+        // ניהול קטגוריות עצמאי בפאנל הניהול
+        function addStandaloneCategory() {
+            const input = document.getElementById('newCategoryStandaloneInput');
+            const name = input.value.trim();
+            if (!name) return;
+            ensureCategoriesList();
+            if (!globalData.categories.includes(name)) {
+                globalData.categories.push(name);
+                saveData();
+            }
+            input.value = '';
+        }
+
+        function deleteCategoryAdmin(index) {
+            ensureCategoriesList();
+            const catName = globalData.categories[index];
+            globalData.categories.splice(index, 1);
+            // מוחק גם מנות ששייכות לקטגוריה שנמחקה
+            globalData.menuItems = (globalData.menuItems || []).filter(item => item.category !== catName);
+            saveData();
+        }
+
+        function renderCategoriesAdmin() {
+            const container = document.getElementById('categoriesListAdmin');
+            if (!container) return;
+            ensureCategoriesList();
+            container.innerHTML = '';
+            (globalData.categories || []).forEach((cat, idx) => {
+                const div = document.createElement('div');
+                div.className = 'user-item';
+                div.innerHTML = `
+                    <span><b>${cat}</b></span>
+                    <button class="delete-btn" onclick="deleteCategoryAdmin(${idx})">מחק קטגוריה</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
         function updateAdminCategoriesSelect() {
             const selectElem = document.getElementById('newDishCategory');
             if (!selectElem) return;
-            let existingCategories = [...new Set((globalData.menuItems || []).map(item => item.category))];
+            ensureCategoriesList();
+            const currentVal = selectElem.value;
             
-            let html = existingCategories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+            let html = (globalData.categories || []).map(cat => `<option value="${cat}">${cat}</option>`).join('');
             html += `<option value="__NEW_CATEGORY__">➕ יצירת קטגוריה חדשה...</option>`;
             selectElem.innerHTML = html;
+
+            if (currentVal && (globalData.categories || []).includes(currentVal)) {
+                selectElem.value = currentVal;
+            }
         }
 
         function handleCategorySelect(val) {
@@ -1625,6 +1753,11 @@
             }
 
             if (name && !isNaN(price) && finalCategory) {
+                ensureCategoriesList();
+                if (!globalData.categories.includes(finalCategory)) {
+                    globalData.categories.push(finalCategory);
+                }
+
                 let dishObj = { category: finalCategory, name: name, price: price };
                 if (origPriceVal && !isNaN(parseFloat(origPriceVal))) {
                     dishObj.originalPrice = parseFloat(origPriceVal);
@@ -1660,20 +1793,13 @@
             saveData();
         }
 
+        // מציג את רשימת העובדים בדיוק לפי הסדר שקבעת בגרירה בפאנל הניהול!
         function renderUsersBadges() {
             const container = document.getElementById('usersBadgesContainer');
             if (!container) return;
             container.innerHTML = '';
-            
-            let sortedUsers = [...(globalData.users || [])].sort((a, b) => {
-                let indexA = (globalData.roles || []).indexOf(a.role);
-                let indexB = (globalData.roles || []).indexOf(b.role);
-                if (indexA === -1) indexA = 999;
-                if (indexB === -1) indexB = 999;
-                return indexA - indexB;
-            });
 
-            sortedUsers.forEach(u => {
+            (globalData.users || []).forEach(u => {
                 const div = document.createElement('div');
                 div.className = 'user-card-badge';
                 div.innerHTML = `
@@ -1834,7 +1960,6 @@
                 userInvoices.splice(index, 1);
                 setUserInvoicesList(username, userInvoices);
 
-                // חישוב מחדש של רווחי המסעדה, המשכורת (20%) וטבלת המכירות לפי החשבוניות שנותרו
                 let remainingTotal = userInvoices.reduce((sum, inv) => sum + (Number(inv.total) || 0), 0);
                 setUserSalesAmount(username, remainingTotal);
 
@@ -1856,7 +1981,7 @@
             { title: "ברוכים הבאים למערכת ג'פניטה", text: "מדריך קצר שיעזור לכם להכיר את המערכת ואת אפשרויות הניהול שבה." },
             { title: "מבנה המסך הראשי", text: "המסך מחולק לעמודות: רשימת העובדים, טבלת דירוג המכירות, תפריט המוצרים והמבצעים, ועגלת ההזמנה." },
             { title: "ביצוע הזמנות וניהול חשבוניות", text: "לחיצה על מנה בתפריט תוסיף אותה לעגלה. לאחר אישור ההזמנה, הנתונים יתעדכנו אוטומטית ברווחי המסעדה ובטבלת המכירות אצל כולם!" },
-            { title: "פאנל ניהול מתקדם (F9)", text: "לחיצה על מקש **F9** במקלדת והזנת קוד הניהול תפתח את פאנל הניהול להוספת מנות, משתמשים וניהול דרגות." },
+            { title: "פאנל ניהול מתקדם (F9)", text: "לחיצה על מקש **F9** במקלדת והזנת קוד הניהול תפתח את פאנל הניהול להוספת מנות, קטגוריות, משתמשים וסידורם בגרירה." },
             { title: "סיום ההדרכה", text: "אתם מוכנים להתחיל לעבוד במערכת. המשך משמרת נעימה!" }
         ];
         let currentTutorialStep = 0;
@@ -1950,7 +2075,6 @@
                 currentLoggedUser = validUser.username;
                 errorMsg.style.display = 'none';
                 
-                // עוצר את השיר ברגע שמתחברים למשתמש!
                 stopIntroMusic();
 
                 document.getElementById('introScreen').classList.add('fade-out');
@@ -2021,7 +2145,7 @@
 
         function fullSiteReset() {
             let fresh = getInitialState();
-            fresh.resetId = Date.now(); // מזהה איפוס חדש שמכריח את כל הטלפונים והמחשבים להתאפס מיד!
+            fresh.resetId = Date.now();
             fresh.lastUpdated = Date.now();
             globalData = fresh;
             saveData();
@@ -2049,6 +2173,7 @@
                 updateRoleSelects();
                 renderRoles();
                 renderUsers();
+                renderCategoriesAdmin();
                 updateAdminCategoriesSelect();
                 renderDishesForDelete();
             } else {
@@ -2097,17 +2222,75 @@
             });
         }
 
+        // רינדור משתמשים עם אפשרות גרירה (Drag & Drop) לשינוי הסדר
         function renderUsers() {
             const userList = document.getElementById('userList');
             if (!userList) return;
             userList.innerHTML = '';
             (globalData.users || []).forEach((u, index) => {
                 const div = document.createElement('div');
-                div.className = 'user-item';
+                div.className = 'user-item draggable-user';
+                div.draggable = true;
+                div.dataset.index = index;
+
+                div.addEventListener('dragstart', handleUserDragStart);
+                div.addEventListener('dragover', handleUserDragOver);
+                div.addEventListener('dragleave', handleUserDragLeave);
+                div.addEventListener('drop', handleUserDrop);
+                div.addEventListener('dragend', handleUserDragEnd);
+
                 let roleOptions = (globalData.roles || []).map(r => `<option value="${r}" ${u.role === r ? 'selected' : ''}>${r}</option>`).join('');
-                div.innerHTML = `<span><b>${u.username}</b> (קוד: ${u.pin})</span><div style="display: flex; gap: 6px; align-items: center;"><select class="admin-select" style="padding: 3px 6px; font-size: 0.8rem;" onchange="changeUserRole(${index}, this.value)">${roleOptions}</select><button class="delete-btn" onclick="deleteUser(${index})">מחק</button></div>`;
+                div.innerHTML = `
+                    <span style="display:flex; align-items:center;">
+                        <span class="drag-handle" title="גרור לשינוי מיקום">☰</span>
+                        <b>${u.username}</b>&nbsp;(קוד: ${u.pin})
+                    </span>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <select class="admin-select" style="padding: 3px 6px; font-size: 0.8rem;" onchange="changeUserRole(${index}, this.value)">${roleOptions}</select>
+                        <button class="delete-btn" onclick="deleteUser(${index})">מחק</button>
+                    </div>
+                `;
                 userList.appendChild(div);
             });
+        }
+
+        function handleUserDragStart(e) {
+            draggedUserIndex = Number(this.dataset.index);
+            this.classList.add('dragging');
+            if (e.dataTransfer) {
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', draggedUserIndex);
+            }
+        }
+
+        function handleUserDragOver(e) {
+            e.preventDefault();
+            if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+            this.classList.add('drag-over');
+        }
+
+        function handleUserDragLeave() {
+            this.classList.remove('drag-over');
+        }
+
+        function handleUserDrop(e) {
+            e.stopPropagation();
+            this.classList.remove('drag-over');
+            const targetIndex = Number(this.dataset.index);
+            if (draggedUserIndex !== null && draggedUserIndex !== targetIndex) {
+                const movedUser = globalData.users.splice(draggedUserIndex, 1)[0];
+                globalData.users.splice(targetIndex, 0, movedUser);
+                saveData();
+            }
+            return false;
+        }
+
+        function handleUserDragEnd() {
+            this.classList.remove('dragging');
+            document.querySelectorAll('#userList .user-item').forEach(item => {
+                item.classList.remove('drag-over');
+            });
+            draggedUserIndex = null;
         }
 
         function changeUserRole(index, newRole) {
@@ -2140,3 +2323,4 @@
     </script>
 </body>
 </html>
+```
