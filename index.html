@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
@@ -77,7 +78,7 @@
             line-height: 1.6;
         }
 
-        /* מעטפת לרקע */
+        /* מעטפת לרקע - אטומה כדי שלא יראו שום טקסט מאחור */
         .bg-wrapper {
             position: fixed;
             top: -5%;
@@ -87,6 +88,7 @@
             overflow: hidden;
             z-index: 1;
             pointer-events: none;
+            background-color: #050505;
         }
 
         .bg-container {
@@ -98,7 +100,7 @@
             background-repeat: no-repeat;
             opacity: 0;
             transform: scale(1.05);
-            transition: opacity 1.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.15s ease-out;
+            transition: opacity 0.6s ease-out, transform 0.15s ease-out;
             will-change: transform;
         }
 
@@ -565,7 +567,7 @@
             color: #fff;
         }
 
-        /* ----- מסך INTRO ----- */
+        /* ----- מסך INTRO (נעלם מיד בכניסה בלי להשאיר כתוביות שקופות מאחור) ----- */
         .intro-screen {
             position: fixed;
             top: 0;
@@ -578,14 +580,15 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: opacity 1.2s ease, visibility 1.2s ease;
             overflow: hidden;
             padding: 20px;
         }
 
         .intro-screen.fade-out {
-            opacity: 0;
-            visibility: hidden;
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
         }
 
         .sun-bg {
@@ -601,17 +604,6 @@
         @keyframes pulseSun {
             0% { transform: scale(0.9); opacity: 0.6; }
             100% { transform: scale(1.15); opacity: 1; }
-        }
-
-        .japanese-watermark {
-            position: absolute;
-            font-family: 'Noto Serif JP', serif;
-            font-size: 12rem;
-            color: rgba(255, 255, 255, 0.03);
-            letter-spacing: 12px;
-            user-select: none;
-            pointer-events: none;
-            white-space: nowrap;
         }
 
         .intro-content {
@@ -859,9 +851,12 @@
             background: linear-gradient(145deg, #160a0a, #0a0404);
             border: 2px solid rgba(255, 59, 59, 0.6);
             border-radius: 20px;
-            width: 420px;
+            width: 460px;
             max-width: 100%;
-            padding: 28px;
+            max-height: 90vh;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            padding: 26px;
             box-shadow: 0 0 60px rgba(255, 0, 0, 0.3);
             position: relative;
             transform: scale(0.5) rotate(-5deg);
@@ -875,39 +870,49 @@
         }
 
         .f1-header {
-            font-size: 1.5rem;
+            font-size: 1.45rem;
             font-weight: 900;
             color: #ff3b3b;
-            margin-bottom: 18px;
+            margin-bottom: 14px;
             text-align: center;
             letter-spacing: 1.5px;
         }
 
-        .f1-input {
+        .f1-input, .f1-select {
             width: 100%;
-            padding: 11px 16px;
-            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.06);
             border: 1.5px solid rgba(255, 59, 59, 0.4);
             border-radius: 10px;
             color: #fff;
             outline: none;
             font-family: 'Heebo', sans-serif;
-            font-size: 1rem;
+            font-size: 0.95rem;
             text-align: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
+        }
+
+        .f1-select {
+            cursor: pointer;
+            text-align: right;
+        }
+
+        .f1-select option {
+            background: #140808;
+            color: #fff;
         }
 
         .f1-btn {
             width: 100%;
-            padding: 11px;
+            padding: 10px;
             background: linear-gradient(135deg, #ff3b3b 0%, #8c0c0c 100%);
             color: #fff;
             border: 1px solid rgba(255, 100, 100, 0.5);
             border-radius: 10px;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.92rem;
             cursor: pointer;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             transition: 0.3s;
         }
 
@@ -916,13 +921,29 @@
             transform: translateY(-2px);
         }
 
+        .f1-discord-box {
+            background: rgba(88, 101, 242, 0.1);
+            border: 1px solid rgba(88, 101, 242, 0.45);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 14px;
+        }
+
+        .f1-discord-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #8ea1e1;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
         .f1-status-box {
-            margin-top: 12px;
-            padding: 10px;
+            margin-top: 8px;
+            padding: 9px;
             border-radius: 8px;
             text-align: center;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
         }
 
         .f1-status-box.offline {
@@ -1138,9 +1159,6 @@
                 width: 90% !important;
                 padding: 18px !important;
             }
-            .japanese-watermark {
-                font-size: 7rem !important;
-            }
         }
 
         @keyframes fadeInDown { to { opacity: 1; transform: translateY(0); } }
@@ -1232,7 +1250,6 @@
     <!-- מסך INTRO -->
     <div class="intro-screen" id="introScreen">
         <div class="sun-bg"></div>
-        <div class="japanese-watermark">日本料理レストラン</div>
         
         <div class="intro-content">
             <div class="sub-kanji">日本料理</div>
@@ -1327,7 +1344,7 @@
         </div>
     </div>
 
-    <!-- פאנל חירום F1 -->
+    <!-- פאנל חירום ושליטה F1 (כולל בוט דיסקורד Webhook) -->
     <div class="f1-modal" id="f1Modal">
         <div class="f1-panel">
             <span class="f1-close" onclick="closeF1()">✕</span>
@@ -1338,12 +1355,30 @@
                 <div class="error-msg" id="f1ErrorMsg" style="color:#ff5555; text-align:center; margin-top:5px; display:none;">קוד שגוי!</div>
             </div>
             <div id="f1DashboardSection" style="display: none;">
-                <div class="f1-header">שליטה גלובלית באתר</div>
+                <div class="f1-header">שליטה גלובלית ובוט דיסקורד</div>
                 <div class="f1-status-box" id="f1StatusBox">סטטוס אתר: פעיל תקין</div>
-                <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
+
+                <!-- אזור דיסקורד Webhook ודוחות קבלות/משכורת -->
+                <div class="f1-discord-box">
+                    <div class="f1-discord-title">🤖 שליחת דוחות ואיפוס לדיסקורד (Webhook)</div>
+                    <div style="font-size: 0.82rem; color: #ccc; margin-bottom: 6px;">בחר על מי לשלוח דוח קבלות ומשכורת לדיסקורד:</div>
+                    <select id="f1DiscordUserSelect" class="f1-select">
+                        <option value="__ALL__">כל המשתמשים יחד (!קבלות)</option>
+                    </select>
+
+                    <button class="f1-btn" style="background: linear-gradient(135deg, #5865F2, #3b45b8); border-color: #7983f5;" onclick="triggerDiscordReportFromF1()">
+                        📨 שלח דוח קבלות ומשכורת לדיסקורד (!קבלות)
+                    </button>
+
+                    <button class="f1-btn" style="background: linear-gradient(135deg, #2b6cb0, #1a365d); border-color: #63b3ed;" onclick="triggerResetSalaryFromF1()">
+                        💰 אפס משכורת (לנבחר / לכולם) + שלח לדיסקורד (!איפוסמשכורת)
+                    </button>
+                </div>
+
+                <!-- כפתורי שליטה באתר -->
+                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px;">
                     <button class="f1-btn" style="background: linear-gradient(135deg, #aa1111, #550000);" onclick="setGlobalSiteState(false)">כבה את האתר לכולם (קראש)</button>
                     <button class="f1-btn" style="background: linear-gradient(135deg, #11aa44, #005522);" onclick="setGlobalSiteState(true)">הפעל מחדש את האתר</button>
-                    <button class="f1-btn" style="background: linear-gradient(135deg, #2b6cb0, #1a365d); margin-top: 6px;" onclick="resetAllSalariesAndSales()">💰 איפוס משכורות, מכירות וחשבוניות (לכולם)</button>
                     <button class="f1-btn" style="background: linear-gradient(135deg, #ff8800, #cc4400); margin-top: 4px;" onclick="fullSiteReset()">🔄 איפוס מלא לכל הנתונים (לכולם)</button>
                 </div>
             </div>
@@ -1351,13 +1386,28 @@
     </div>
 
     <script>
+        // ניקוי אוטומטי של כל טקסט זר במידה והודבק בטעות מתחת לקוד
+        window.addEventListener('DOMContentLoaded', () => {
+            Array.from(document.body.childNodes).forEach(node => {
+                if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== '') {
+                    node.textContent = '';
+                }
+            });
+        });
+
         // ביטול מוחלט של כל הודעות הדפדפן וגוגל ("האתר אומר...")
         window.alert = function() {};
         window.confirm = function() { return true; };
 
+        // כתובת ה-Webhook של דיסקורד שסיפקת
+        const DISCORD_WEBHOOK_URLS = [
+            "https://discord.com/api/webhooks/1566530959132721316/XESt74EG5nzXGs2juCyi57ayFvrCgjM8awNjNq2ohBoLEKBqF1BT4q-zQFe4dvWecaQf",
+            "https://discordapp.com/api/webhooks/1566530959132721316/XESt74EG5nzXGs2juCyi57ayFvrCgjM8awNjNq2ohBoLEKBqF1BT4q-zQFe4dvWecaQf"
+        ];
+
         let currentLoggedUser = '';
         let currentOrder = [];
-        let isLoggedIn = false; // שומר שהשיר יתנגן רק במסך הפתיחה וייעצר בכניסה למשתמש
+        let isLoggedIn = false;
         let draggedUserIndex = null;
 
         const defaultCategories = [
@@ -1380,20 +1430,20 @@
             { category: 'הנחה לעובדי מדינה 25%', name: 'מבצע גדול', price: 2925, originalPrice: 3900 },
             { category: 'הנחה לעובדי מדינה 25%', name: 'מבצע משפחתי', price: 4387, originalPrice: 5850 },
 
-            // מנות עיקריות (לפי התמונות)
+            // מנות עיקריות
             { category: 'מנות עיקריות', name: 'ראמן מסורתי', price: 390 },
             { category: 'מנות עיקריות', name: 'סושי מיקס', price: 390 },
             { category: 'מנות עיקריות', name: 'טריאקי סלמון', price: 350 },
             { category: 'מנות עיקריות', name: 'גיוזה לוקוס', price: 380 },
 
-            // ארוחות (לפי התמונות)
+            // ארוחות
             { category: 'ארוחות', name: "ארוחת ג'פניטה", price: 550 },
 
-            // קינוחים (לפי התמונות)
+            // קינוחים
             { category: 'קינוחים', name: 'קאסטלה יפנית', price: 160 },
             { category: 'קינוחים', name: 'פנקייק יפני', price: 125 },
 
-            // שתייה (לפי התמונות)
+            // שתייה
             { category: 'שתייה', name: 'לימונדה יפנית', price: 100 },
             { category: 'שתייה', name: 'תה ירוק', price: 100 },
             { category: 'שתייה', name: "מים - ג'פניטה", price: 100 }
@@ -1416,13 +1466,14 @@
             };
         }
 
-        // ניקוי זיכרון ישן
         localStorage.removeItem('japanita_stable_data');
 
         const STORAGE_KEY = 'japanita_cloud_synced_v7';
         const CLOUD_TOPIC = 'japanita_pos_live_v7_mia22345/state';
+        const DISCORD_CMD_TOPIC = 'japanita_pos_live_v7_mia22345/discord_cmd';
         let globalData = getInitialState();
         let mqttClients = [];
+        let lastHandledDiscordCmdId = 0;
 
         function getUserSalesAmount(username) {
             if (!username || !globalData.sales) return 0;
@@ -1486,8 +1537,187 @@
         }
 
         // ====================================================
+        // מערכת שליחה ל-Webhook של דיסקורד (!קבלות ו-!איפוסמשכורת)
+        // ====================================================
+        async function postToDiscordWebhook(payload) {
+            for (const url of DISCORD_WEBHOOK_URLS) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (response.ok || response.status === 204) {
+                        return true;
+                    }
+                } catch (err) {}
+            }
+            return false;
+        }
+
+        function buildUserDiscordEmbed(userObj) {
+            const username = userObj.username;
+            const role = userObj.role || 'עובד';
+            const sales = getUserSalesAmount(username);
+            const salary = Math.round(sales * 0.20);
+            const invoices = getUserInvoicesList(username);
+
+            let invoicesText = '';
+            if (invoices.length === 0) {
+                invoicesText = 'אין חשבוניות שמורות כרגע.';
+            } else {
+                invoicesText = invoices.map((inv, idx) => {
+                    const itemsStr = (inv.items || []).map(it => `${it.name} (x${it.qty})`).join(', ');
+                    return `**#${idx + 1}** | 🕒 ${inv.date} | 🍱 ${itemsStr} | 💵 **₪${(inv.total || 0).toLocaleString()}**`;
+                }).join('\n');
+
+                if (invoicesText.length > 3400) {
+                    invoicesText = invoicesText.substring(0, 3400) + '\n... (המשך קבלות)';
+                }
+            }
+
+            return {
+                title: `👤 עובד: ${username} (${role})`,
+                color: 0xff3b3b,
+                fields: [
+                    { name: '💵 סה"כ מכירות שעשה', value: `**₪${Math.round(sales).toLocaleString()}**`, inline: true },
+                    { name: '💰 משכורת נוכחית (20%)', value: `**₪${salary.toLocaleString()}**`, inline: true },
+                    { name: '🧾 כמות חשבוניות', value: `**${invoices.length}**`, inline: true }
+                ],
+                description: `**📋 פירוט חשבוניות של ${username}:**\n${invoicesText}`,
+                timestamp: new Date().toISOString(),
+                footer: { text: "מערכת ניהול ג'פניטה • דוח קבלות ומשכורות" }
+            };
+        }
+
+        async function sendDiscordReport(targetUsername = '__ALL__') {
+            const users = globalData.users || [];
+            let embedsToSend = [];
+
+            if (targetUsername === '__ALL__') {
+                let totalRestaurantSales = 0;
+                users.forEach(u => { totalRestaurantSales += getUserSalesAmount(u.username); });
+                let totalSalaries = Math.round(totalRestaurantSales * 0.20);
+
+                embedsToSend.push({
+                    title: "🍣 דוח קבלות, מכירות ומשכורות מלא - ג'פניטה (!קבלות)",
+                    color: 0xb81414,
+                    description: `**סיכום כלל העובדים במסעדה (${users.length} עובדים):**\n📈 **סה"כ מכירות מסעדה:** ₪${Math.round(totalRestaurantSales).toLocaleString()}\n💰 **סה"כ משכורות לתשלום (20%):** ₪${totalSalaries.toLocaleString()}`,
+                    timestamp: new Date().toISOString()
+                });
+
+                users.forEach(u => {
+                    embedsToSend.push(buildUserDiscordEmbed(u));
+                });
+            } else {
+                const foundUser = users.find(u => u.username.toLowerCase() === targetUsername.toLowerCase());
+                if (!foundUser) return false;
+                embedsToSend.push(buildUserDiscordEmbed(foundUser));
+            }
+
+            let allSucceeded = true;
+            for (let i = 0; i < embedsToSend.length; i += 8) {
+                const chunk = embedsToSend.slice(i, i + 8);
+                const ok = await postToDiscordWebhook({
+                    username: "בוט ג'פניטה 🍣",
+                    embeds: chunk
+                });
+                if (!ok) allSucceeded = false;
+            }
+            return allSucceeded;
+        }
+
+        async function triggerDiscordReportFromF1() {
+            const selectElem = document.getElementById('f1DiscordUserSelect');
+            const target = selectElem ? selectElem.value : '__ALL__';
+            const box = document.getElementById('f1StatusBox');
+
+            if (box) {
+                box.className = 'f1-status-box online';
+                box.innerText = '⏳ שולח דוח קבלות ומשכורות לדיסקורד...';
+            }
+
+            const ok = await sendDiscordReport(target);
+            if (box) {
+                if (ok) {
+                    box.className = 'f1-status-box online';
+                    box.innerText = target === '__ALL__'
+                        ? '✅ דוח !קבלות מלא על כל המשתמשים נשלח לדיסקורד!'
+                        : `✅ דוח קבלות ומשכורת על "${target}" נשלח לדיסקורד!`;
+                } else {
+                    box.className = 'f1-status-box offline';
+                    box.innerText = '❌ שגיאה בשליחה לדיסקורד (בדוק שה-Webhook תקין)';
+                }
+            }
+        }
+
+        async function triggerResetSalaryFromF1() {
+            const selectElem = document.getElementById('f1DiscordUserSelect');
+            const target = selectElem ? selectElem.value : '__ALL__';
+            const box = document.getElementById('f1StatusBox');
+
+            if (target === '__ALL__') {
+                globalData.sales = {};
+                globalData.revenue = 0;
+                globalData.invoices = {};
+                saveData();
+
+                await postToDiscordWebhook({
+                    username: "בוט ג'פניטה 🍣",
+                    embeds: [{
+                        title: "🔄 איפוס משכורות וחשבוניות גלובלי (!איפוסמשכורת)",
+                        color: 0x2b6cb0,
+                        description: "כל המשכורות, הרווחים והחשבוניות של **כלל העובדים** אופסו כעת ל-**₪0** בהצלחה!",
+                        timestamp: new Date().toISOString(),
+                        footer: { text: "מערכת ניהול ג'פניטה" }
+                    }]
+                });
+
+                if (box) {
+                    box.className = 'f1-status-box online';
+                    box.innerText = '✅ המשכורות והחשבוניות של כולם אופסו ונשלח עדכון לדיסקורד!';
+                }
+            } else {
+                setUserSalesAmount(target, 0);
+                setUserInvoicesList(target, []);
+                saveData();
+
+                await postToDiscordWebhook({
+                    username: "בוט ג'פניטה 🍣",
+                    embeds: [{
+                        title: `🔄 איפוס משכורת וחשבוניות לעובד: ${target}`,
+                        color: 0x2b6cb0,
+                        description: `המשכורת, המכירות והחשבוניות של **${target}** אופסו כעת ל-**₪0** בהצלחה!`,
+                        timestamp: new Date().toISOString(),
+                        footer: { text: "מערכת ניהול ג'פניטה" }
+                    }]
+                });
+
+                if (box) {
+                    box.className = 'f1-status-box online';
+                    box.innerText = `✅ המשכורת והחשבוניות של "${target}" אופסו ונשלח עדכון לדיסקורד!`;
+                }
+            }
+        }
+
+        function updateF1UserSelect() {
+            const selectElem = document.getElementById('f1DiscordUserSelect');
+            if (!selectElem) return;
+            const currentVal = selectElem.value;
+
+            let html = `<option value="__ALL__">כל המשתמשים יחד (!קבלות / !איפוסמשכורת)</option>`;
+            (globalData.users || []).forEach(u => {
+                html += `<option value="${u.username}">משתמש ספציפי: ${u.username} (${u.role || 'עובד'})</option>`;
+            });
+            selectElem.innerHTML = html;
+
+            if (currentVal && (currentVal === '__ALL__' || (globalData.users || []).some(u => u.username === currentVal))) {
+                selectElem.value = currentVal;
+            }
+        }
+
+        // ====================================================
         // מערכת סנכרון ענן בזמן אמת (MQTT Retained Cloud Sync)
-        // ללא איפוס שבועי אוטומטי - איפוס מתבצע ידנית ב-F1 בלבד
         // ====================================================
         function initCloudSync() {
             const cached = localStorage.getItem(STORAGE_KEY);
@@ -1507,7 +1737,7 @@
                 'wss://broker.hivemq.com:8884/mqtt'
             ];
 
-            brokers.forEach(brokerUrl => {
+            brokers.forEach((brokerUrl, brokerIdx) => {
                 try {
                     const client = mqtt.connect(brokerUrl, {
                         clientId: 'japanita_' + Math.random().toString(16).substring(2, 10),
@@ -1517,6 +1747,7 @@
 
                     client.on('connect', () => {
                         client.subscribe(CLOUD_TOPIC, { qos: 1 });
+                        client.subscribe(DISCORD_CMD_TOPIC, { qos: 1 });
                     });
 
                     client.on('message', (topic, message) => {
@@ -1540,6 +1771,28 @@
                                                 location.reload();
                                             }
                                         }
+                                    }
+                                }
+                            } catch (err) {}
+                        }
+
+                        if (topic === DISCORD_CMD_TOPIC && message && brokerIdx === 0) {
+                            try {
+                                const cmdObj = JSON.parse(message.toString());
+                                if (cmdObj && cmdObj.id && cmdObj.id !== lastHandledDiscordCmdId) {
+                                    lastHandledDiscordCmdId = cmdObj.id;
+                                    if (cmdObj.command === '!קבלות' || cmdObj.command === '/קבלות') {
+                                        sendDiscordReport(cmdObj.user || '__ALL__');
+                                    } else if (cmdObj.command === '!איפוסמשכורת' || cmdObj.command === '/איפוסמשכורת') {
+                                        if (cmdObj.user && cmdObj.user !== '__ALL__') {
+                                            setUserSalesAmount(cmdObj.user, 0);
+                                            setUserInvoicesList(cmdObj.user, []);
+                                        } else {
+                                            globalData.sales = {};
+                                            globalData.revenue = 0;
+                                            globalData.invoices = {};
+                                        }
+                                        saveData();
                                     }
                                 }
                             } catch (err) {}
@@ -1595,6 +1848,8 @@
             renderMenu();
             renderUsersBadges();
             renderLeaderboard();
+            updateF1UserSelect();
+
             if (document.getElementById('adminModal').classList.contains('active')) {
                 updateRoleSelects();
                 renderRoles();
@@ -1712,7 +1967,6 @@
             container.innerHTML = html;
         }
 
-        // ניהול קטגוריות עצמאי בפאנל הניהול
         function addStandaloneCategory() {
             const input = document.getElementById('newCategoryStandaloneInput');
             const name = input.value.trim();
@@ -1826,7 +2080,6 @@
             saveData();
         }
 
-        // מציג את רשימת העובדים בדיוק לפי הסדר שקבעת בגרירה בפאנל הניהול
         function renderUsersBadges() {
             const container = document.getElementById('usersBadgesContainer');
             if (!container) return;
@@ -2083,7 +2336,11 @@
                 
                 stopIntroMusic();
 
-                document.getElementById('introScreen').classList.add('fade-out');
+                // העלמה מיידית של מסך הפתיחה ללא שקיפות מאחור
+                const introElem = document.getElementById('introScreen');
+                introElem.classList.add('fade-out');
+                introElem.style.display = 'none';
+
                 document.getElementById('bgContainer').classList.add('active');
                 document.getElementById('mainAppContent').classList.add('active');
                 document.getElementById('earningsTopBar').classList.add('active');
@@ -2136,6 +2393,7 @@
             if (pass === 'nadirnadirnashirbeyachad') {
                 document.getElementById('f1LoginSection').style.display = 'none';
                 document.getElementById('f1DashboardSection').style.display = 'block';
+                updateF1UserSelect();
                 updateF1StatusDisplay();
             } else {
                 err.style.display = 'block';
@@ -2147,20 +2405,6 @@
         function setGlobalSiteState(isWorking) {
             globalData.crash = !isWorking;
             saveData();
-        }
-
-        // איפוס משכורות, מכירות וחשבוניות בלבד דרך F1
-        function resetAllSalariesAndSales() {
-            globalData.sales = {};
-            globalData.revenue = 0;
-            globalData.invoices = {};
-            saveData();
-
-            const box = document.getElementById('f1StatusBox');
-            if (box) {
-                box.className = 'f1-status-box online';
-                box.innerText = 'המשכורות, המכירות והחשבוניות אופסו לכולם!';
-            }
         }
 
         function fullSiteReset() {
@@ -2242,7 +2486,6 @@
             });
         }
 
-        // רינדור משתמשים עם אפשרות גרירה (Drag & Drop) לשינוי הסדר
         function renderUsers() {
             const userList = document.getElementById('userList');
             if (!userList) return;
@@ -2343,3 +2586,4 @@
     </script>
 </body>
 </html>
+```
