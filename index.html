@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
@@ -1267,6 +1266,10 @@
     </div>
 
     <script>
+        // ביטול מוחלט של כל הודעות הדפדפן וגוגל ("האתר אומר...")
+        window.alert = function() {};
+        window.confirm = function() { return true; };
+
         let currentLoggedUser = '';
         let currentOrder = [];
         let isLoggedIn = false; // שומר שהשיר יתנגן רק במסך הפתיחה וייעצר בכניסה למשתמש
@@ -1324,6 +1327,47 @@
                 }
             }
             return total;
+        }
+
+        // פונקציה שמחזירה את רשימת החשבוניות של עובד בלי תלות באותיות גדולות/קטנות
+        function getUserInvoicesList(username) {
+            if (!username || !globalData.invoices) return [];
+            let list = [];
+            for (let [key, arr] of Object.entries(globalData.invoices)) {
+                if (key.toLowerCase() === username.toLowerCase() && Array.isArray(arr)) {
+                    list = list.concat(arr);
+                }
+            }
+            return list;
+        }
+
+        function setUserInvoicesList(username, newList) {
+            if (!username) return;
+            if (!globalData.invoices) globalData.invoices = {};
+            for (let key of Object.keys(globalData.invoices)) {
+                if (key.toLowerCase() === username.toLowerCase()) {
+                    delete globalData.invoices[key];
+                }
+            }
+            globalData.invoices[username] = newList;
+        }
+
+        function setUserSalesAmount(username, newAmount) {
+            if (!username) return;
+            if (!globalData.sales) globalData.sales = {};
+            for (let key of Object.keys(globalData.sales)) {
+                if (key.toLowerCase() === username.toLowerCase()) {
+                    delete globalData.sales[key];
+                }
+            }
+            globalData.sales[username] = Math.max(0, Number(newAmount) || 0);
+
+            // עדכון סך רווחי המסעדה הכוללים
+            let totalRev = 0;
+            for (let val of Object.values(globalData.sales)) {
+                totalRev += (Number(val) || 0);
+            }
+            globalData.revenue = totalRev;
         }
 
         // ====================================================
@@ -1718,50 +1762,44 @@
 
             let totalSum = currentOrder.reduce((sum, item) => sum + (item.price * item.qty), 0);
             
-            globalData.revenue = (globalData.revenue || 0) + totalSum;
-            if (!globalData.sales) globalData.sales = {};
-            
-            let canonicalUser = currentLoggedUser.toLowerCase();
-            let currentUserTotal = getUserSalesAmount(canonicalUser);
-            for (let key of Object.keys(globalData.sales)) {
-                if (key.toLowerCase() === canonicalUser) {
-                    delete globalData.sales[key];
-                }
-            }
-            globalData.sales[currentLoggedUser] = currentUserTotal + totalSum;
+            let currentUserTotal = getUserSalesAmount(currentLoggedUser);
+            setUserSalesAmount(currentLoggedUser, currentUserTotal + totalSum);
 
-            if (!globalData.invoices) globalData.invoices = {};
-            if (!globalData.invoices[currentLoggedUser]) globalData.invoices[currentLoggedUser] = [];
-            
-            globalData.invoices[currentLoggedUser].push({
+            let userInvoices = getUserInvoicesList(currentLoggedUser);
+            userInvoices.push({
                 date: new Date().toLocaleString('he-IL'),
                 items: [...currentOrder],
                 total: totalSum
             });
+            setUserInvoicesList(currentLoggedUser, userInvoices);
 
             saveData();
             currentOrder = [];
             renderOrderSidebar();
-            alert("ההזמנה בוצעה ועודכנה אצל כולם בהצלחה!");
         }
 
         function renderInvoicesList() {
             const container = document.getElementById('invoicesListContainer');
             if (!container) return;
-            let userInvoices = (globalData.invoices && globalData.invoices[currentLoggedUser]) ? globalData.invoices[currentLoggedUser] : [];
+            let userInvoices = getUserInvoicesList(currentLoggedUser);
+            let currentSales = getUserSalesAmount(currentLoggedUser);
 
-            if (userInvoices.length === 0) {
+            if (userInvoices.length === 0 && currentSales === 0) {
                 container.innerHTML = '<div style="text-align:center; color:#aaa;">אין עדיין חשבוניות שמורות לחשבון זה.</div>';
             } else {
-                let html = '';
+                let html = `
+                    <button class="admin-btn" style="margin-bottom: 8px; background: linear-gradient(135deg, #aa1111, #550000);" onclick="clearAllUserInvoices('${currentLoggedUser}')">
+                        מחק את כל החשבוניות ואפס רווחים ומשכורת
+                    </button>
+                `;
                 userInvoices.forEach((inv, i) => {
-                    let itemsDesc = inv.items.map(it => `${it.name} x${it.qty}`).join(', ');
+                    let itemsDesc = (inv.items || []).map(it => `${it.name} x${it.qty}`).join(', ');
                     html += `
                         <div class="invoice-item-box">
                             <div>
                                 <div><b>הזמנה #${i + 1}</b> - ${inv.date}</div>
                                 <div style="color:#ccc; font-size:0.85rem; margin:4px 0;">פרטים: ${itemsDesc}</div>
-                                <div style="color:#ff8888; font-weight:700;">סה״כ שולם: ₪${inv.total.toLocaleString()}</div>
+                                <div style="color:#ff8888; font-weight:700;">סה״כ שולם: ₪${(inv.total || 0).toLocaleString()}</div>
                             </div>
                             <div class="invoice-actions">
                                 <button class="copy-btn" onclick="copyInvoiceText('${currentLoggedUser}', ${i})">העתק קבלה</button>
@@ -1780,21 +1818,36 @@
         }
 
         function copyInvoiceText(username, index) {
-            let inv = globalData.invoices[username][index];
+            let userInvoices = getUserInvoicesList(username);
+            let inv = userInvoices[index];
             if (!inv) return;
 
-            let itemsList = inv.items.map(it => `- ${it.name} (כמות: ${it.qty}) - ₪${it.price * it.qty}`).join('\n');
+            let itemsList = (inv.items || []).map(it => `- ${it.name} (כמות: ${it.qty}) - ₪${it.price * it.qty}`).join('\n');
             let textToCopy = `קבלה - ג'פניטה\nתאריך: ${inv.date}\nעובד: ${username}\n------------------\n${itemsList}\n------------------\nסה"כ לתשלום: ₪${inv.total.toLocaleString()}`;
 
             navigator.clipboard.writeText(textToCopy).catch(err => {});
         }
 
         function deleteInvoice(username, index) {
-            if (globalData.invoices[username]) {
-                globalData.invoices[username].splice(index, 1);
+            let userInvoices = getUserInvoicesList(username);
+            if (userInvoices.length > index) {
+                userInvoices.splice(index, 1);
+                setUserInvoicesList(username, userInvoices);
+
+                // חישוב מחדש של רווחי המסעדה, המשכורת (20%) וטבלת המכירות לפי החשבוניות שנותרו
+                let remainingTotal = userInvoices.reduce((sum, inv) => sum + (Number(inv.total) || 0), 0);
+                setUserSalesAmount(username, remainingTotal);
+
                 saveData();
                 renderInvoicesList();
             }
+        }
+
+        function clearAllUserInvoices(username) {
+            setUserInvoicesList(username, []);
+            setUserSalesAmount(username, 0);
+            saveData();
+            renderInvoicesList();
         }
 
         function closeInvoicesModal() { document.getElementById('invoiceModal').classList.remove('active'); }
@@ -1967,14 +2020,12 @@
         }
 
         function fullSiteReset() {
-            if (confirm("האם אתה בטוח שברצונך לאפס את כל האתר אצל כל המכשירים? כל המשתמשים והנתונים יימחקו לצמיתות!")) {
-                let fresh = getInitialState();
-                fresh.resetId = Date.now(); // מזהה איפוס חדש שמכריח את כל הטלפונים והמחשבים להתאפס מיד!
-                fresh.lastUpdated = Date.now();
-                globalData = fresh;
-                saveData();
-                setTimeout(() => location.reload(), 500);
-            }
+            let fresh = getInitialState();
+            fresh.resetId = Date.now(); // מזהה איפוס חדש שמכריח את כל הטלפונים והמחשבים להתאפס מיד!
+            fresh.lastUpdated = Date.now();
+            globalData = fresh;
+            saveData();
+            setTimeout(() => location.reload(), 500);
         }
 
         function updateF1StatusDisplay() {
@@ -2079,7 +2130,6 @@
                 saveData();
                 document.getElementById('newUsername').value = '';
                 document.getElementById('newPin').value = '';
-                alert("המשתמש נוסף ומסונכרן כעת בכל המכשירים!");
             }
         }
 
@@ -2090,4 +2140,3 @@
     </script>
 </body>
 </html>
-```
