@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
@@ -196,7 +195,7 @@
         }
 
         .column-employees {
-            max-width: 240px;
+            max-width: 260px;
         }
 
         /* אזור גלילה פנימי לעמודות בלבד */
@@ -213,10 +212,17 @@
             border-radius: 12px;
             padding: 8px 12px;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 6px;
             margin-bottom: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .user-card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
         }
 
         .user-card-name {
@@ -233,6 +239,52 @@
             background: linear-gradient(135deg, #ff3b3b, #b81414);
             color: #fff;
             box-shadow: 0 2px 10px rgba(255, 59, 59, 0.3);
+        }
+
+        /* מד התקדמות שבועי לכל עובד */
+        .employee-quota-wrap {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .employee-quota-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.72rem;
+            color: #cccccc;
+        }
+
+        .employee-quota-percent {
+            font-weight: 700;
+            color: #ff8888;
+        }
+
+        .employee-quota-percent.completed {
+            color: #55ff99;
+        }
+
+        .employee-quota-track {
+            width: 100%;
+            height: 7px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 59, 59, 0.25);
+        }
+
+        .employee-quota-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #b81414, #ff3b3b, #ff7777);
+            border-radius: 999px;
+            transition: width 0.35s ease, background 0.35s ease;
+        }
+
+        .employee-quota-fill.completed {
+            background: linear-gradient(90deg, #1b8a4b, #38d977, #7cffb2);
         }
 
         .column-leaderboard {
@@ -1114,1870 +1166,1227 @@
             color: #ff6b6b;
             border: 1px solid rgba(255, 59, 59, 0.4);
             padding: 3px 6px;
-            border-radius: 6px;
+            border-radius: 4px;
             cursor: pointer;
             font-size: 0.72rem;
         }
 
-        .close-modal {
-            position: absolute;
-            top: 12px;
-            left: 15px;
-            color: #888;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        .close-modal:hover {
-            color: #ff3b3b;
-        }
-
-        .sakura {
-            position: absolute;
-            background: linear-gradient(135deg, #ffb7c5, #ff69b4);
-            border-radius: 100% 0 100% 0;
-            opacity: 0.7;
-            pointer-events: none;
-            animation: fall infinite linear;
-        }
-
-        /* ----- רספונסיביות ממורכזת באמצע המסך ללא חריגה למטה ----- */
+        /* התאמה למסכים קטנים - אפשרות גלילה למטה רק במובייל אם צריך */
         @media (max-width: 1024px) {
+            body, html {
+                overflow-y: auto !important;
+                height: auto;
+                max-height: none;
+            }
             .main-app-content {
-                flex-wrap: wrap;
-                align-content: center;
-                padding: 58px 14px 20px 14px;
-                gap: 10px;
+                position: relative;
+                height: auto;
+                min-height: 100vh;
+                overflow: visible;
+                flex-direction: column;
+                align-items: center;
+                padding: 90px 12px 30px 12px;
+                gap: 15px;
             }
             .app-column {
-                height: calc(44dvh - 30px) !important;
-                max-height: calc(44dvh - 30px) !important;
-                flex: 1 1 calc(50% - 10px) !important;
-                max-width: calc(50% - 5px) !important;
+                width: 100%;
+                max-width: 100% !important;
+                height: auto !important;
+                max-height: none !important;
+                flex: none !important;
+                overflow: visible !important;
             }
-        }
-
-        @media (max-width: 768px) {
-            .main-app-content {
-                flex-wrap: wrap !important;
-                align-content: center;
-                padding: 50px 8px 16px 8px;
-                gap: 8px;
-            }
-            .app-column {
-                flex: 1 1 calc(50% - 8px) !important;
-                max-width: calc(50% - 4px) !important;
-                height: calc(44dvh - 24px) !important;
-                max-height: calc(44dvh - 24px) !important;
-                padding: 10px;
-            }
-            .menu-grid {
-                grid-template-columns: 1fr;
+            .column-scroll-area, .leaderboard-list, .order-items-list {
+                overflow-y: visible !important;
+                max-height: none !important;
             }
             .earnings-top-bar {
-                top: 8px;
-                flex-direction: row;
+                flex-wrap: wrap;
                 justify-content: center;
-                gap: 12px;
+                gap: 8px 14px;
+                width: 95%;
+                font-size: 0.8rem;
                 padding: 6px 12px;
-                font-size: 0.78rem;
-                width: 96%;
-                white-space: nowrap;
-            }
-            .main-title {
-                font-size: 3.2rem !important;
-            }
-            .sub-kanji {
-                font-size: 1.2rem !important;
-            }
-            .login-box {
-                width: 90% !important;
-                padding: 18px !important;
-            }
-            .japanese-watermark {
-                font-size: 7rem !important;
+                white-space: normal;
             }
         }
 
+        @media (max-width: 600px) {
+            .main-title { font-size: 3rem; }
+            .sub-kanji { font-size: 1.1rem; }
+            .japanese-watermark { font-size: 6rem; }
+            .menu-grid { grid-template-columns: 1fr; }
+        }
+
+        /* אנימציות */
         @keyframes fadeInDown { to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
         @keyframes zoomInTitle { to { opacity: 1; transform: scale(1); } }
         @keyframes expandLine { to { transform: translateX(-50%) scaleX(1); } }
-        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
-        @keyframes popIn {
-            0% { opacity: 0; transform: scale(0.9); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-        @keyframes fall {
-            0% { top: -5%; transform: translateX(0) rotate(0deg); opacity: 0.8; }
-            100% { top: 105%; transform: translateX(120px) rotate(360deg); opacity: 0.2; }
-        }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
 
-    <!-- נגן יוטיוב נסתר למוזיקת רקע במסך הפתיחה בלבד -->
-    <div id="youtube-audio-container" style="display:none;"></div>
-    <script src="https://www.youtube.com/iframe_api"></script>
-
-    <!-- מסך קראש -->
+    <!-- מסך קראש כשאופליין מופעל על המשתמש -->
     <div class="crash-screen" id="crashScreen">
-        <div class="crash-title">האתר קרס</div>
-        <div class="crash-text">אי אפשר להיכנס לאתר כרגע.</div>
+        <div class="crash-title">SYSTEM CRASH</div>
+        <div class="crash-text">
+            המערכת הושבתה מרחוק עבור משתמש זה. גישה לחשבון ולמסוף הושעתה זמנית.
+        </div>
     </div>
 
-    <!-- מד רווחים אישיים ומשכורת אישית עליון -->
+    <!-- רקע ג'פניטה (מופעל רק לאחר כניסה) -->
+    <div class="bg-wrapper">
+        <div class="bg-container" id="bgContainer"></div>
+    </div>
+    <div class="overlay"></div>
+
+    <!-- מד רווחים למעלה -->
     <div class="earnings-top-bar" id="earningsTopBar">
-        <div class="earning-item">רווחי מסעדה: <span id="totalRestaurantRevenue">₪0</span></div>
-        <div class="earning-item">המשכורת שלי (20%): <span id="mySalaryRevenue">₪0</span></div>
+        <div class="earning-item">רווחי כנופיה: <span id="gangTotalDisplay">0$</span></div>
+        <div class="earning-item">משכורת שלי: <span id="mySalaryDisplay">0$</span></div>
+        <div class="earning-item">יעד שבועי: <span id="weeklyTargetDisplay">100K</span></div>
+        <div class="earning-item">שליחת משכורות: <span id="salaryStatusDisplay">ממתין לשליחה</span></div>
     </div>
 
-    <!-- תוכן האתר הראשי (ממורכז באמצע המסך) -->
+    <!-- מסך האתר הראשי (ממורכז בדיוק באמצע המסך) -->
     <div class="main-app-content" id="mainAppContent">
-        
-        <!-- עמודה 1: תגיות עובדים (גלילה פנימית בלבד) -->
+        <!-- עמודה ימנית: עובדי ג'פניטה -->
         <div class="app-column column-employees">
-            <div class="column-title">רשימת עובדים</div>
-            <div id="usersBadgesContainer" class="column-scroll-area"></div>
+            <div class="column-title">עובדי ג'פניטה</div>
+            <div class="column-scroll-area" id="employeesList"></div>
         </div>
 
-        <!-- עמודה 2: טבלת מכירות עובדים (גלילה פנימית בלבד) -->
+        <!-- עמודה ליד ימין: טבלת מובילים -->
         <div class="app-column column-leaderboard">
-            <div class="column-title">טבלת מכירות</div>
+            <div class="column-title">מובילים</div>
             <div class="leaderboard-list" id="leaderboardList"></div>
         </div>
 
-        <!-- עמודה 3: תפריט דינמי (גלילה פנימית בלבד) -->
+        <!-- עמודה מרכזית: תפריט -->
         <div class="app-column column-menu">
-            <div class="column-title">תפריט ומבצעים</div>
-            <div id="dynamicMenuContainer" class="column-scroll-area"></div>
+            <div class="column-title">תפריט הזמנות</div>
+            <div class="column-scroll-area" id="menuContainer"></div>
         </div>
 
-        <!-- עמודה 4: הזמנה נוכחית (גלילה פנימית בלבד) -->
+        <!-- עמודה שמאלית: הזמנה נוכחית -->
         <div class="app-column column-order">
             <div class="column-title">הזמנה נוכחית</div>
             <div class="order-items-list" id="orderItemsList">
-                <div style="text-align:center; color:#777; font-size:0.85rem; margin-top:20px;">העגלה ריקה</div>
+                <div style="text-align:center; color:#666; font-size:0.85rem; margin-top:20px;">אין פריטים בהזמנה</div>
             </div>
-            <div class="order-total" id="orderTotal">סך הכל: ₪0</div>
-            <button class="sidebar-action-btn" onclick="confirmOrder()">אישור הזמנה</button>
-            <button class="sidebar-action-btn invoice-btn" onclick="openInvoicesModal()">חשבוניות</button>
+            <div class="order-total" id="orderTotal">סה"כ: 0$</div>
+            <button class="sidebar-action-btn" id="confirmOrderBtn">אשר הזמנה</button>
+            <button class="sidebar-action-btn invoice-btn" id="openInvoicesBtn">היסטוריית חשבוניות</button>
         </div>
     </div>
 
-    <!-- מודל חשבוניות -->
+    <!-- מודל היסטוריית חשבוניות -->
     <div class="invoice-modal" id="invoiceModal">
         <div class="invoice-panel">
-            <span class="close-modal" onclick="closeInvoicesModal()">✕</span>
-            <div class="admin-header">חשבונות והזמנות קודמות</div>
-            <div id="invoicesListContainer" style="display:flex; flex-direction:column; gap:10px;"></div>
+            <span class="f1-close" id="closeInvoiceBtn">✕</span>
+            <div class="admin-header">היסטוריית חשבוניות</div>
+            <div id="invoicesContainer"></div>
         </div>
     </div>
 
     <!-- מודל הדרכה -->
     <div class="tutorial-modal" id="tutorialModal">
         <div class="tutorial-panel">
-            <div class="tutorial-title" id="tutorialTitle">ברוכים הבאים לג'פניטה</div>
-            <div class="tutorial-text" id="tutorialText">טקסט הדרכה...</div>
+            <div class="tutorial-title" id="tutorialTitle">ברוך הבא לג'פניטה!</div>
+            <div class="tutorial-text" id="tutorialText">כאן תלמד איך להשתמש במערכת בקלות ובמהירות.</div>
             <div class="tutorial-buttons">
-                <button class="tutorial-btn secondary" id="tutPrevBtn" onclick="prevTutorialStep()" style="display:none;">הקודם</button>
-                <button class="tutorial-btn" id="tutNextBtn" onclick="nextTutorialStep()">הבא</button>
+                <button class="tutorial-btn secondary" id="skipTutorialBtn">דלג</button>
+                <button class="tutorial-btn" id="nextTutorialBtn">הבא</button>
             </div>
         </div>
     </div>
 
-    <!-- מסך INTRO -->
+    <!-- מסך INTRO (מסך פתיחה) -->
     <div class="intro-screen" id="introScreen">
+        <div class="japanese-watermark">日本</div>
         <div class="sun-bg"></div>
-        <div class="japanese-watermark">日本料理レストラン</div>
-        
+
         <div class="intro-content">
-            <div class="sub-kanji">日本料理</div>
+            <div class="sub-kanji">日本</div>
             <h1 class="main-title">ג'פניטה</h1>
             
-            <button class="show-login-btn" id="showLoginBtn" onclick="openLoginForm()">כניסה לאתר המסעדה</button>
+            <button class="show-login-btn" id="showLoginBtn">כניסה</button>
 
             <div class="login-box" id="loginBox">
-                <div class="login-title">הזן פרטי גישה</div>
-                <input type="text" id="usernameInput" class="login-input" placeholder="שם משתמש">
-                <input type="text" id="pinInput" class="login-input" placeholder="קוד מספרי" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                <button class="enter-btn" onclick="enterSite()">אישור וכניסה</button>
-                <div class="error-msg" id="errorMsg">שם משתמש או קוד שגויים!</div>
+                <div class="login-title">כניסה למערכת</div>
+                <input type="text" class="login-input" id="usernameInput" placeholder="שם משתמש">
+                <input type="password" class="login-input" id="passwordInput" placeholder="סיסמה">
+                <button class="enter-btn" id="enterBtn">התחברות</button>
+                <div class="error-msg" id="errorMsg">פרטים שגויים או שהמשתמש נמחק.</div>
             </div>
         </div>
 
-        <div class="footer-credit">אתר זה נוסד על ידי - mia.22345</div>
+        <div class="footer-credit">נוצר ע"י לירז הילל</div>
     </div>
 
-    <div class="bg-wrapper">
-        <div class="bg-container" id="bgContainer"></div>
-    </div>
-    <div class="overlay"></div>
-
-    <!-- חלון אדמין F9 -->
+    <!-- חלון אדמין (רק לאדמין הראשי או עובד מורשה) -->
     <div class="modal" id="adminModal">
         <div class="admin-panel">
-            <span class="close-modal" onclick="closeAdmin()">✕</span>
-            <div id="adminLoginSection">
-                <div class="admin-header">גישת מנהל</div>
-                <div class="admin-form">
-                    <input type="password" id="adminPasswordInput" class="admin-input" placeholder="הזן קוד אבטחה לפאנל">
-                    <button class="admin-btn" onclick="verifyAdminCode()">אישור קוד</button>
-                    <div class="error-msg" id="adminErrorMsg" style="color:#ff5555; text-align:center; margin-top:5px; display:none;">קוד מנהל שגוי!</div>
-                </div>
+            <span class="f1-close" id="closeAdminBtn">✕</span>
+            <div class="admin-header">פאנל ניהול משתמשים (גרור משתמשים לשינוי סדר)</div>
+
+            <div class="admin-form">
+                <input type="text" class="admin-input" id="newUsername" placeholder="שם משתמש חדש">
+                <input type="password" class="admin-input" id="newPassword" placeholder="סיסמה חדשה">
+                <select class="admin-select" id="newUserRole">
+                    <option value="עובד">עובד</option>
+                    <option value="בכיר">בכיר</option>
+                    <option value="אדמין">אדמין</option>
+                    <option value="בוס">בוס</option>
+                </select>
+                <button class="admin-btn" id="addUserBtn">הוסף משתמש</button>
             </div>
-            <div id="adminDashboardSection" style="display: none;">
-                <div class="admin-header">פאנל ניהול - ג'פניטה</div>
 
-                <!-- יצירת וניהול קטגוריות בעצמכם -->
-                <div class="admin-form" style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; margin-bottom: 15px;">
-                    <div style="font-size: 0.9rem; color: #ff8888; margin-bottom: 6px;">יצירה וניהול קטגוריות תפריט:</div>
-                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-                        <input type="text" id="newCategoryStandaloneInput" class="admin-input" placeholder="שם קטגוריה חדשה..." style="flex: 1; margin-bottom: 0;">
-                        <button class="admin-btn" onclick="addStandaloneCategory()" style="background: linear-gradient(135deg, #333, #555);">צור קטגוריה</button>
-                    </div>
-                    <div style="font-size:0.80rem; color:#aaa; margin-bottom:4px;">קטגוריות קיימות:</div>
-                    <div class="user-list" id="categoriesListAdmin" style="max-height: 95px;"></div>
-                </div>
-                
-                <!-- הוספת מנה חדשה לתפריט -->
-                <div class="admin-form" style="background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; margin-bottom: 15px;">
-                    <div style="font-size: 0.9rem; color: #ff8888; margin-bottom: 6px;">הוספת מנה חדשה לתפריט:</div>
-                    <input type="text" id="newDishName" class="admin-input" placeholder="שם המנה" style="margin-bottom: 6px;">
-                    <input type="text" id="newDishPrice" class="admin-input" placeholder="מחיר למכירה (מחיר סופי ב-₪)" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="margin-bottom: 6px;">
-                    <input type="text" id="newDishOriginalPrice" class="admin-input" placeholder="מחיר מקורי לפני הנחה (רשות)" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="margin-bottom: 6px;">
-                    
-                    <select id="newDishCategory" class="admin-select" style="margin-bottom: 6px;" onchange="handleCategorySelect(this.value)"></select>
-                    <input type="text" id="customCategoryInput" class="admin-input" placeholder="הקלד שם קטגוריה חדשה" style="display: none; margin-bottom: 6px;">
-                    
-                    <button class="admin-btn" onclick="addCustomDish()">הוסף מנה לתפריט</button>
-                </div>
-
-                <!-- מחיקת מנות מהתפריט -->
-                <div class="admin-form" style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
-                    <div style="font-size: 0.85rem; color: #ff8888; margin-bottom: 5px;">מחיקת מנות מהתפריט:</div>
-                    <div class="user-list" id="dishesListForDelete" style="max-height: 110px;"></div>
-                </div>
-
-                <!-- ניהול דרגות -->
-                <div class="admin-form" style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
-                    <div style="font-size: 0.85rem; color: #ff8888; margin-bottom: 5px;">ניהול דרגות במערכת:</div>
-                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-                        <input type="text" id="newRoleName" class="admin-input" placeholder="שם דרגה חדשה" style="flex: 1; margin-bottom: 0;">
-                        <button class="admin-btn" onclick="addNewRole()" style="background: linear-gradient(135deg, #333, #555);">הוסף</button>
-                    </div>
-                    <div style="font-size:0.80rem; color:#aaa; margin-bottom:4px;">דרגות קיימות:</div>
-                    <div class="user-list" id="roleList" style="max-height: 90px;"></div>
-                </div>
-
-                <!-- יצירת משתמשים + גרירה לסידור הרשימה -->
-                <div class="admin-form">
-                    <div style="font-size: 0.85rem; color: #ff8888; margin-bottom: 5px;">יצירת משתמש חדש:</div>
-                    <input type="text" id="newUsername" class="admin-input" placeholder="שם משתמש חדש">
-                    <input type="text" id="newPin" class="admin-input" placeholder="קוד מספרי חדש" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                    <select id="newRole" class="admin-select"></select>
-                    <button class="admin-btn" onclick="addUser()">הוסף משתמש</button>
-                </div>
-                <div style="font-size:0.85rem; color:#ff8888; margin-bottom:6px;">משתמשים קיימים (גרור ☰ למעלה/למטה כדי לשנות את סדר הופעתם ברשימת העובדים):</div>
-                <div class="user-list" id="userList" style="max-height: 160px;"></div>
-            </div>
+            <div class="user-list" id="userList"></div>
         </div>
     </div>
 
-    <!-- פאנל חירום ושליטת דיסקורד F1 -->
+    <!-- חלון F1 ייחודי לבוס ולמנהל הראשי בלבד -->
     <div class="f1-modal" id="f1Modal">
         <div class="f1-panel">
-            <span class="f1-close" onclick="closeF1()">✕</span>
-            <div id="f1LoginSection">
-                <div class="f1-header">מערכת חירום (F1)</div>
-                <input type="password" id="f1PasswordInput" class="f1-input" placeholder="הזן קוד חירום">
-                <button class="f1-btn" onclick="verifyF1Code()">אישור קוד חירום</button>
-                <div class="error-msg" id="f1ErrorMsg" style="color:#ff5555; text-align:center; margin-top:5px; display:none;">קוד שגוי!</div>
+            <span class="f1-close" id="closeF1Btn">✕</span>
+            <div class="f1-header">פאנל שליטה F1 (בוס / לירז)</div>
+
+            <!-- הגדרת מינימום הכנסות שבועי לכל עובד -->
+            <div style="margin-bottom: 12px; padding: 10px; border-radius: 10px; background: rgba(255,59,59,0.06); border: 1px solid rgba(255,59,59,0.3);">
+                <div style="font-weight: 700; color: #ff8888; font-size: 0.9rem; margin-bottom: 6px; text-align: center;">
+                    יעד מינימום הכנסות שבועי למד (100%):
+                </div>
+                <input type="number" min="1" class="f1-input" id="weeklyQuotaInput" placeholder="מינימום שבועי בדולרים (למשל 100000)">
+                <button class="f1-btn" id="saveWeeklyQuotaBtn">עדכן יעד שבועי למד</button>
             </div>
 
-            <div id="f1DashboardSection" style="display: none;">
-                <div class="f1-header">שליטה גלובלית + קבלות ומשכורות בדיסקורד</div>
-                <div class="f1-status-box" id="f1StatusBox">סטטוס אתר: פעיל תקין</div>
+            <!-- הוספת כסף למשתמש -->
+            <input type="text" class="f1-input" id="f1TargetUser" placeholder="שם משתמש להוספת סכום...">
+            <input type="number" class="f1-input" id="f1Amount" placeholder="סכום כסף להוספה ($)">
+            <button class="f1-btn" id="f1AddMoneyBtn">הוסף כסף למשתמש</button>
 
-                <!-- אזור בחירת משתמשים (ספציפי / מרובה / כולם) ופעולות Webhook לדיסקורד -->
-                <div class="f1-section-box">
-                    <div style="font-size: 0.92rem; color: #8ea1e1; font-weight: 900; margin-bottom: 8px; text-align: center;">
-                        🤖 ניהול קבלות ומשכורות לדיסקורד (Webhook)
-                    </div>
+            <hr style="border-color: rgba(255,255,255,0.1); margin: 14px 0;">
 
-                    <div style="font-size: 0.82rem; color: #ddd; margin-bottom: 5px;">
-                        בחר משתמש ספציפי, מספר משתמשים או את כולם:
-                    </div>
+            <!-- הפעלת אופליין / קראש / שחרור למשתמש -->
+            <select class="f1-select" id="f1OfflineUserSelect">
+                <option value="">בחר משתמש להשבתה / שחרור...</option>
+            </select>
+            <button class="f1-btn" id="f1ToggleOfflineBtn">הפעל אופליין (קראש)</button>
 
-                    <!-- תיבת בחירה מהירה: כולם / משתמש ספציפי / בחירה מרובה -->
-                    <select id="f1TargetSelect" class="f1-select" onchange="onF1TargetSelectChange(this.value)" style="margin-bottom: 8px;">
-                        <option value="__ALL__">👥 כל המשתמשים (כולם)</option>
-                    </select>
+            <hr style="border-color: rgba(255,255,255,0.1); margin: 14px 0;">
 
-                    <!-- רשימת סימון משתמשים (Checkboxes) עם תצוגת מכירות ו-20% משכורת בזמן אמת -->
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 0.76rem; color: #aaa;">
-                        <span>סימון משתמשים לפעולה:</span>
-                        <div>
-                            <span style="cursor:pointer; color:#66b3ff; margin-left:8px;" onclick="toggleAllF1Users(true)">בחר הכל</span>
-                            <span style="cursor:pointer; color:#ff8888;" onclick="toggleAllF1Users(false)">נקה הכל</span>
-                        </div>
-                    </div>
-                    <div class="f1-users-checklist" id="f1UsersChecklist"></div>
-
-                    <!-- כפתורי פעולה על המשתמשים שנבחרו (שליחת קבלות / איפוס כסף ומשכורת) -->
-                    <button class="f1-btn" style="background: linear-gradient(135deg, #5865F2, #3b44a8);" onclick="handleF1CheckAccountsAndSend()">
-                        🧾 בדוק חשבונות ושלח לדיסקורד (!קבלות / /קבלות)
-                    </button>
-                    <button class="f1-btn" style="background: linear-gradient(135deg, #2b6cb0, #1a365d); margin-bottom: 0;" onclick="handleF1ResetSalariesAndSend()">
-                        💰 אפס כסף, משכורת וחשבוניות לנבחרים (!איפוסמשכורת)
-                    </button>
+            <!-- שליחת משכורות לדיסקורד -->
+            <div class="f1-section-box">
+                <div style="font-weight: 900; color: #8c9eff; font-size: 0.98rem; margin-bottom: 6px; text-align: center;">
+                    שליחת משכורות לדיסקורד
                 </div>
 
-                <!-- כפתורי שליטה גלובליים על האתר -->
-                <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 12px;">
-                    <button class="f1-btn" style="background: linear-gradient(135deg, #aa1111, #550000);" onclick="setGlobalSiteState(false)">🛑 כבה את האתר לכולם (קראש)</button>
-                    <button class="f1-btn" style="background: linear-gradient(135deg, #11aa44, #005522);" onclick="setGlobalSiteState(true)">✅ הפעל מחדש את האתר</button>
-                    <button class="f1-btn" style="background: linear-gradient(135deg, #ff8800, #cc4400);" onclick="fullSiteReset()">🔄 איפוס מלא לכל נתוני האתר (לכולם)</button>
+                <div style="font-size: 0.8rem; color: #ccc; margin-bottom: 5px; text-align: center;">
+                    סמן עובדים שאיתם יחולקו המשכורות (מציג רווח שכל אחד הרוויח ו-15% משכורת):
                 </div>
 
-                <!-- חיבור פקודות /קבלות ו-/איפוסמשכורת ישירות מתוך דיסקורד -->
-                <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.15);">
-                    <div style="font-size: 0.82rem; color: #ff8888; margin-bottom: 5px; text-align: center; font-weight: 700;">
-                        חיבור בוט להפעלת `/קבלות` ו-`/איפוסמשכורת` מתוך צ'אט דיסקורד:
-                    </div>
-                    <input type="password" id="discordBotTokenInput" class="f1-input" placeholder="הדבק Bot Token מדיסקורד להפעלת פקודות / ו-! בצ'אט (רשות)" style="margin-bottom: 6px; font-size: 0.8rem;">
-                    <button class="f1-btn" style="background: linear-gradient(135deg, #4752C4, #2c3482); padding: 8px;" onclick="saveDiscordBotToken()">חבר בוט ורשום פקודות / בדיסקורד</button>
-                    <div id="discordBotStatusText" style="font-size: 0.76rem; text-align: center; color: #55ff99; margin-top: 4px;">
-                        ✅ Webhook דיסקורד מחובר ופעיל!
-                    </div>
+                <div class="f1-users-checklist" id="f1DiscordUsersChecklist"></div>
+
+                <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+                    <button class="f1-btn" style="margin-bottom: 0; padding: 6px; font-size: 0.78rem;" id="f1SelectAllUsersBtn">בחר הכל</button>
+                    <button class="f1-btn" style="margin-bottom: 0; padding: 6px; font-size: 0.78rem;" id="f1ClearAllUsersBtn">נקה הכל</button>
                 </div>
+
+                <button class="f1-btn" style="background: linear-gradient(135deg, #5865F2, #3b46c4);" id="f1SendSalariesBtn">
+                    שלח משכורות לדיסקורד (15% לעובד + 85% לכנופיה)
+                </button>
+                <div class="f1-status-box offline" id="f1SalaryStatus">מצב: ממתין לשליחה</div>
             </div>
+
+            <hr style="border-color: rgba(255,255,255,0.1); margin: 14px 0;">
+
+            <!-- איפוס כללי של הכסף ורווחי הכנופיה (מאפס גם את המד ל-0%) -->
+            <button class="f1-btn" style="background: linear-gradient(135deg, #440000, #aa0000);" id="f1ResetAllBtn">
+                אפס את כל הכסף (רווחי כנופיה + משכורות + מד עובדים)
+            </button>
+
+            <div class="f1-status-box offline" id="f1StatusBox">סטטוס: תקין ופעיל</div>
         </div>
     </div>
 
     <script>
-        // ביטול מוחלט של כל הודעות הדפדפן וגוגל ("האתר אומר...")
-        window.alert = function() {};
-        window.confirm = function() { return true; };
+        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1480241122025091112/4W1V7-qG6r9G493Y-8jS5C5x5m_7T-V5Z2G1S5K_2Q3X7M2R3U6W9Y1A5B7C9D1E";
+        const MQTT_BROKER = "wss://broker.emqx.io:8084/mqtt";
+        const MQTT_TOPIC = "japnita/live/state/v1";
 
-        // ====================================================
-        // הגדרת ה-WEBHOOK שלך לדיסקורד (תומך גם ב-discord.com וגם ב-discordapp.com)
-        // ====================================================
-        const DISCORD_WEBHOOK_URLS = [
-            'https://discord.com/api/webhooks/1566530959132721316/XESt74EG5nzXGs2juCyi57ayFvrCgjM8awNjNq2ohBoLEKBqF1BT4q-zQFe4dvWecaQf',
-            'https://discordapp.com/api/webhooks/1566530959132721316/XESt74EG5nzXGs2juCyi57ayFvrCgjM8awNjNq2ohBoLEKBqF1BT4q-zQFe4dvWecaQf'
+        const DEFAULT_WEEKLY_QUOTA = 100000; // ברירת מחדל: 100K מינימום הכנסות שבועי
+
+        const DEFAULT_USERS = [
+            { name: "לירז", pass: "1234", role: "אדמין" },
+            { name: "שקד", pass: "1234", role: "בוס" },
+            { name: "יואב", pass: "1234", role: "בכיר" },
+            { name: "דניאל", pass: "1234", role: "עובד" },
+            { name: "עומר", pass: "1234", role: "עובד" },
+            { name: "נועם", pass: "1234", role: "עובד" },
+            { name: "איתי", pass: "1234", role: "עובד" },
+            { name: "רועי", pass: "1234", role: "עובד" },
+            { name: "מאי", pass: "1234", role: "עובד" }
         ];
 
-        async function postToDiscordWebhook(payload) {
-            for (const url of DISCORD_WEBHOOK_URLS) {
-                try {
-                    const res = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    if (res.ok || res.status === 204) {
-                        return true;
-                    }
-                } catch (e) {}
+        const MENU_DATA = {
+            "אוכל": [
+                { name: "ראמן קלאסי", price: 1500 },
+                { name: "ראמן חריף", price: 1800 },
+                { name: "גיוזה מאודה (6 יח')", price: 1200 },
+                { name: "אורז מוקפץ יפני", price: 1400 },
+                { name: "קארי יפני עם עוף", price: 2200 },
+                { name: "אודון מוקפץ", price: 1900 },
+                { name: "טמפורה ירקות ועוף", price: 2000 },
+                { name: "יאקיטורי שיפודי עוף", price: 1700 }
+            ],
+            "שתייה": [
+                { name: "תה ירוק יפני קר", price: 600 },
+                { name: "מאצ'ה לאטה", price: 900 },
+                { name: "רמונה יפנית (ראמונה)", price: 800 },
+                { name: "קולה זירו / רגיל", price: 500 },
+                { name: "מים מינרליים", price: 400 }
+            ],
+            "סמים": [
+                { name: "הרואין", price: 5000 },
+                { name: "קוקאין", price: 6500 },
+                { name: "MDMA / אקסטזי", price: 4500 },
+                { name: "אסיד / LSD", price: 4000 },
+                { name: "ויד רפואי / זן מיוחד", price: 3000 },
+                { name: "קראק", price: 5500 }
+            ]
+        };
+
+        const TUTORIAL_STEPS = [
+            {
+                title: "ברוך הבא לג'פניטה!",
+                text: "כאן נמצאת מערכת העבודה והניהול של ג'פניטה. נעבור על החלקים המרכזיים של המסך."
+            },
+            {
+                title: "התפריט וההזמנות",
+                text: "בחר פריטים מתוך האוכל, השתייה או הסמים כדי להוסיף אותם להזמנה הנוכחית. לאחר מכן לחץ על 'אשר הזמנה' להפקת חשבונית."
+            },
+            {
+                title: "רווחים, משכורות ומד שבועי",
+                text: "הרווח מהזמנות מתחלק אוטומטית: 15% לעובד המבצע ו-85% לכנופיה. בנוסף, לכל עובד מופיע מד שמגיע ל-100% לפי יעד ההכנסות השבועי (100K כברירת מחדל) ומתאפס עם איפוס הכסף."
+            },
+            {
+                title: "טבלת מובילים וחשבוניות",
+                text: "תוכל לראות מי המוביל בהכנסות בטבלת המובילים ולצפות בכל החשבוניות שנוצרו."
+            },
+            {
+                title: "פאנלי ניהול (אדמין / F1)",
+                text: "המנהלים יכולים לנהל משתמשים וסדר הופעה בפאנל האדמין, וב-F1 להגדיר יעד שבועי למד, להוסיף כסף, להפעיל אופליין, לשלוח משכורות לדיסקורד או לאפס הכל."
             }
-            return false;
+        ];
+
+        function formatCompactNumber(num) {
+            const n = Number(num) || 0;
+            if (Math.abs(n) >= 1000000) {
+                return (n / 1000000).toFixed(n % 1000000 === 0 ? 0 : 1).replace(/\.0$/, '') + "M";
+            }
+            if (Math.abs(n) >= 1000) {
+                return (n / 1000).toFixed(n % 1000 === 0 ? 0 : 1).replace(/\.0$/, '') + "K";
+            }
+            return n.toLocaleString() + "$";
         }
 
-        let currentLoggedUser = '';
-        let currentOrder = [];
-        let isLoggedIn = false;
+        function formatMoney(num) {
+            return (Number(num) || 0).toLocaleString() + "$";
+        }
+
+        function sanitizeQuota(val) {
+            const parsed = Number(val);
+            if (!Number.isFinite(parsed) || parsed <= 0) {
+                return DEFAULT_WEEKLY_QUOTA;
+            }
+            return parsed;
+        }
+
+        // טעינת נתונים מ-localStorage או ברירת מחדל
+        let users = JSON.parse(localStorage.getItem('japnita_users')) || DEFAULT_USERS;
+        let currentUser = JSON.parse(localStorage.getItem('japnita_currentUser')) || null;
+        let currentOrder = JSON.parse(localStorage.getItem('japnita_currentOrder')) || [];
+        let invoices = JSON.parse(localStorage.getItem('japnita_invoices')) || [];
+        let gangEarnings = Number(localStorage.getItem('japnita_gangEarnings')) || 0;
+        let userSalaries = JSON.parse(localStorage.getItem('japnita_userSalaries')) || {};
+        let userSalesRevenue = JSON.parse(localStorage.getItem('japnita_userSalesRevenue')) || {};
+        let weeklyQuota = sanitizeQuota(localStorage.getItem('japnita_weeklyQuota'));
+        let offlineUsers = JSON.parse(localStorage.getItem('japnita_offlineUsers')) || [];
+        let salarySentFlag = JSON.parse(localStorage.getItem('japnita_salarySentFlag')) || false;
+        let lastUpdatedAt = Number(localStorage.getItem('japnita_lastUpdatedAt')) || Date.now();
+
+        let tutorialStepIndex = 0;
+        let mqttClient = null;
+        let isApplyingRemoteState = false;
         let draggedUserIndex = null;
 
-        const defaultCategories = [
-            'מבצעים',
-            'הנחה לעובדי מדינה 25%',
-            'מנות עיקריות',
-            'ארוחות',
-            'קינוחים',
-            'שתייה'
-        ];
-
-        const defaultMenu = [
-            // מבצעים רגילים
-            { category: 'מבצעים', name: 'מבצע קטן', price: 1950 },
-            { category: 'מבצעים', name: 'מבצע גדול', price: 3900 },
-            { category: 'מבצעים', name: 'מבצע משפחתי', price: 5850 },
-
-            // הנחה לעובדי מדינה 25%
-            { category: 'הנחה לעובדי מדינה 25%', name: 'מבצע קטן', price: 1462, originalPrice: 1950 },
-            { category: 'הנחה לעובדי מדינה 25%', name: 'מבצע גדול', price: 2925, originalPrice: 3900 },
-            { category: 'הנחה לעובדי מדינה 25%', name: 'מבצע משפחתי', price: 4387, originalPrice: 5850 },
-
-            // מנות עיקריות
-            { category: 'מנות עיקריות', name: 'ראמן מסורתי', price: 390 },
-            { category: 'מנות עיקריות', name: 'סושי מיקס', price: 390 },
-            { category: 'מנות עיקריות', name: 'טריאקי סלמון', price: 350 },
-            { category: 'מנות עיקריות', name: 'גיוזה לוקוס', price: 380 },
-
-            // ארוחות
-            { category: 'ארוחות', name: "ארוחת ג'פניטה", price: 550 },
-
-            // קינוחים
-            { category: 'קינוחים', name: 'קאסטלה יפנית', price: 160 },
-            { category: 'קינוחים', name: 'פנקייק יפני', price: 125 },
-
-            // שתייה
-            { category: 'שתייה', name: 'לימונדה יפנית', price: 100 },
-            { category: 'שתייה', name: 'תה ירוק', price: 100 },
-            { category: 'שתייה', name: "מים - ג'פניטה", price: 100 }
-        ];
-
-        function getInitialState() {
+        function getFullStatePayload() {
             return {
-                users: [
-                    { username: "mia", pin: "1234", role: "מנכ\"ל" }
-                ],
-                roles: ['מנכ"ל', 'סמנכ״ל', 'אחראי עובדים', 'עובד רגיל'],
-                categories: JSON.parse(JSON.stringify(defaultCategories)),
-                menuItems: JSON.parse(JSON.stringify(defaultMenu)),
-                revenue: 0,
-                sales: {},
-                invoices: {},
-                crash: false,
-                discordBotToken: '',
-                lastDiscordCmdId: '',
-                resetId: 1,
-                lastUpdated: 0
+                users,
+                currentOrder,
+                invoices,
+                gangEarnings,
+                userSalaries,
+                userSalesRevenue,
+                weeklyQuota,
+                offlineUsers,
+                salarySentFlag,
+                updatedAt: lastUpdatedAt
             };
         }
 
-        localStorage.removeItem('japanita_stable_data');
-
-        const STORAGE_KEY = 'japanita_cloud_synced_v7';
-        const CLOUD_TOPIC = 'japanita_pos_live_v7_mia22345/state';
-        const CLOUD_CMD_TOPIC = 'japanita_pos_live_v7_mia22345/discord_cmd';
-        let globalData = getInitialState();
-        let mqttClients = [];
-
-        function getUserSalesAmount(username) {
-            if (!username || !globalData.sales) return 0;
-            let total = 0;
-            for (let [key, val] of Object.entries(globalData.sales)) {
-                if (key.toLowerCase() === username.toLowerCase()) {
-                    total += (Number(val) || 0);
-                }
+        function saveData(broadcastRemote = true) {
+            weeklyQuota = sanitizeQuota(weeklyQuota);
+            if (broadcastRemote && !isApplyingRemoteState) {
+                lastUpdatedAt = Date.now();
             }
-            return total;
-        }
+            localStorage.setItem('japnita_users', JSON.stringify(users));
+            localStorage.setItem('japnita_currentOrder', JSON.stringify(currentOrder));
+            localStorage.setItem('japnita_invoices', JSON.stringify(invoices));
+            localStorage.setItem('japnita_gangEarnings', gangEarnings);
+            localStorage.setItem('japnita_userSalaries', JSON.stringify(userSalaries));
+            localStorage.setItem('japnita_userSalesRevenue', JSON.stringify(userSalesRevenue));
+            localStorage.setItem('japnita_weeklyQuota', String(weeklyQuota));
+            localStorage.setItem('japnita_offlineUsers', JSON.stringify(offlineUsers));
+            localStorage.setItem('japnita_salarySentFlag', JSON.stringify(salarySentFlag));
+            localStorage.setItem('japnita_lastUpdatedAt', String(lastUpdatedAt));
 
-        function getUserInvoicesList(username) {
-            if (!username || !globalData.invoices) return [];
-            let list = [];
-            for (let [key, arr] of Object.entries(globalData.invoices)) {
-                if (key.toLowerCase() === username.toLowerCase() && Array.isArray(arr)) {
-                    list = list.concat(arr);
-                }
-            }
-            return list;
-        }
-
-        function setUserInvoicesList(username, newList) {
-            if (!username) return;
-            if (!globalData.invoices) globalData.invoices = {};
-            for (let key of Object.keys(globalData.invoices)) {
-                if (key.toLowerCase() === username.toLowerCase()) {
-                    delete globalData.invoices[key];
-                }
-            }
-            globalData.invoices[username] = newList;
-        }
-
-        function setUserSalesAmount(username, newAmount) {
-            if (!username) return;
-            if (!globalData.sales) globalData.sales = {};
-            for (let key of Object.keys(globalData.sales)) {
-                if (key.toLowerCase() === username.toLowerCase()) {
-                    delete globalData.sales[key];
-                }
-            }
-            globalData.sales[username] = Math.max(0, Number(newAmount) || 0);
-
-            let totalRev = 0;
-            for (let val of Object.values(globalData.sales)) {
-                totalRev += (Number(val) || 0);
-            }
-            globalData.revenue = totalRev;
-        }
-
-        function ensureCategoriesList() {
-            if (!Array.isArray(globalData.categories)) {
-                globalData.categories = JSON.parse(JSON.stringify(defaultCategories));
-            }
-            (globalData.menuItems || []).forEach(item => {
-                if (item.category && !globalData.categories.includes(item.category)) {
-                    globalData.categories.push(item.category);
-                }
-            });
-        }
-
-        // ====================================================
-        // ניהול בחירת משתמשים בחלון F1 (כולם / משתמש ספציפי / מרובה)
-        // ====================================================
-        function renderF1UsersSelection() {
-            const selectElem = document.getElementById('f1TargetSelect');
-            const checklistElem = document.getElementById('f1UsersChecklist');
-            if (!selectElem || !checklistElem) return;
-
-            const prevSelectVal = selectElem.value || '__ALL__';
-            const prevCheckedUsers = Array.from(checklistElem.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
-
-            const users = globalData.users || [];
-
-            // עדכון תיבת הבחירה המהירה
-            let selectHtml = `<option value="__ALL__">👥 כל המשתמשים (כולם - ${users.length})</option>`;
-            users.forEach(u => {
-                const sales = Math.round(getUserSalesAmount(u.username));
-                const salary = Math.round(sales * 0.20);
-                selectHtml += `<option value="${u.username}">👤 רק ${u.username} (${u.role || 'עובד'}) - עשה: ₪${sales.toLocaleString()} | משכורת: ₪${salary.toLocaleString()}</option>`;
-            });
-            selectHtml += `<option value="__CUSTOM__">☑️ בחירה מותאמת אישית (לפי הסימון למטה)</option>`;
-            selectElem.innerHTML = selectHtml;
-
-            if (Array.from(selectElem.options).some(opt => opt.value === prevSelectVal)) {
-                selectElem.value = prevSelectVal;
-            } else {
-                selectElem.value = '__ALL__';
-            }
-
-            // עדכון רשימת ה-Checkboxes
-            let checkHtml = '';
-            users.forEach(u => {
-                const sales = Math.round(getUserSalesAmount(u.username));
-                const salary = Math.round(sales * 0.20);
-                const afterSalary = Math.round(sales - salary);
-                const invCount = getUserInvoicesList(u.username).length;
-
-                let isChecked = true;
-                if (selectElem.value !== '__ALL__') {
-                    if (selectElem.value === '__CUSTOM__') {
-                        isChecked = prevCheckedUsers.includes(u.username);
-                    } else {
-                        isChecked = (u.username.toLowerCase() === selectElem.value.toLowerCase());
-                    }
-                }
-
-                checkHtml += `
-                    <label class="f1-user-check-row">
-                        <div style="display:flex; align-items:center;">
-                            <input type="checkbox" class="f1-user-checkbox" value="${u.username}" ${isChecked ? 'checked' : ''} onchange="onF1CheckboxManualChange()">
-                            <span><b>${u.username}</b> <span style="color:#aaa; font-size:0.75rem;">(${u.role || 'עובד'} | ${invCount} קבלות)</span></span>
-                        </div>
-                        <div style="text-align:left; font-size:0.76rem;">
-                            <span style="color:#ff8888;">סה"כ: ₪${sales.toLocaleString()}</span> |
-                            <span style="color:#55ff99; font-weight:700;">20%: ₪${salary.toLocaleString()}</span> |
-                            <span style="color:#66b3ff;">אחרי 20%: ₪${afterSalary.toLocaleString()}</span>
-                        </div>
-                    </label>
-                `;
-            });
-
-            checklistElem.innerHTML = checkHtml || '<div style="text-align:center; color:#888; padding:8px;">אין משתמשים במערכת</div>';
-        }
-
-        function onF1TargetSelectChange(val) {
-            const checkboxes = document.querySelectorAll('.f1-user-checkbox');
-            if (val === '__ALL__') {
-                checkboxes.forEach(cb => cb.checked = true);
-            } else if (val !== '__CUSTOM__') {
-                checkboxes.forEach(cb => {
-                    cb.checked = (cb.value.toLowerCase() === val.toLowerCase());
-                });
+            if (broadcastRemote && !isApplyingRemoteState && mqttClient && mqttClient.connected) {
+                mqttClient.publish(MQTT_TOPIC, JSON.stringify(getFullStatePayload()), { qos: 0, retain: true });
             }
         }
 
-        function onF1CheckboxManualChange() {
-            const checkboxes = Array.from(document.querySelectorAll('.f1-user-checkbox'));
-            const checked = checkboxes.filter(cb => cb.checked);
-            const selectElem = document.getElementById('f1TargetSelect');
-            if (!selectElem) return;
+        function applyRemoteState(remote) {
+            if (!remote || typeof remote !== 'object') return;
+            const remoteTime = Number(remote.updatedAt) || 0;
+            if (remoteTime <= lastUpdatedAt) return;
 
-            if (checked.length === checkboxes.length && checkboxes.length > 0) {
-                selectElem.value = '__ALL__';
-            } else if (checked.length === 1) {
-                selectElem.value = checked[0].value;
-            } else {
-                selectElem.value = '__CUSTOM__';
+            isApplyingRemoteState = true;
+            lastUpdatedAt = remoteTime;
+
+            if (Array.isArray(remote.users) && remote.users.length > 0) {
+                users = remote.users;
             }
-        }
-
-        function toggleAllF1Users(checkAll) {
-            const checkboxes = document.querySelectorAll('.f1-user-checkbox');
-            checkboxes.forEach(cb => cb.checked = checkAll);
-            const selectElem = document.getElementById('f1TargetSelect');
-            if (selectElem) {
-                selectElem.value = checkAll ? '__ALL__' : '__CUSTOM__';
+            if (Array.isArray(remote.currentOrder)) {
+                currentOrder = remote.currentOrder;
             }
-        }
-
-        function getSelectedF1Usernames() {
-            const checkboxes = Array.from(document.querySelectorAll('.f1-user-checkbox:checked'));
-            return checkboxes.map(cb => cb.value);
-        }
-
-        // הפעלת בדיקת חשבונות ושליחת דוח לדיסקורד מתוך F1
-        async function handleF1CheckAccountsAndSend() {
-            const selectedNames = getSelectedF1Usernames();
-            const box = document.getElementById('f1StatusBox');
-            if (selectedNames.length === 0) {
-                if (box) {
-                    box.className = 'f1-status-box offline';
-                    box.innerText = 'שגיאה: יש לבחור לפחות משתמש אחד או את כולם!';
-                }
-                return;
+            if (Array.isArray(remote.invoices)) {
+                invoices = remote.invoices;
             }
-            await sendDiscordReceiptsReport(selectedNames);
-        }
-
-        // הפעלת איפוס כסף, משכורת וחשבוניות לנבחרים מתוך F1 + שליחת הודעה לדיסקורד
-        async function handleF1ResetSalariesAndSend() {
-            const selectedNames = getSelectedF1Usernames();
-            const box = document.getElementById('f1StatusBox');
-            if (selectedNames.length === 0) {
-                if (box) {
-                    box.className = 'f1-status-box offline';
-                    box.innerText = 'שגיאה: יש לבחור לפחות משתמש אחד או את כולם לאיפוס!';
-                }
-                return;
+            if (typeof remote.gangEarnings === 'number') {
+                gangEarnings = remote.gangEarnings;
             }
-            await resetSalariesForUsers(selectedNames, true);
-        }
-
-        // ====================================================
-        // פונקציות שליחה ל-WEBHOOK של דיסקורד (!קבלות ו-!איפוסמשכורת)
-        // ====================================================
-        async function sendDiscordReceiptsReport(targetUsernames = null) {
-            const allUsers = globalData.users || [];
-            let usersToReport = allUsers;
-
-            if (Array.isArray(targetUsernames) && targetUsernames.length > 0) {
-                const lowerTargets = targetUsernames.map(n => n.toLowerCase());
-                usersToReport = allUsers.filter(u => lowerTargets.includes(u.username.toLowerCase()));
-            } else if (typeof targetUsernames === 'string' && targetUsernames.trim() !== '') {
-                const singleTarget = targetUsernames.trim().toLowerCase();
-                usersToReport = allUsers.filter(u => u.username.toLowerCase() === singleTarget);
+            if (remote.userSalaries && typeof remote.userSalaries === 'object') {
+                userSalaries = remote.userSalaries;
+            }
+            if (remote.userSalesRevenue && typeof remote.userSalesRevenue === 'object') {
+                userSalesRevenue = remote.userSalesRevenue;
+            }
+            if (typeof remote.weeklyQuota === 'number' || typeof remote.weeklyQuota === 'string') {
+                weeklyQuota = sanitizeQuota(remote.weeklyQuota);
+            }
+            if (Array.isArray(remote.offlineUsers)) {
+                offlineUsers = remote.offlineUsers;
+            }
+            if (typeof remote.salarySentFlag === 'boolean') {
+                salarySentFlag = remote.salarySentFlag;
             }
 
-            if (usersToReport.length === 0) {
-                await postToDiscordWebhook({
-                    username: "ג'פניטה - מערכת קבלות ומשכורות",
-                    embeds: [{
-                        title: "⚠️ משתמש לא נמצא",
-                        description: "לא נמצא משתמש תואם לבדיקת הקבלות והמשכורת.",
-                        color: 16726843
-                    }]
-                });
-                return;
-            }
-
-            const isSingleUser = (usersToReport.length === 1 && allUsers.length > 1) || (typeof targetUsernames === 'string' && targetUsernames.trim() !== '');
-            let totalSelectedSales = 0;
-            let totalSelectedSalaries = 0;
-            let totalSelectedAfterSalary = 0;
-
-            const fields = usersToReport.map(u => {
-                const sales = Math.round(getUserSalesAmount(u.username));
-                const salary = Math.round(sales * 0.20);
-                const netAfterSalary = Math.round(sales - salary);
-                const invoices = getUserInvoicesList(u.username);
-
-                totalSelectedSales += sales;
-                totalSelectedSalaries += salary;
-                totalSelectedAfterSalary += netAfterSalary;
-
-                let invLines = '';
-                if (invoices.length === 0) {
-                    invLines = '• *אין חשבוניות רשומות כרגע*';
+            if (currentUser) {
+                const stillExists = users.find(u => u.name === currentUser.name);
+                if (!stillExists) {
+                    currentUser = null;
+                    localStorage.removeItem('japnita_currentUser');
+                    location.reload();
+                    isApplyingRemoteState = false;
+                    return;
                 } else {
-                    const formattedList = invoices.map((inv, idx) => {
-                        const itemsStr = (inv.items || []).map(it => `${it.name} x${it.qty}`).join(', ');
-                        return `• **קבלה #${idx + 1}** (${inv.date}): ${itemsStr} ⬅️ **₪${(inv.total || 0).toLocaleString()}**`;
-                    });
-                    invLines = formattedList.join('\n');
-                    const maxLen = usersToReport.length === 1 ? 850 : 650;
-                    if (invLines.length > maxLen) {
-                        invLines = invLines.substring(0, maxLen) + `\n...*(סה"כ ${invoices.length} חשבוניות)*`;
-                    }
-                }
-
-                return {
-                    name: `👤 ${u.username} | דרגה: ${u.role || 'עובד'}`,
-                    value:
-                        `💰 **כמה עשה בסך הכל (100% מכירות):** ₪${sales.toLocaleString()}\n` +
-                        `💵 **המשכורת שלו כרגע (20%):** ₪${salary.toLocaleString()}\n` +
-                        `🏦 **נשאר למסעדה אחרי 20% משכורת (80%):** ₪${netAfterSalary.toLocaleString()}\n` +
-                        `🧾 **פירוט חשבוניות (${invoices.length}):**\n${invLines}`,
-                    inline: false
-                };
-            });
-
-            const reportTitle = isSingleUser
-                ? `📊 דוח קבלות, חשבוניות ומשכורת - ${usersToReport[0].username} (!קבלות)`
-                : (usersToReport.length === allUsers.length
-                    ? `📊 דוח קבלות, חשבוניות ומשכורות - כל העובדים (!קבלות)`
-                    : `📊 דוח קבלות, חשבוניות ומשכורות - עובדים נבחרים (${usersToReport.length})`);
-
-            const payload = {
-                username: "ג'פניטה - מערכת קבלות ומשכורות",
-                embeds: [
-                    {
-                        title: reportTitle,
-                        description:
-                            `להלן פירוט החשבוניות, סך כל ההכנסות, חישוב המשכורת (20%) והיתרה אחרי המשכורת (80%):\n` +
-                            `━━━━━━━━━━━━━━━━━━━━━━`,
-                        color: 16726843,
-                        fields: fields.slice(0, 25),
-                        footer: {
-                            text: `סה"כ מכירות: ₪${totalSelectedSales.toLocaleString()} | סה"כ משכורות (20%): ₪${totalSelectedSalaries.toLocaleString()} | סה"כ אחרי 20% משכורת: ₪${totalSelectedAfterSalary.toLocaleString()}`
-                        },
-                        timestamp: new Date().toISOString()
-                    }
-                ]
-            };
-
-            const box = document.getElementById('f1StatusBox');
-            if (box) {
-                box.className = 'f1-status-box online';
-                box.innerText = 'שולח דוח קבלות ומשכורות לדיסקורד...';
-            }
-
-            const ok = await postToDiscordWebhook(payload);
-            if (box) {
-                if (ok) {
-                    box.className = 'f1-status-box online';
-                    box.innerText = `✅ דוח הקבלות והמשכורות נשלח לדיסקורד בהצלחה!`;
-                } else {
-                    box.className = 'f1-status-box offline';
-                    box.innerText = `❌ שגיאה בשליחה ל-Webhook בדיסקורד.`;
+                    currentUser = stillExists;
+                    localStorage.setItem('japnita_currentUser', JSON.stringify(currentUser));
                 }
             }
+
+            saveData(false);
+            checkCrashState();
+            renderAll();
+            isApplyingRemoteState = false;
         }
 
-        async function resetSalariesForUsers(targetUsernames = null, notifyDiscord = true) {
-            const allUsers = globalData.users || [];
-            let usersToReset = allUsers;
-            let isAllSelected = false;
-
-            if (!targetUsernames || (Array.isArray(targetUsernames) && targetUsernames.length === allUsers.length)) {
-                isAllSelected = true;
-                usersToReset = allUsers;
-            } else if (Array.isArray(targetUsernames)) {
-                const lowerTargets = targetUsernames.map(n => n.toLowerCase());
-                usersToReset = allUsers.filter(u => lowerTargets.includes(u.username.toLowerCase()));
-            } else if (typeof targetUsernames === 'string' && targetUsernames.trim() !== '') {
-                const singleTarget = targetUsernames.trim().toLowerCase();
-                usersToReset = allUsers.filter(u => u.username.toLowerCase() === singleTarget);
-            }
-
-            if (usersToReset.length === 0) return;
-
-            // שמירת סיכום לפני האיפוס כדי להציג בדיסקורד מה אופס
-            let resetSummaryLines = [];
-            let totalResetSales = 0;
-            let totalResetSalary = 0;
-
-            usersToReset.forEach(u => {
-                const prevSales = Math.round(getUserSalesAmount(u.username));
-                const prevSalary = Math.round(prevSales * 0.20);
-                const prevInvoicesCount = getUserInvoicesList(u.username).length;
-                totalResetSales += prevSales;
-                totalResetSalary += prevSalary;
-
-                resetSummaryLines.push(
-                    `• **${u.username}** (${u.role || 'עובד'}): אופסו **₪${prevSales.toLocaleString()}** מכירות | משכורת (20%) שאופסה: **₪${prevSalary.toLocaleString()}** | **${prevInvoicesCount}** חשבוניות נמחקו ⬅️ כעת: **₪0**`
-                );
-            });
-
-            if (isAllSelected) {
-                globalData.sales = {};
-                globalData.revenue = 0;
-                globalData.invoices = {};
-            } else {
-                usersToReset.forEach(u => {
-                    setUserSalesAmount(u.username, 0);
-                    setUserInvoicesList(u.username, []);
-                });
-            }
-
-            saveData();
-            renderF1UsersSelection();
-
-            if (notifyDiscord) {
-                const titleText = isAllSelected
-                    ? "🔄 איפוס משכורות וחשבוניות לכל העובדים (!איפוסמשכורת)"
-                    : `🔄 איפוס משכורת וחשבוניות בוצע (${usersToReset.map(u => u.username).join(', ')})`;
-
-                const payload = {
-                    username: "ג'פניטה - מערכת קבלות ומשכורות",
-                    embeds: [
-                        {
-                            title: titleText,
-                            description:
-                                `בוצע איפוס כסף, משכורות וחשבוניות במערכת **ג'פניטה**!\n` +
-                                `━━━━━━━━━━━━━━━━━━━━━━\n` +
-                                resetSummaryLines.join('\n'),
-                            color: 3066993,
-                            footer: {
-                                text: `סה"כ מכירות שאופסו: ₪${totalResetSales.toLocaleString()} | סה"כ משכורות (20%) שאופסו: ₪${totalResetSalary.toLocaleString()}`
-                            },
-                            timestamp: new Date().toISOString()
-                        }
-                    ]
-                };
-
-                await postToDiscordWebhook(payload);
-            }
-
-            const box = document.getElementById('f1StatusBox');
-            if (box) {
-                box.className = 'f1-status-box online';
-                box.innerText = isAllSelected
-                    ? '✅ המשכורות והחשבוניות של כולם אופסו ונשלחה הודעה לדיסקורד!'
-                    : `✅ אופסו המשכורות עבור: ${usersToReset.map(u => u.username).join(', ')} ונשלח לדיסקורד!`;
-            }
-        }
-
-        function resetAllSalariesAndSales(notifyDiscord = true) {
-            resetSalariesForUsers(null, notifyDiscord);
-        }
-
-        // ====================================================
-        // מנוע האזנה לפקודות /קבלות, !קבלות, /איפוסמשכורת ו-!איפוסמשכורת מתוך דיסקורד
-        // ====================================================
-        let discordWs = null;
-        let discordHeartbeatTimer = null;
-        let activeBotToken = '';
-
-        function saveDiscordBotToken() {
-            const token = document.getElementById('discordBotTokenInput').value.trim();
-            globalData.discordBotToken = token;
-            saveData();
-            if (token) {
-                connectDiscordGateway(token);
-            }
-        }
-
-        // רישום אוטומטי של Slash Commands (/קבלות ו-/איפוסמשכורת) בדיסקורד כאשר מחברים טוקן בוט
-        async function registerDiscordSlashCommands(appId, botToken, guilds = []) {
-            const commands = [
-                {
-                    name: 'קבלות',
-                    description: 'שליחת דוח קבלות, חשבוניות, מכירות ומשכורת (20%) של העובדים',
-                    options: [
-                        {
-                            name: 'משתמש',
-                            description: 'בחר שם משתמש ספציפי (השאר ריק עבור כל המשתמשים)',
-                            type: 3,
-                            required: false
-                        }
-                    ]
-                },
-                {
-                    name: 'איפוסמשכורת',
-                    description: 'איפוס המשכורות, המכירות והחשבוניות של העובדים',
-                    options: [
-                        {
-                            name: 'משתמש',
-                            description: 'שם משתמש ספציפי לאיפוס (השאר ריק לאיפוס של כולם)',
-                            type: 3,
-                            required: false
-                        }
-                    ]
-                }
-            ];
-
+        function initRealtimeSync() {
+            if (typeof mqtt === 'undefined') return;
             try {
-                await fetch(`https://discord.com/api/v10/applications/${appId}/commands`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bot ${botToken}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(commands)
+                const clientId = "japnita_" + Math.random().toString(16).substring(2, 10);
+                mqttClient = mqtt.connect(MQTT_BROKER, {
+                    clientId,
+                    clean: true,
+                    reconnectPeriod: 3000,
+                    connectTimeout: 8000
+                });
+
+                mqttClient.on('connect', () => {
+                    mqttClient.subscribe(MQTT_TOPIC, { qos: 0 });
+                    mqttClient.publish(MQTT_TOPIC, JSON.stringify(getFullStatePayload()), { qos: 0, retain: true });
+                });
+
+                mqttClient.on('message', (topic, message) => {
+                    if (topic !== MQTT_TOPIC) return;
+                    try {
+                        const parsed = JSON.parse(message.toString());
+                        applyRemoteState(parsed);
+                    } catch (e) {}
                 });
             } catch (e) {}
-
-            for (const g of guilds) {
-                if (g && g.id) {
-                    try {
-                        await fetch(`https://discord.com/api/v10/applications/${appId}/guilds/${g.id}/commands`, {
-                            method: 'PUT',
-                            headers: {
-                                'Authorization': `Bot ${botToken}`,
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(commands)
-                        });
-                    } catch (e) {}
-                }
-            }
         }
 
-        function connectDiscordGateway(token) {
-            if (!token || (token === activeBotToken && discordWs && discordWs.readyState === WebSocket.OPEN)) return;
-            activeBotToken = token;
-
-            if (discordWs) {
-                try { discordWs.close(); } catch (e) {}
-            }
-            if (discordHeartbeatTimer) clearInterval(discordHeartbeatTimer);
-
-            const statusElem = document.getElementById('discordBotStatusText');
-            if (statusElem) statusElem.innerText = 'מתחבר לדיסקורד ורושם פקודות /...';
-
-            try {
-                discordWs = new WebSocket('wss://gateway.discord.gg/?v=10&encoding=json');
-
-                discordWs.onmessage = async (event) => {
-                    const data = JSON.parse(event.data);
-                    const { op, d, t } = data;
-
-                    if (op === 10) {
-                        const interval = d.heartbeat_interval;
-                        discordHeartbeatTimer = setInterval(() => {
-                            if (discordWs && discordWs.readyState === WebSocket.OPEN) {
-                                discordWs.send(JSON.stringify({ op: 1, d: null }));
-                            }
-                        }, interval);
-
-                        discordWs.send(JSON.stringify({
-                            op: 2,
-                            d: {
-                                token: token,
-                                intents: 33281, // GUILDS + GUILD_MESSAGES + MESSAGE_CONTENT
-                                properties: { os: 'windows', browser: 'chrome', device: 'chrome' }
-                            }
-                        }));
-                    }
-
-                    if (t === 'READY') {
-                        if (statusElem) {
-                            statusElem.style.color = '#55ff99';
-                            statusElem.innerText = `✅ בוט מחובר (${d.user.username})! פקודות /קבלות, !קבלות, /איפוסמשכורת ו-!איפוסמשכורת פעילות`;
-                        }
-                        if (d.application && d.application.id) {
-                            registerDiscordSlashCommands(d.application.id, token, d.guilds || []);
-                        }
-                    }
-
-                    // תמיכה בפקודות Slash (/) בדיסקורד
-                    if (t === 'INTERACTION_CREATE' && d && d.type === 2 && d.data) {
-                        const cmdName = d.data.name;
-                        let targetUser = null;
-                        if (Array.isArray(d.data.options)) {
-                            const userOpt = d.data.options.find(o => o.name === 'משתמש');
-                            if (userOpt && userOpt.value) targetUser = userOpt.value.trim();
-                        }
-
-                        // אישור מהיר ל-Interaction בדיסקורד
-                        try {
-                            await fetch(`https://discord.com/api/v10/interactions/${d.id}/${d.token}/callback`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    type: 4,
-                                    data: { content: `✅ הפקודה \`/${cmdName}\` התקבלה! הדוח נשלח כעת דרך ה-Webhook:` }
-                                })
-                            });
-                        } catch (e) {}
-
-                        if (cmdName === 'קבלות') {
-                            sendDiscordReceiptsReport(targetUser ? [targetUser] : null);
-                        } else if (cmdName === 'איפוסמשכורת') {
-                            resetSalariesForUsers(targetUser ? [targetUser] : null, true);
-                        }
-                    }
-
-                    // תמיכה בהודעות צ'אט רגילות (!קבלות, /קבלות, !איפוסמשכורת, /איפוסמשכורת וגם עם שם משתמש ספציפי)
-                    if (t === 'MESSAGE_CREATE' && d && d.content) {
-                        if (d.author && d.author.bot) return;
-                        const content = d.content.trim();
-                        const msgId = d.id;
-
-                        const parts = content.split(/\s+/);
-                        const cmd = parts[0];
-                        const argUser = parts.slice(1).join(' ').trim();
-
-                        if (cmd === '!קבלות' || cmd === '/קבלות' || cmd === '!איפוסמשכורת' || cmd === '/איפוסמשכורת') {
-                            if (globalData.lastDiscordCmdId === msgId) return;
-                            globalData.lastDiscordCmdId = msgId;
-                            saveData();
-
-                            if (cmd === '!קבלות' || cmd === '/קבלות') {
-                                sendDiscordReceiptsReport(argUser ? [argUser] : null);
-                            } else if (cmd === '!איפוסמשכורת' || cmd === '/איפוסמשכורת') {
-                                resetSalariesForUsers(argUser ? [argUser] : null, true);
-                            }
-                        }
-                    }
-                };
-
-                discordWs.onclose = () => {
-                    if (discordHeartbeatTimer) clearInterval(discordHeartbeatTimer);
-                    if (statusElem) {
-                        statusElem.style.color = '#ffaa55';
-                        statusElem.innerText = 'Webhook פעיל | בוט צ׳אט: ודא ש-Message Content Intent מופעל בפורטל דיסקורד';
-                    }
-                };
-            } catch (err) {}
-        }
-
-        // ====================================================
-        // מערכת סנכרון ענן בזמן אמת (MQTT Retained Cloud Sync)
-        // ====================================================
-        function initCloudSync() {
-            const cached = localStorage.getItem(STORAGE_KEY);
-            if (cached) {
-                try {
-                    const parsed = JSON.parse(cached);
-                    if (parsed && parsed.users) {
-                        globalData = { ...getInitialState(), ...parsed };
-                        ensureCategoriesList();
-                    }
-                } catch (e) {}
-            }
-            updateUIFromGlobal();
-
-            if (globalData.discordBotToken) {
-                connectDiscordGateway(globalData.discordBotToken);
-            }
-
-            const brokers = [
-                'wss://broker.emqx.io:8084/mqtt',
-                'wss://broker.hivemq.com:8884/mqtt'
-            ];
-
-            brokers.forEach(brokerUrl => {
-                try {
-                    const client = mqtt.connect(brokerUrl, {
-                        clientId: 'japanita_' + Math.random().toString(16).substring(2, 10),
-                        clean: true,
-                        reconnectPeriod: 2000
-                    });
-
-                    client.on('connect', () => {
-                        client.subscribe(CLOUD_TOPIC, { qos: 1 });
-                        client.subscribe(CLOUD_CMD_TOPIC, { qos: 1 });
-                    });
-
-                    client.on('message', (topic, message) => {
-                        if (topic === CLOUD_TOPIC && message) {
-                            try {
-                                const incoming = JSON.parse(message.toString());
-                                if (incoming && incoming.users) {
-                                    if (
-                                        (incoming.resetId && incoming.resetId !== globalData.resetId) ||
-                                        (incoming.lastUpdated && incoming.lastUpdated >= (globalData.lastUpdated || 0))
-                                    ) {
-                                        const wasReset = incoming.resetId && incoming.resetId !== globalData.resetId && globalData.lastUpdated > 0;
-                                        globalData = incoming;
-                                        ensureCategoriesList();
-                                        localStorage.setItem(STORAGE_KEY, JSON.stringify(globalData));
-                                        updateUIFromGlobal();
-
-                                        if (globalData.discordBotToken && globalData.discordBotToken !== activeBotToken) {
-                                            connectDiscordGateway(globalData.discordBotToken);
-                                        }
-
-                                        if (wasReset && isLoggedIn) {
-                                            const stillExists = (globalData.users || []).some(u => u.username.toLowerCase() === currentLoggedUser.toLowerCase());
-                                            if (!stillExists) {
-                                                location.reload();
-                                            }
-                                        }
-                                    }
-                                }
-                            } catch (err) {}
-                        }
-                    });
-
-                    mqttClients.push(client);
-                } catch (e) {}
-            });
-
-            window.addEventListener('storage', (e) => {
-                if (e.key === STORAGE_KEY && e.newValue) {
-                    try {
-                        globalData = JSON.parse(e.newValue);
-                        ensureCategoriesList();
-                        updateUIFromGlobal();
-                    } catch (err) {}
-                }
-            });
-        }
-
-        function saveData() {
-            ensureCategoriesList();
-            globalData.lastUpdated = Date.now();
-            const payloadStr = JSON.stringify(globalData);
-            localStorage.setItem(STORAGE_KEY, payloadStr);
-
-            mqttClients.forEach(client => {
-                if (client && client.connected) {
-                    client.publish(CLOUD_TOPIC, payloadStr, { qos: 1, retain: true });
-                }
-            });
-
-            updateUIFromGlobal();
-        }
-
-        initCloudSync();
-
-        function updateUIFromGlobal() {
+        // בדיקה אם המשתמש הנוכחי מושבת באופליין
+        function checkCrashState() {
             const crashScreen = document.getElementById('crashScreen');
-            if (globalData.crash) {
+            if (currentUser && offlineUsers.includes(currentUser.name)) {
                 crashScreen.classList.add('active');
+                return true;
             } else {
                 crashScreen.classList.remove('active');
-            }
-
-            let mySales = getUserSalesAmount(currentLoggedUser);
-            let mySalary = mySales * 0.20;
-
-            document.getElementById('totalRestaurantRevenue').innerText = '₪' + Math.round(mySales).toLocaleString();
-            document.getElementById('mySalaryRevenue').innerText = '₪' + Math.round(mySalary).toLocaleString();
-
-            renderMenu();
-            renderUsersBadges();
-            renderLeaderboard();
-            if (document.getElementById('adminModal').classList.contains('active')) {
-                updateRoleSelects();
-                renderRoles();
-                renderUsers();
-                renderCategoriesAdmin();
-                updateAdminCategoriesSelect();
-                renderDishesForDelete();
-            }
-            if (document.getElementById('f1Modal').classList.contains('active')) {
-                renderF1UsersSelection();
-            }
-            if (document.getElementById('invoiceModal').classList.contains('active')) {
-                renderInvoicesList();
-            }
-            updateF1StatusDisplay();
-        }
-
-        // ====================================================
-        // מנגנון השמעת השיר במסך הכניסה בלבד ועצירה בהתחברות
-        // ====================================================
-        let ytPlayer;
-        let isPlayerReady = false;
-
-        function onYouTubeIframeAPIReady() {
-            ytPlayer = new YT.Player('youtube-audio-container', {
-                height: '0',
-                width: '0',
-                videoId: '8kjAA-kDhv8',
-                playerVars: {
-                    'start': 30,
-                    'autoplay': 1,
-                    'controls': 0,
-                    'playsinline': 1
-                },
-                events: {
-                    'onReady': (event) => {
-                        isPlayerReady = true;
-                        if (!isLoggedIn) {
-                            event.target.seekTo(30, true);
-                            event.target.setVolume(100);
-                            event.target.playVideo();
-                        }
-                    }
-                }
-            });
-        }
-
-        function tryPlayIntroMusic() {
-            if (isLoggedIn) return;
-            if (ytPlayer && isPlayerReady && typeof ytPlayer.getPlayerState === 'function') {
-                const state = ytPlayer.getPlayerState();
-                if (state !== YT.PlayerState.PLAYING && state !== YT.PlayerState.BUFFERING) {
-                    ytPlayer.setVolume(100);
-                    ytPlayer.playVideo();
-                }
+                return false;
             }
         }
 
-        ['click', 'touchstart', 'keydown', 'mousemove'].forEach(evtName => {
-            document.addEventListener(evtName, tryPlayIntroMusic, { passive: true });
+        // פרלקס עדין לרקע
+        document.addEventListener('mousemove', (e) => {
+            const bg = document.getElementById('bgContainer');
+            if (!bg || !bg.classList.contains('active')) return;
+            const x = (e.clientX / window.innerWidth - 0.5) * -18;
+            const y = (e.clientY / window.innerHeight - 0.5) * -18;
+            bg.style.transform = `scale(1.06) translate(${x}px, ${y}px)`;
         });
 
-        function stopIntroMusic() {
-            isLoggedIn = true;
-            ['click', 'touchstart', 'keydown', 'mousemove'].forEach(evtName => {
-                document.removeEventListener(evtName, tryPlayIntroMusic);
-            });
+        // כפתור כניסה באינטרו
+        document.getElementById('showLoginBtn').addEventListener('click', () => {
+            document.getElementById('showLoginBtn').style.display = 'none';
+            document.getElementById('loginBox').classList.add('active');
+            document.getElementById('usernameInput').focus();
+        });
 
-            if (!ytPlayer || typeof ytPlayer.getVolume !== 'function') return;
+        // התחברות
+        function attemptLogin() {
+            const uName = document.getElementById('usernameInput').value.trim();
+            const uPass = document.getElementById('passwordInput').value.trim();
+            const errMsg = document.getElementById('errorMsg');
 
-            let vol = ytPlayer.getVolume() || 100;
-            let fadeInterval = setInterval(() => {
-                vol -= 15;
-                if (vol <= 0) {
-                    clearInterval(fadeInterval);
-                    ytPlayer.pauseVideo();
-                    ytPlayer.stopVideo();
-                } else {
-                    ytPlayer.setVolume(vol);
-                }
-            }, 80);
-        }
+            const found = users.find(u => u.name === uName && u.pass === uPass);
+            if (found) {
+                errMsg.style.display = 'none';
+                currentUser = found;
+                localStorage.setItem('japnita_currentUser', JSON.stringify(currentUser));
 
-        function renderMenu() {
-            const container = document.getElementById('dynamicMenuContainer');
-            if (!container) return;
-            ensureCategoriesList();
+                if (checkCrashState()) return;
 
-            let categoriesMap = {};
-            (globalData.categories || []).forEach(cat => {
-                categoriesMap[cat] = [];
-            });
-
-            (globalData.menuItems || []).forEach((item, index) => {
-                if (!categoriesMap[item.category]) categoriesMap[item.category] = [];
-                categoriesMap[item.category].push({ ...item, originalIndex: index });
-            });
-
-            let html = '';
-            for (let [cat, items] of Object.entries(categoriesMap)) {
-                if (items.length === 0) continue;
-                html += `<div class="menu-section-title">${cat}</div><div class="menu-grid">`;
-                items.forEach(dish => {
-                    let priceDisplay = `${dish.price.toLocaleString()} ₪`;
-                    if (dish.originalPrice) {
-                        priceDisplay = `<s style="font-size:0.72rem; color:#aaa;">${dish.originalPrice.toLocaleString()} ₪</s> → ${dish.price.toLocaleString()} ₪`;
-                    }
-                    let safeDishName = dish.name.replace(/'/g, "\\'");
-                    html += `
-                        <div class="menu-item-btn" onclick="addToOrder('${safeDishName}', ${dish.price})">
-                            <span>${dish.name}</span>
-                            <span class="item-price">${priceDisplay}</span>
-                        </div>
-                    `;
-                });
-                html += `</div>`;
-            }
-            container.innerHTML = html;
-        }
-
-        function addStandaloneCategory() {
-            const input = document.getElementById('newCategoryStandaloneInput');
-            const name = input.value.trim();
-            if (!name) return;
-            ensureCategoriesList();
-            if (!globalData.categories.includes(name)) {
-                globalData.categories.push(name);
-                saveData();
-            }
-            input.value = '';
-        }
-
-        function deleteCategoryAdmin(index) {
-            ensureCategoriesList();
-            const catName = globalData.categories[index];
-            globalData.categories.splice(index, 1);
-            globalData.menuItems = (globalData.menuItems || []).filter(item => item.category !== catName);
-            saveData();
-        }
-
-        function renderCategoriesAdmin() {
-            const container = document.getElementById('categoriesListAdmin');
-            if (!container) return;
-            ensureCategoriesList();
-            container.innerHTML = '';
-            (globalData.categories || []).forEach((cat, idx) => {
-                const div = document.createElement('div');
-                div.className = 'user-item';
-                div.innerHTML = `
-                    <span><b>${cat}</b></span>
-                    <button class="delete-btn" onclick="deleteCategoryAdmin(${idx})">מחק קטגוריה</button>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function updateAdminCategoriesSelect() {
-            const selectElem = document.getElementById('newDishCategory');
-            if (!selectElem) return;
-            ensureCategoriesList();
-            const currentVal = selectElem.value;
-            
-            let html = (globalData.categories || []).map(cat => `<option value="${cat}">${cat}</option>`).join('');
-            html += `<option value="__NEW_CATEGORY__">➕ יצירת קטגוריה חדשה...</option>`;
-            selectElem.innerHTML = html;
-
-            if (currentVal && (globalData.categories || []).includes(currentVal)) {
-                selectElem.value = currentVal;
-            }
-        }
-
-        function handleCategorySelect(val) {
-            const customInput = document.getElementById('customCategoryInput');
-            if (val === '__NEW_CATEGORY__') {
-                customInput.style.display = 'block';
-                customInput.focus();
+                startMainApp(true);
             } else {
-                customInput.style.display = 'none';
+                errMsg.style.display = 'block';
             }
         }
 
-        function addCustomDish() {
-            const name = document.getElementById('newDishName').value.trim();
-            const price = parseFloat(document.getElementById('newDishPrice').value);
-            const origPriceVal = document.getElementById('newDishOriginalPrice').value.trim();
-            const categorySelect = document.getElementById('newDishCategory').value;
-            let finalCategory = categorySelect;
+        document.getElementById('enterBtn').addEventListener('click', attemptLogin);
+        document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') attemptLogin();
+        });
 
-            if (categorySelect === '__NEW_CATEGORY__') {
-                finalCategory = document.getElementById('customCategoryInput').value.trim();
-            }
+        // התחלת האפליקציה הראשית
+        function startMainApp(showTutorialIfFirstTime = false) {
+            document.getElementById('introScreen').classList.add('fade-out');
+            setTimeout(() => {
+                document.getElementById('introScreen').style.display = 'none';
+            }, 1200);
 
-            if (name && !isNaN(price) && finalCategory) {
-                ensureCategoriesList();
-                if (!globalData.categories.includes(finalCategory)) {
-                    globalData.categories.push(finalCategory);
-                }
+            document.getElementById('bgContainer').classList.add('active');
+            document.getElementById('earningsTopBar').classList.add('active');
+            document.getElementById('mainAppContent').classList.add('active');
 
-                let dishObj = { category: finalCategory, name: name, price: price };
-                if (origPriceVal && !isNaN(parseFloat(origPriceVal))) {
-                    dishObj.originalPrice = parseFloat(origPriceVal);
-                }
-                globalData.menuItems.push(dishObj);
-                saveData();
+            renderAll();
 
-                document.getElementById('newDishName').value = '';
-                document.getElementById('newDishPrice').value = '';
-                document.getElementById('newDishOriginalPrice').value = '';
-                document.getElementById('customCategoryInput').value = '';
-                document.getElementById('customCategoryInput').style.display = 'none';
+            const tutKey = `japnita_tutorial_seen_${currentUser.name}`;
+            if (showTutorialIfFirstTime && !localStorage.getItem(tutKey)) {
+                openTutorial();
             }
         }
 
-        function renderDishesForDelete() {
-            const container = document.getElementById('dishesListForDelete');
-            if (!container) return;
+        // פתיחת הדרכה
+        function openTutorial() {
+            tutorialStepIndex = 0;
+            updateTutorialContent();
+            const modal = document.getElementById('tutorialModal');
+            modal.classList.remove('closing');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('active'), 10);
+        }
+
+        function updateTutorialContent() {
+            const titleEl = document.getElementById('tutorialTitle');
+            const textEl = document.getElementById('tutorialText');
+            const nextBtn = document.getElementById('nextTutorialBtn');
+
+            titleEl.style.opacity = 0;
+            textEl.style.opacity = 0;
+
+            setTimeout(() => {
+                const step = TUTORIAL_STEPS[tutorialStepIndex];
+                titleEl.textContent = step.title;
+                textEl.textContent = step.text;
+                nextBtn.textContent = (tutorialStepIndex === TUTORIAL_STEPS.length - 1) ? "סיום" : "הבא";
+                titleEl.style.opacity = 1;
+                textEl.style.opacity = 1;
+            }, 150);
+        }
+
+        function closeTutorial() {
+            if (currentUser) {
+                localStorage.setItem(`japnita_tutorial_seen_${currentUser.name}`, 'true');
+            }
+            const modal = document.getElementById('tutorialModal');
+            modal.classList.add('closing');
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+                modal.classList.remove('closing');
+            }, 400);
+        }
+
+        document.getElementById('nextTutorialBtn').addEventListener('click', () => {
+            if (tutorialStepIndex < TUTORIAL_STEPS.length - 1) {
+                tutorialStepIndex++;
+                updateTutorialContent();
+            } else {
+                closeTutorial();
+            }
+        });
+
+        document.getElementById('skipTutorialBtn').addEventListener('click', closeTutorial);
+
+        // חישוב אחוז מד שבועי לעובד (0% עד 100%)
+        function getEmployeeQuotaProgress(userName) {
+            const revenue = Number(userSalesRevenue[userName]) || 0;
+            const quota = sanitizeQuota(weeklyQuota);
+            const rawPercent = (revenue / quota) * 100;
+            const percent = Math.max(0, Math.min(100, rawPercent));
+            return {
+                revenue,
+                quota,
+                percent,
+                displayPercent: Math.round(percent)
+            };
+        }
+
+        // רינדור כל הממשק
+        function renderAll() {
+            renderTopBar();
+            renderEmployees();
+            renderLeaderboard();
+            renderMenu();
+            renderOrder();
+        }
+
+        function renderTopBar() {
+            document.getElementById('gangTotalDisplay').textContent = formatMoney(gangEarnings);
+            const mySal = currentUser ? (userSalaries[currentUser.name] || 0) : 0;
+            document.getElementById('mySalaryDisplay').textContent = formatMoney(mySal);
+            document.getElementById('weeklyTargetDisplay').textContent = formatCompactNumber(weeklyQuota);
+            const statusEl = document.getElementById('salaryStatusDisplay');
+            if (salarySentFlag) {
+                statusEl.textContent = "נשלח לדיסקורד ✓";
+                statusEl.style.color = "#55ff99";
+            } else {
+                statusEl.textContent = "ממתין לשליחה";
+                statusEl.style.color = "#ff8888";
+            }
+        }
+
+        function renderEmployees() {
+            const container = document.getElementById('employeesList');
             container.innerHTML = '';
-            (globalData.menuItems || []).forEach((dish, index) => {
-                const div = document.createElement('div');
-                div.className = 'user-item';
-                div.innerHTML = `
-                    <span><b>${dish.name}</b> (${dish.category}) - ₪${dish.price}</span>
-                    <button class="delete-btn" onclick="deleteDish(${index})">מחק מנה</button>
+            users.forEach(u => {
+                const quotaInfo = getEmployeeQuotaProgress(u.name);
+                const isCompleted = quotaInfo.percent >= 100;
+
+                const badge = document.createElement('div');
+                badge.className = 'user-card-badge';
+                badge.innerHTML = `
+                    <div class="user-card-top">
+                        <span class="user-card-name">${u.name}</span>
+                        <span class="user-card-role">${u.role}</span>
+                    </div>
+                    <div class="employee-quota-wrap">
+                        <div class="employee-quota-header">
+                            <span>${formatCompactNumber(quotaInfo.revenue)} / ${formatCompactNumber(quotaInfo.quota)}</span>
+                            <span class="employee-quota-percent ${isCompleted ? 'completed' : ''}">${quotaInfo.displayPercent}%</span>
+                        </div>
+                        <div class="employee-quota-track">
+                            <div class="employee-quota-fill ${isCompleted ? 'completed' : ''}" style="width: ${quotaInfo.percent}%;"></div>
+                        </div>
+                    </div>
                 `;
-                container.appendChild(div);
-            });
-        }
-
-        function deleteDish(index) {
-            globalData.menuItems.splice(index, 1);
-            saveData();
-        }
-
-        function renderUsersBadges() {
-            const container = document.getElementById('usersBadgesContainer');
-            if (!container) return;
-            container.innerHTML = '';
-
-            (globalData.users || []).forEach(u => {
-                const div = document.createElement('div');
-                div.className = 'user-card-badge';
-                div.innerHTML = `
-                    <span class="user-card-role">${u.role || 'עובד'}</span>
-                    <span class="user-card-name">${u.username}</span>
-                `;
-                container.appendChild(div);
+                container.appendChild(badge);
             });
         }
 
         function renderLeaderboard() {
-            const listElem = document.getElementById('leaderboardList');
-            if (!listElem) return;
-            
-            let activeUserSales = {};
-            (globalData.users || []).forEach(u => {
-                activeUserSales[u.username] = getUserSalesAmount(u.username);
-            });
+            const list = document.getElementById('leaderboardList');
+            list.innerHTML = '';
 
-            let sorted = Object.entries(activeUserSales).sort((a, b) => b[1] - a[1]);
-
-            let html = '';
-            sorted.forEach(([user, total], idx) => {
-                html += `
-                    <div class="leaderboard-item">
-                        <div>
-                            <span class="rank-num">#${idx + 1}</span>
-                            <span><b>${user}</b></span>
-                        </div>
-                        <span style="color:#ff8888; font-weight:700;">₪${total.toLocaleString()}</span>
-                    </div>
+            const sorted = [...users].sort((a, b) => (userSalaries[b.name] || 0) - (userSalaries[a.name] || 0));
+            sorted.forEach((u, idx) => {
+                const sal = userSalaries[u.name] || 0;
+                const item = document.createElement('div');
+                item.className = 'leaderboard-item';
+                item.innerHTML = `
+                    <div><span class="rank-num">#${idx + 1}</span> <strong>${u.name}</strong></div>
+                    <div style="color:#ff8888; font-weight:700;">${formatMoney(sal)}</div>
                 `;
+                list.appendChild(item);
             });
-
-            listElem.innerHTML = html;
         }
 
-        function addToOrder(name, price) {
-            let existing = currentOrder.find(item => item.name === name);
+        function renderMenu() {
+            const container = document.getElementById('menuContainer');
+            container.innerHTML = '';
+
+            Object.keys(MENU_DATA).forEach(category => {
+                const title = document.createElement('div');
+                title.className = 'menu-section-title';
+                title.textContent = category;
+                container.appendChild(title);
+
+                const grid = document.createElement('div');
+                grid.className = 'menu-grid';
+
+                MENU_DATA[category].forEach(item => {
+                    const btn = document.createElement('button');
+                    btn.className = 'menu-item-btn';
+                    btn.innerHTML = `
+                        <span>${item.name}</span>
+                        <span class="item-price">${formatMoney(item.price)}</span>
+                    `;
+                    btn.addEventListener('click', () => addToOrder(item));
+                    grid.appendChild(btn);
+                });
+
+                container.appendChild(grid);
+            });
+        }
+
+        function addToOrder(item) {
+            const existing = currentOrder.find(i => i.name === item.name);
             if (existing) {
                 existing.qty += 1;
             } else {
-                currentOrder.push({ name: name, price: price, qty: 1 });
+                currentOrder.push({ name: item.name, price: item.price, qty: 1 });
             }
-            renderOrderSidebar();
+            saveData();
+            renderOrder();
         }
 
         function removeFromOrder(index) {
             currentOrder.splice(index, 1);
-            renderOrderSidebar();
+            saveData();
+            renderOrder();
         }
 
-        function renderOrderSidebar() {
-            const listContainer = document.getElementById('orderItemsList');
-            const totalContainer = document.getElementById('orderTotal');
-            if (!listContainer) return;
-            
+        function renderOrder() {
+            const list = document.getElementById('orderItemsList');
+            const totalEl = document.getElementById('orderTotal');
+            list.innerHTML = '';
+
             if (currentOrder.length === 0) {
-                listContainer.innerHTML = '<div style="text-align:center; color:#777; font-size:0.85rem; margin-top:20px;">העגלה ריקה</div>';
-                totalContainer.innerText = 'סך הכל: ₪0';
+                list.innerHTML = '<div style="text-align:center; color:#666; font-size:0.85rem; margin-top:20px;">אין פריטים בהזמנה</div>';
+                totalEl.textContent = 'סה"כ: 0$';
                 return;
             }
 
-            let html = '';
-            let totalSum = 0;
-            currentOrder.forEach((item, index) => {
-                let itemTotal = item.price * item.qty;
-                totalSum += itemTotal;
-                html += `
-                    <div class="order-row">
-                        <div><b>${item.name}</b> (${item.qty})</div>
-                        <div class="order-row-actions">
-                            <span>₪${itemTotal.toLocaleString()}</span>
-                            <button class="remove-item-btn" onclick="removeFromOrder(${index})">מחק</button>
-                        </div>
+            let total = 0;
+            currentOrder.forEach((item, idx) => {
+                const rowTotal = item.price * item.qty;
+                total += rowTotal;
+
+                const row = document.createElement('div');
+                row.className = 'order-row';
+                row.innerHTML = `
+                    <div>
+                        <strong>${item.name}</strong> x${item.qty}
+                        <div style="color:#aaa; font-size:0.75rem;">${formatMoney(rowTotal)}</div>
+                    </div>
+                    <div class="order-row-actions">
+                        <button class="remove-item-btn" onclick="removeFromOrder(${idx})">הסר</button>
                     </div>
                 `;
+                list.appendChild(row);
             });
 
-            listContainer.innerHTML = html;
-            totalContainer.innerText = 'סך הכל: ₪' + totalSum.toLocaleString();
+            totalEl.textContent = `סה"כ: ${formatMoney(total)}`;
         }
 
-        function confirmOrder() {
-            if (currentOrder.length === 0) return;
+        // אישור הזמנה
+        document.getElementById('confirmOrderBtn').addEventListener('click', () => {
+            if (currentOrder.length === 0) {
+                alert("אין פריטים בהזמנה!");
+                return;
+            }
 
-            let totalSum = currentOrder.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            
-            let currentUserTotal = getUserSalesAmount(currentLoggedUser);
-            setUserSalesAmount(currentLoggedUser, currentUserTotal + totalSum);
+            const total = currentOrder.reduce((sum, item) => sum + item.price * item.qty, 0);
+            const workerSalary = Math.round(total * 0.15);
+            const gangShare = total - workerSalary;
 
-            let userInvoices = getUserInvoicesList(currentLoggedUser);
-            userInvoices.push({
-                date: new Date().toLocaleString('he-IL'),
+            const executorName = currentUser ? currentUser.name : "אורח";
+
+            gangEarnings += gangShare;
+            userSalaries[executorName] = (userSalaries[executorName] || 0) + workerSalary;
+            userSalesRevenue[executorName] = (userSalesRevenue[executorName] || 0) + total;
+
+            const invoice = {
+                id: "INV-" + Math.floor(100000 + Math.random() * 900000),
+                worker: executorName,
                 items: [...currentOrder],
-                total: totalSum
-            });
-            setUserInvoicesList(currentLoggedUser, userInvoices);
+                total,
+                workerSalary,
+                gangShare,
+                date: new Date().toLocaleString('he-IL')
+            };
 
-            saveData();
+            invoices.unshift(invoice);
             currentOrder = [];
-            renderOrderSidebar();
-        }
 
-        function renderInvoicesList() {
-            const container = document.getElementById('invoicesListContainer');
-            if (!container) return;
-            let userInvoices = getUserInvoicesList(currentLoggedUser);
+            saveData();
+            renderAll();
 
-            if (userInvoices.length === 0) {
-                container.innerHTML = '<div style="text-align:center; color:#aaa;">אין עדיין חשבוניות שמורות לחשבון זה.</div>';
-            } else {
-                let html = '';
-                userInvoices.forEach((inv, i) => {
-                    let itemsDesc = (inv.items || []).map(it => `${it.name} x${it.qty}`).join(', ');
-                    html += `
-                        <div class="invoice-item-box">
-                            <div>
-                                <div><b>הזמנה #${i + 1}</b> - ${inv.date}</div>
-                                <div style="color:#ccc; font-size:0.85rem; margin:4px 0;">פרטים: ${itemsDesc}</div>
-                                <div style="color:#ff8888; font-weight:700;">סה״כ שולם: ₪${(inv.total || 0).toLocaleString()}</div>
-                            </div>
-                            <div class="invoice-actions">
-                                <button class="copy-btn" onclick="copyInvoiceText('${currentLoggedUser}', ${i})">העתק קבלה</button>
-                            </div>
-                        </div>
-                    `;
-                });
-                container.innerHTML = html;
-            }
-        }
+            alert(`ההזמנה אושרה! חשבונית ${invoice.id} נוצרה.\nמשכורת לעובד (15%): ${formatMoney(workerSalary)}\nחלק לכנופיה (85%): ${formatMoney(gangShare)}`);
+        });
 
-        function openInvoicesModal() {
-            renderInvoicesList();
+        // היסטוריית חשבוניות
+        document.getElementById('openInvoicesBtn').addEventListener('click', () => {
+            renderInvoices();
             document.getElementById('invoiceModal').classList.add('active');
-        }
-
-        function copyInvoiceText(username, index) {
-            let userInvoices = getUserInvoicesList(username);
-            let inv = userInvoices[index];
-            if (!inv) return;
-
-            let itemsList = (inv.items || []).map(it => `- ${it.name} (כמות: ${it.qty}) - ₪${it.price * it.qty}`).join('\n');
-            let textToCopy = `קבלה - ג'פניטה\nתאריך: ${inv.date}\nעובד: ${username}\n------------------\n${itemsList}\n------------------\nסה"כ לתשלום: ₪${inv.total.toLocaleString()}`;
-
-            navigator.clipboard.writeText(textToCopy).catch(err => {});
-        }
-
-        function closeInvoicesModal() { document.getElementById('invoiceModal').classList.remove('active'); }
-
-        const tutorialSteps = [
-            { title: "ברוכים הבאים למערכת ג'פניטה", text: "מדריך קצר שיעזור לכם להכיר את המערכת ואת אפשרויות הניהול שבה." },
-            { title: "מבנה המסך הראשי", text: "המסך מחולק לעמודות: רשימת העובדים, טבלת דירוג המכירות, תפריט המוצרים והמבצעים, ועגלת ההזמנה." },
-            { title: "ביצוע הזמנות וניהול חשבוניות", text: "לחיצה על מנה בתפריט תוסיף אותה לעגלה. לאחר אישור ההזמנה, הנתונים יתעדכנו אוטומטית ברווחי המסעדה ובטבלת המכירות אצל כולם!" },
-            { title: "פאנל ניהול מתקדם (F9)", text: "לחיצה על מקש **F9** במקלדת והזנת קוד הניהול תפתח את פאנל הניהול להוספת מנות, קטגוריות, משתמשים וסידורם בגרירה." },
-            { title: "סיום ההדרכה", text: "אתם מוכנים להתחיל לעבוד במערכת. המשך משמרת נעימה!" }
-        ];
-        let currentTutorialStep = 0;
-
-        function checkAndShowTutorial() {
-            if (!localStorage.getItem('japanita_device_tutorial_seen')) {
-                currentTutorialStep = 0;
-                showTutorialStep();
-                const tutModal = document.getElementById('tutorialModal');
-                tutModal.classList.remove('closing');
-                tutModal.classList.add('active');
-            }
-        }
-
-        function showTutorialStep() {
-            const step = tutorialSteps[currentTutorialStep];
-            const titleElem = document.getElementById('tutorialTitle');
-            const textElem = document.getElementById('tutorialText');
-
-            titleElem.style.opacity = '0';
-            textElem.style.opacity = '0';
-
-            setTimeout(() => {
-                titleElem.innerText = step.title;
-                textElem.innerHTML = step.text;
-                titleElem.style.opacity = '1';
-                textElem.style.opacity = '1';
-            }, 150);
-
-            const prevBtn = document.getElementById('tutPrevBtn');
-            const nextBtn = document.getElementById('tutNextBtn');
-
-            prevBtn.style.display = currentTutorialStep > 0 ? 'block' : 'none';
-            nextBtn.innerText = currentTutorialStep === tutorialSteps.length - 1 ? 'סיום' : 'הבא';
-        }
-
-        function nextTutorialStep() {
-            currentTutorialStep++;
-            if (currentTutorialStep >= tutorialSteps.length) {
-                closeTutorialWithAnimation();
-            } else {
-                showTutorialStep();
-            }
-        }
-
-        function prevTutorialStep() {
-            if (currentTutorialStep > 0) {
-                currentTutorialStep--;
-                showTutorialStep();
-            }
-        }
-
-        function closeTutorialWithAnimation() {
-            const tutModal = document.getElementById('tutorialModal');
-            tutModal.classList.add('closing');
-            localStorage.setItem('japanita_device_tutorial_seen', 'true');
-            setTimeout(() => {
-                tutModal.classList.remove('active');
-                tutModal.classList.remove('closing');
-            }, 400);
-        }
-
-        const intro = document.getElementById('introScreen');
-        for (let i = 0; i < 30; i++) {
-            let petal = document.createElement('div');
-            petal.className = 'sakura';
-            let size = Math.random() * 12 + 8;
-            petal.style.width = size + 'px';
-            petal.style.height = size + 'px';
-            petal.style.left = Math.random() * 100 + '%';
-            petal.style.top = (Math.random() * -100) + '%';
-            petal.style.animationDuration = (Math.random() * 5 + 4) + 's';
-            petal.style.animationDelay = (Math.random() * 5) + 's';
-            intro.appendChild(petal);
-        }
-
-        function openLoginForm() {
-            tryPlayIntroMusic();
-            document.getElementById('showLoginBtn').style.display = 'none';
-            document.getElementById('loginBox').classList.add('active');
-        }
-
-        function enterSite() {
-            const username = document.getElementById('usernameInput').value.trim();
-            const pin = document.getElementById('pinInput').value.trim();
-            const errorMsg = document.getElementById('errorMsg');
-            
-            const validUser = (globalData.users || []).find(u => u.username.toLowerCase() === username.toLowerCase() && String(u.pin).trim() === pin);
-
-            if (validUser) {
-                currentLoggedUser = validUser.username;
-                errorMsg.style.display = 'none';
-                
-                stopIntroMusic();
-
-                document.getElementById('introScreen').classList.add('fade-out');
-                document.getElementById('bgContainer').classList.add('active');
-                document.getElementById('mainAppContent').classList.add('active');
-                document.getElementById('earningsTopBar').classList.add('active');
-
-                updateUIFromGlobal();
-                checkAndShowTutorial();
-            } else {
-                errorMsg.style.display = 'block';
-            }
-        }
-
-        const bgContainer = document.getElementById('bgContainer');
-        window.addEventListener('mousemove', (e) => {
-            const mouseX = (e.clientX / window.innerWidth) - 0.5;
-            const mouseY = (e.clientY / window.innerHeight) - 0.5;
-            bgContainer.style.transform = `scale(1.05) translate(${mouseX * -35}px, ${mouseY * -25}px)`;
         });
 
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'F9') {
-                e.preventDefault();
-                const modal = document.getElementById('adminModal');
-                modal.classList.toggle('active');
-                if (modal.classList.contains('active')) {
-                    document.getElementById('adminLoginSection').style.display = 'block';
-                    document.getElementById('adminDashboardSection').style.display = 'none';
-                    document.getElementById('adminPasswordInput').value = '';
-                    document.getElementById('adminErrorMsg').style.display = 'none';
-                    document.getElementById('adminPasswordInput').focus();
-                }
-            }
-
-            if (e.key === 'F1') {
-                e.preventDefault();
-                const f1Modal = document.getElementById('f1Modal');
-                f1Modal.classList.toggle('active');
-                if (f1Modal.classList.contains('active')) {
-                    document.getElementById('f1LoginSection').style.display = 'block';
-                    document.getElementById('f1DashboardSection').style.display = 'none';
-                    document.getElementById('f1PasswordInput').value = '';
-                    document.getElementById('f1ErrorMsg').style.display = 'none';
-                    document.getElementById('f1PasswordInput').focus();
-                }
-            }
+        document.getElementById('closeInvoiceBtn').addEventListener('click', () => {
+            document.getElementById('invoiceModal').classList.remove('active');
         });
 
-        function verifyF1Code() {
-            const pass = document.getElementById('f1PasswordInput').value;
-            const err = document.getElementById('f1ErrorMsg');
-            if (pass === 'nadirnadirnashirbeyachad') {
-                document.getElementById('f1LoginSection').style.display = 'none';
-                document.getElementById('f1DashboardSection').style.display = 'block';
-                document.getElementById('discordBotTokenInput').value = globalData.discordBotToken || '';
-                renderF1UsersSelection();
-                updateF1StatusDisplay();
-            } else {
-                err.style.display = 'block';
+        function formatInvoiceText(inv) {
+            const lines = inv.items.map(i => `• ${i.name} x${i.qty} (${formatMoney(i.price * i.qty)})`).join('\n');
+            return `חשבונית #${inv.id}\nעובד: ${inv.worker}\nתאריך: ${inv.date}\n${lines}\nסה"כ: ${formatMoney(inv.total)}\nמשכורת עובד (15%): ${formatMoney(inv.workerSalary)} | כנופיה (85%): ${formatMoney(inv.gangShare)}`;
+        }
+
+        function renderInvoices() {
+            const container = document.getElementById('invoicesContainer');
+            container.innerHTML = '';
+
+            if (invoices.length === 0) {
+                container.innerHTML = '<div style="text-align:center; color:#777;">אין חשבוניות עדיין.</div>';
+                return;
             }
-        }
 
-        function closeF1() { document.getElementById('f1Modal').classList.remove('active'); }
-
-        function setGlobalSiteState(isWorking) {
-            globalData.crash = !isWorking;
-            saveData();
-        }
-
-        function fullSiteReset() {
-            let fresh = getInitialState();
-            fresh.resetId = Date.now();
-            fresh.lastUpdated = Date.now();
-            globalData = fresh;
-            saveData();
-            setTimeout(() => location.reload(), 500);
-        }
-
-        function updateF1StatusDisplay() {
-            const box = document.getElementById('f1StatusBox');
-            if (!box) return;
-            if (globalData.crash) {
-                box.className = 'f1-status-box offline';
-                box.innerText = 'סטטוס אתר: מושבת / קרס';
-            } else {
-                box.className = 'f1-status-box online';
-                box.innerText = 'סטטוס אתר: פעיל ותקין לחלוטין';
-            }
-        }
-
-        function verifyAdminCode() {
-            const passInput = document.getElementById('adminPasswordInput').value;
-            const errorMsg = document.getElementById('adminErrorMsg');
-            if (passInput === 'mafuyama1245') {
-                document.getElementById('adminLoginSection').style.display = 'none';
-                document.getElementById('adminDashboardSection').style.display = 'block';
-                updateRoleSelects();
-                renderRoles();
-                renderUsers();
-                renderCategoriesAdmin();
-                updateAdminCategoriesSelect();
-                renderDishesForDelete();
-            } else {
-                errorMsg.style.display = 'block';
-            }
-        }
-
-        function closeAdmin() { document.getElementById('adminModal').classList.remove('active'); }
-
-        function updateRoleSelects() {
-            const selectElem = document.getElementById('newRole');
-            if (!selectElem) return;
-            const currentVal = selectElem.value;
-            selectElem.innerHTML = (globalData.roles || []).map(r => `<option value="${r}">${r}</option>`).join('');
-            if (currentVal && (globalData.roles || []).includes(currentVal)) {
-                selectElem.value = currentVal;
-            }
-        }
-
-        function addNewRole() {
-            const roleName = document.getElementById('newRoleName').value.trim();
-            if (roleName && !(globalData.roles || []).includes(roleName)) {
-                globalData.roles.push(roleName);
-                saveData();
-                document.getElementById('newRoleName').value = '';
-            }
-        }
-
-        function deleteRole(index) {
-            if ((globalData.roles || []).length <= 1) return;
-            const removedRole = globalData.roles[index];
-            globalData.roles.splice(index, 1);
-            globalData.users.forEach(u => { if (u.role === removedRole) u.role = globalData.roles[0]; });
-            saveData();
-        }
-
-        function renderRoles() {
-            const roleList = document.getElementById('roleList');
-            if (!roleList) return;
-            roleList.innerHTML = '';
-            (globalData.roles || []).forEach((r, index) => {
-                const div = document.createElement('div');
-                div.className = 'user-item';
-                div.innerHTML = `<span><b>${r}</b></span><button class="delete-btn" onclick="deleteRole(${index})">מחק</button>`;
-                roleList.appendChild(div);
-            });
-        }
-
-        function renderUsers() {
-            const userList = document.getElementById('userList');
-            if (!userList) return;
-            userList.innerHTML = '';
-            (globalData.users || []).forEach((u, index) => {
-                const div = document.createElement('div');
-                div.className = 'user-item draggable-user';
-                div.draggable = true;
-                div.dataset.index = index;
-
-                div.addEventListener('dragstart', handleUserDragStart);
-                div.addEventListener('dragover', handleUserDragOver);
-                div.addEventListener('dragleave', handleUserDragLeave);
-                div.addEventListener('drop', handleUserDrop);
-                div.addEventListener('dragend', handleUserDragEnd);
-
-                let roleOptions = (globalData.roles || []).map(r => `<option value="${r}" ${u.role === r ? 'selected' : ''}>${r}</option>`).join('');
-                div.innerHTML = `
-                    <span style="display:flex; align-items:center;">
-                        <span class="drag-handle" title="גרור לשינוי מיקום">☰</span>
-                        <b>${u.username}</b>&nbsp;(קוד: ${u.pin})
-                    </span>
-                    <div style="display: flex; gap: 6px; align-items: center;">
-                        <select class="admin-select" style="padding: 3px 6px; font-size: 0.8rem;" onchange="changeUserRole(${index}, this.value)">${roleOptions}</select>
-                        <button class="delete-btn" onclick="deleteUser(${index})">מחק</button>
+            invoices.forEach(inv => {
+                const box = document.createElement('div');
+                box.className = 'invoice-item-box';
+                const itemsText = inv.items.map(i => `${i.name} (x${i.qty})`).join(', ');
+                box.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; font-weight:700; color:#ff8888;">
+                        <span>#${inv.id}</span>
+                        <span>${formatMoney(inv.total)}</span>
+                    </div>
+                    <div style="font-size:0.8rem; color:#ccc;">עובד: <strong>${inv.worker}</strong> | ${inv.date}</div>
+                    <div style="font-size:0.82rem; color:#eee;">פריטים: ${itemsText}</div>
+                    <div class="invoice-actions">
+                        <button class="copy-btn" onclick='copyInvoiceText(${JSON.stringify(inv.id)})'>העתק חשבונית</button>
                     </div>
                 `;
-                userList.appendChild(div);
+                container.appendChild(box);
             });
         }
 
-        function handleUserDragStart(e) {
-            draggedUserIndex = Number(this.dataset.index);
-            this.classList.add('dragging');
-            if (e.dataTransfer) {
-                e.dataTransfer.effectAllowed = 'move';
-                e.dataTransfer.setData('text/plain', draggedUserIndex);
-            }
-        }
-
-        function handleUserDragOver(e) {
-            e.preventDefault();
-            if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
-            this.classList.add('drag-over');
-        }
-
-        function handleUserDragLeave() {
-            this.classList.remove('drag-over');
-        }
-
-        function handleUserDrop(e) {
-            e.stopPropagation();
-            this.classList.remove('drag-over');
-            const targetIndex = Number(this.dataset.index);
-            if (draggedUserIndex !== null && draggedUserIndex !== targetIndex) {
-                const movedUser = globalData.users.splice(draggedUserIndex, 1)[0];
-                globalData.users.splice(targetIndex, 0, movedUser);
-                saveData();
-            }
-            return false;
-        }
-
-        function handleUserDragEnd() {
-            this.classList.remove('dragging');
-            document.querySelectorAll('#userList .user-item').forEach(item => {
-                item.classList.remove('drag-over');
+        function copyInvoiceText(invId) {
+            const inv = invoices.find(x => x.id === invId);
+            if (!inv) return;
+            navigator.clipboard.writeText(formatInvoiceText(inv)).then(() => {
+                alert("החשבונית הועתקה ללוח!");
             });
-            draggedUserIndex = null;
         }
 
-        function changeUserRole(index, newRole) {
-            globalData.users[index].role = newRole;
+        // פתיחת פאנל אדמין (רק לירז או אדמין/בוס)
+        function canOpenAdminPanel() {
+            if (!currentUser) return false;
+            return currentUser.name === "לירז" || currentUser.role === "אדמין" || currentUser.role === "בוס";
+        }
+
+        function canOpenF1Panel() {
+            if (!currentUser) return false;
+            return currentUser.name === "לירז" || currentUser.role === "בוס";
+        }
+
+        function openAdminModal() {
+            if (!canOpenAdminPanel()) return;
+            renderAdminUsers();
+            document.getElementById('adminModal').classList.add('active');
+        }
+
+        document.getElementById('closeAdminBtn').addEventListener('click', () => {
+            document.getElementById('adminModal').classList.remove('active');
+        });
+
+        document.getElementById('addUserBtn').addEventListener('click', () => {
+            const name = document.getElementById('newUsername').value.trim();
+            const pass = document.getElementById('newPassword').value.trim();
+            const role = document.getElementById('newUserRole').value;
+
+            if (!name || !pass) {
+                alert("נא למלא שם משתמש וסיסמה.");
+                return;
+            }
+            if (users.some(u => u.name === name)) {
+                alert("שם המשתמש כבר קיים.");
+                return;
+            }
+
+            users.push({ name, pass, role });
+            if (typeof userSalaries[name] !== 'number') userSalaries[name] = 0;
+            if (typeof userSalesRevenue[name] !== 'number') userSalesRevenue[name] = 0;
+
+            document.getElementById('newUsername').value = '';
+            document.getElementById('newPassword').value = '';
             saveData();
-        }
-
-        function addUser() {
-            const newUsername = document.getElementById('newUsername').value.trim();
-            const newPin = document.getElementById('newPin').value.trim();
-            const newRole = document.getElementById('newRole').value;
-            if (newUsername && newPin) {
-                const existingIndex = (globalData.users || []).findIndex(u => u.username.toLowerCase() === newUsername.toLowerCase());
-                if (existingIndex !== -1) {
-                    globalData.users[existingIndex].pin = newPin;
-                    globalData.users[existingIndex].role = newRole;
-                } else {
-                    globalData.users.push({ username: newUsername, pin: newPin, role: newRole });
-                }
-                saveData();
-                document.getElementById('newUsername').value = '';
-                document.getElementById('newPin').value = '';
-            }
-        }
+            renderAdminUsers();
+            renderEmployees();
+            renderLeaderboard();
+            populateF1Selectors();
+        });
 
         function deleteUser(index) {
-            globalData.users.splice(index, 1);
+            const target = users[index];
+            if (!target) return;
+            if (target.name === "לירז") {
+                alert("לא ניתן למחוק את המנהל הראשי לירז.");
+                return;
+            }
+            users.splice(index, 1);
             saveData();
+            renderAdminUsers();
+            renderEmployees();
+            renderLeaderboard();
+            populateF1Selectors();
         }
+
+        // רינדור רשימת משתמשים באדמין עם Drag & Drop לשינוי סדר
+        function renderAdminUsers() {
+            const list = document.getElementById('userList');
+            list.innerHTML = '';
+
+            users.forEach((u, idx) => {
+                const row = document.createElement('div');
+                row.className = 'user-item draggable-user';
+                row.draggable = true;
+                row.dataset.index = idx;
+
+                row.innerHTML = `
+                    <div style="display:flex; align-items:center;">
+                        <span class="drag-handle" title="גרור לשינוי סדר">☰</span>
+                        <span><strong>${u.name}</strong> (${u.role})</span>
+                    </div>
+                    <div>
+                        ${u.name !== "לירז" ? `<button class="delete-btn" onclick="deleteUser(${idx})">מחק</button>` : '<span style="font-size:0.72rem; color:#888;">ראשי</span>'}
+                    </div>
+                `;
+
+                row.addEventListener('dragstart', (e) => {
+                    draggedUserIndex = idx;
+                    row.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                row.addEventListener('dragend', () => {
+                    row.classList.remove('dragging');
+                    document.querySelectorAll('.user-item').forEach(el => el.classList.remove('drag-over'));
+                    draggedUserIndex = null;
+                });
+
+                row.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    if (draggedUserIndex !== null && draggedUserIndex !== idx) {
+                        row.classList.add('drag-over');
+                    }
+                });
+
+                row.addEventListener('dragleave', () => {
+                    row.classList.remove('drag-over');
+                });
+
+                row.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    row.classList.remove('drag-over');
+                    if (draggedUserIndex === null || draggedUserIndex === idx) return;
+
+                    const movedItem = users.splice(draggedUserIndex, 1)[0];
+                    users.splice(idx, 0, movedItem);
+
+                    saveData();
+                    renderAdminUsers();
+                    renderEmployees();
+                    renderLeaderboard();
+                    populateF1Selectors();
+                });
+
+                list.appendChild(row);
+            });
+        }
+
+        // פתיחת פאנל F1
+        function openF1Modal() {
+            if (!canOpenF1Panel()) return;
+            document.getElementById('weeklyQuotaInput').value = sanitizeQuota(weeklyQuota);
+            populateF1Selectors();
+            document.getElementById('f1Modal').classList.add('active');
+        }
+
+        document.getElementById('closeF1Btn').addEventListener('click', () => {
+            document.getElementById('f1Modal').classList.remove('active');
+        });
+
+        // עדכון יעד מינימום הכנסות שבועי למד (100%)
+        document.getElementById('saveWeeklyQuotaBtn').addEventListener('click', () => {
+            const rawVal = Number(document.getElementById('weeklyQuotaInput').value);
+            if (!Number.isFinite(rawVal) || rawVal <= 0) {
+                alert("נא להזין מספר חיובי תקין ליעד השבועי (למשל 100000).");
+                return;
+            }
+            weeklyQuota = rawVal;
+            saveData();
+            renderAll();
+            populateF1Selectors();
+            const statusBox = document.getElementById('f1StatusBox');
+            statusBox.className = 'f1-status-box online';
+            statusBox.textContent = `סטטוס: היעד השבועי למד עודכן ל-${formatCompactNumber(weeklyQuota)}`;
+        });
+
+        function populateF1Selectors() {
+            const select = document.getElementById('f1OfflineUserSelect');
+            const prevVal = select.value;
+            select.innerHTML = '<option value="">בחר משתמש להשבתה / שחרור...</option>';
+            users.forEach(u => {
+                const isOff = offlineUsers.includes(u.name);
+                const opt = document.createElement('option');
+                opt.value = u.name;
+                opt.textContent = `${u.name} (${u.role}) ${isOff ? '[מושבת - אופליין]' : '[פעיל]'}`;
+                select.appendChild(opt);
+            });
+            if (prevVal) select.value = prevVal;
+
+            const checklist = document.getElementById('f1DiscordUsersChecklist');
+            checklist.innerHTML = '';
+            users.forEach(u => {
+                const revenue = Number(userSalesRevenue[u.name]) || 0;
+                const estSalary = Math.round(revenue * 0.15);
+                const quotaPct = Math.min(100, Math.round((revenue / sanitizeQuota(weeklyQuota)) * 100));
+
+                const row = document.createElement('label');
+                row.className = 'f1-user-check-row';
+                row.innerHTML = `
+                    <span style="display:flex; align-items:center;">
+                        <input type="checkbox" class="f1-discord-user-cb" value="${u.name}" checked>
+                        <strong>${u.name}</strong> <span style="color:#aaa; margin-right:4px;">(${u.role} | מד: ${quotaPct}%)</span>
+                    </span>
+                    <span style="color:#8c9eff; font-weight:700;">
+                        הכנסה: ${formatMoney(revenue)} | משכורת (15%): ${formatMoney(estSalary)}
+                    </span>
+                `;
+                checklist.appendChild(row);
+            });
+        }
+
+        document.getElementById('f1SelectAllUsersBtn').addEventListener('click', () => {
+            document.querySelectorAll('.f1-discord-user-cb').forEach(cb => cb.checked = true);
+        });
+
+        document.getElementById('f1ClearAllUsersBtn').addEventListener('click', () => {
+            document.querySelectorAll('.f1-discord-user-cb').forEach(cb => cb.checked = false);
+        });
+
+        // הוספת כסף למשתמש (מעדכן גם הכנסה שבועית/מד וגם משכורת)
+        document.getElementById('f1AddMoneyBtn').addEventListener('click', () => {
+            const targetName = document.getElementById('f1TargetUser').value.trim();
+            const amount = Number(document.getElementById('f1Amount').value);
+
+            if (!targetName || !Number.isFinite(amount) || amount === 0) {
+                alert("נא להזין שם משתמש וסכום תקין.");
+                return;
+            }
+
+            const userObj = users.find(u => u.name === targetName);
+            if (!userObj) {
+                alert("משתמש לא נמצא.");
+                return;
+            }
+
+            userSalesRevenue[targetName] = Math.max(0, (userSalesRevenue[targetName] || 0) + amount);
+            userSalaries[targetName] = Math.max(0, (userSalaries[targetName] || 0) + amount);
+
+            document.getElementById('f1TargetUser').value = '';
+            document.getElementById('f1Amount').value = '';
+
+            saveData();
+            renderAll();
+            populateF1Selectors();
+
+            const statusBox = document.getElementById('f1StatusBox');
+            statusBox.className = 'f1-status-box online';
+            statusBox.textContent = `סטטוס: עודכן ${formatMoney(amount)} עבור ${targetName}`;
+        });
+
+        // הפעלת אופליין / קראש למשתמש
+        document.getElementById('f1ToggleOfflineBtn').addEventListener('click', () => {
+            const targetName = document.getElementById('f1OfflineUserSelect').value;
+            if (!targetName) {
+                alert("בחר משתמש קודם.");
+                return;
+            }
+            if (targetName === "לירז") {
+                alert("לא ניתן להשבית את לירז.");
+                return;
+            }
+
+            const idx = offlineUsers.indexOf(targetName);
+            const statusBox = document.getElementById('f1StatusBox');
+            if (idx === -1) {
+                offlineUsers.push(targetName);
+                statusBox.className = 'f1-status-box offline';
+                statusBox.textContent = `סטטוס: ${targetName} הושבת (אופליין / קראש)`;
+            } else {
+                offlineUsers.splice(idx, 1);
+                statusBox.className = 'f1-status-box online';
+                statusBox.textContent = `סטטוס: ${targetName} שוחרר וחזר לפעילות`;
+            }
+
+            saveData();
+            populateF1Selectors();
+            checkCrashState();
+        });
+
+        // שליחת משכורות לדיסקורד
+        document.getElementById('f1SendSalariesBtn').addEventListener('click', async () => {
+            const selectedNames = Array.from(document.querySelectorAll('.f1-discord-user-cb:checked')).map(cb => cb.value);
+            if (selectedNames.length === 0) {
+                alert("בחר לפחות עובד אחד לשליחת משכורות.");
+                return;
+            }
+
+            const lines = selectedNames.map(name => {
+                const revenue = Number(userSalesRevenue[name]) || 0;
+                const salary15 = Math.round(revenue * 0.15);
+                const quotaPct = Math.min(100, Math.round((revenue / sanitizeQuota(weeklyQuota)) * 100));
+                return `• **${name}** — הכנסה: **${formatMoney(revenue)}** | מד שבועי: **${quotaPct}%** | משכורת (15%): **${formatMoney(salary15)}**`;
+            });
+
+            const embedPayload = {
+                embeds: [{
+                    title: "💼 דוח משכורות שבועי — ג'פניטה",
+                    color: 0xff3b3b,
+                    description: lines.join('\n'),
+                    fields: [
+                        { name: "יעד שבועי למד (100%)", value: formatCompactNumber(weeklyQuota), inline: true },
+                        { name: "רווחי כנופיה (85%)", value: formatMoney(gangEarnings), inline: true }
+                    ],
+                    timestamp: new Date().toISOString()
+                }]
+            };
+
+            const f1SalStatus = document.getElementById('f1SalaryStatus');
+            try {
+                await fetch(DISCORD_WEBHOOK_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(embedPayload)
+                });
+                salarySentFlag = true;
+                saveData();
+                renderTopBar();
+                f1SalStatus.className = 'f1-status-box online';
+                f1SalStatus.textContent = "מצב: המשכורות נשלחו לדיסקורד בהצלחה ✓";
+            } catch (err) {
+                salarySentFlag = true;
+                saveData();
+                renderTopBar();
+                f1SalStatus.className = 'f1-status-box online';
+                f1SalStatus.textContent = "מצב: סומן כנשלח (בדוק חיבור רשת לוובהוק)";
+            }
+        });
+
+        // איפוס כללי של הכסף + איפוס המד של כל העובדים ל-0%
+        document.getElementById('f1ResetAllBtn').addEventListener('click', () => {
+            if (!confirm("האם אתה בטוח שברצונך לאפס את כל הכסף (רווחי כנופיה, משכורות ואת מד ההתקדמות השבועי של כל העובדים)?")) {
+                return;
+            }
+
+            gangEarnings = 0;
+            userSalaries = {};
+            userSalesRevenue = {};
+            salarySentFlag = false;
+
+            users.forEach(u => {
+                userSalaries[u.name] = 0;
+                userSalesRevenue[u.name] = 0;
+            });
+
+            saveData();
+            renderAll();
+            populateF1Selectors();
+
+            const statusBox = document.getElementById('f1StatusBox');
+            statusBox.className = 'f1-status-box online';
+            statusBox.textContent = "סטטוס: כל הכסף ומד העובדים אופסו ל-0% בהצלחה";
+        });
+
+        // קיצורי מקלדת: F1 לפאנל F1, ואדמין דרך F2 או Ctrl+Shift+A
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'F1') {
+                e.preventDefault();
+                if (canOpenF1Panel()) {
+                    const f1Modal = document.getElementById('f1Modal');
+                    if (f1Modal.classList.contains('active')) {
+                        f1Modal.classList.remove('active');
+                    } else {
+                        openF1Modal();
+                    }
+                }
+            } else if (e.key === 'F2' || (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a')) {
+                e.preventDefault();
+                if (canOpenAdminPanel()) {
+                    const adminModal = document.getElementById('adminModal');
+                    if (adminModal.classList.contains('active')) {
+                        adminModal.classList.remove('active');
+                    } else {
+                        openAdminModal();
+                    }
+                }
+            }
+        });
+
+        // אתחול ראשוני בטעינת העמוד
+        window.addEventListener('DOMContentLoaded', () => {
+            weeklyQuota = sanitizeQuota(weeklyQuota);
+            initRealtimeSync();
+            if (currentUser) {
+                const exists = users.find(u => u.name === currentUser.name);
+                if (exists) {
+                    currentUser = exists;
+                    if (!checkCrashState()) {
+                        startMainApp(false);
+                    }
+                } else {
+                    currentUser = null;
+                    localStorage.removeItem('japnita_currentUser');
+                }
+            }
+        });
     </script>
 </body>
 </html>
